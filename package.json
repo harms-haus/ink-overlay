@@ -60,6 +60,7 @@
 	},
 	"prettier": "@vdemedes/prettier-config",
 	"xo": {
+		"prettier": true,
 		"rules": {
 			"import-x/extensions": "off",
 			"@typescript-eslint/naming-convention": "off",
