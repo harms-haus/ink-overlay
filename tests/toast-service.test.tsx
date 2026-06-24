@@ -11,6 +11,7 @@ import {toasts, overlay} from '../src/manager.js';
 import {overlayStore} from '../src/store.js';
 import {renderWithHost} from './helpers/render-with-host.js';
 import {delay} from './helpers/delay.js';
+import {waitForFrame} from './helpers/wait-for-frame.js';
 
 // ── Isolation: clear singletons between tests ───────────────────
 
@@ -118,13 +119,12 @@ describe('toast service — basic lifecycle', () => {
 		const {lastFrame} = renderWithHost(<Text>app</Text>);
 		await delay(200);
 
-		toasts.success('Timer-gone', {duration: 100});
-		await delay(50);
-		expect(lastFrame()).toContain('Timer-gone');
+		toasts.success('Timer-gone', {duration: 300});
+		await waitForFrame(lastFrame, 'Timer-gone');
 
-		// Wait for the 100ms timer to fire + buffer for re-render.
-		await delay(500);
-		expect(lastFrame()).not.toContain('Timer-gone');
+		// Wait for the 300ms timer to fire + buffer for re-render.
+		await delay(700);
+		await waitForFrame(lastFrame, 'Timer-gone', {present: false});
 	});
 
 	test('toasts.error renders with ✗ icon', async () => {
@@ -132,11 +132,8 @@ describe('toast service — basic lifecycle', () => {
 		await delay(100);
 
 		toasts.error('Failed!');
-		await delay(200);
-
-		const frame = lastFrame();
-		expect(frame).toContain('Failed!');
-		expect(frame).toContain('✗');
+		await waitForFrame(lastFrame, 'Failed!');
+		expect(lastFrame()).toContain('✗');
 	});
 
 	test('toasts.info renders with ℹ icon', async () => {
@@ -144,11 +141,8 @@ describe('toast service — basic lifecycle', () => {
 		await delay(100);
 
 		toasts.info('Heads up');
-		await delay(200);
-
-		const frame = lastFrame();
-		expect(frame).toContain('Heads up');
-		expect(frame).toContain('ℹ');
+		await waitForFrame(lastFrame, 'Heads up');
+		expect(lastFrame()).toContain('ℹ');
 	});
 
 	test('toasts.warn renders with ⚠ icon', async () => {
@@ -156,11 +150,8 @@ describe('toast service — basic lifecycle', () => {
 		await delay(100);
 
 		toasts.warn('Caution');
-		await delay(200);
-
-		const frame = lastFrame();
-		expect(frame).toContain('Caution');
-		expect(frame).toContain('⚠');
+		await waitForFrame(lastFrame, 'Caution');
+		expect(lastFrame()).toContain('⚠');
 	});
 
 	test('toasts.show defaults to info kind', async () => {
@@ -168,11 +159,8 @@ describe('toast service — basic lifecycle', () => {
 		await delay(100);
 
 		toasts.show('Generic message');
-		await delay(200);
-
-		const frame = lastFrame();
-		expect(frame).toContain('Generic message');
-		expect(frame).toContain('ℹ');
+		await waitForFrame(lastFrame, 'Generic message');
+		expect(lastFrame()).toContain('ℹ');
 	});
 });
 
@@ -187,11 +175,8 @@ describe('toast service — stacking', () => {
 
 		toasts.error('A');
 		toasts.info('B');
-		await delay(200);
-
-		const frame = lastFrame();
-		expect(frame).toContain('A');
-		expect(frame).toContain('B');
+		await waitForFrame(lastFrame, 'A');
+		expect(lastFrame()).toContain('B');
 	});
 
 	test('three toasts all visible simultaneously', async () => {
@@ -201,12 +186,9 @@ describe('toast service — stacking', () => {
 		toasts.success('first');
 		toasts.error('second');
 		toasts.warn('third');
-		await delay(200);
-
-		const frame = lastFrame();
-		expect(frame).toContain('first');
-		expect(frame).toContain('second');
-		expect(frame).toContain('third');
+		await waitForFrame(lastFrame, 'first');
+		expect(lastFrame()).toContain('second');
+		expect(lastFrame()).toContain('third');
 	});
 });
 
@@ -221,11 +203,8 @@ describe('toast service — dismiss', () => {
 
 		const idA = toasts.error('Keep me');
 		toasts.info('Remove me');
-		await delay(200);
-
-		let frame = lastFrame();
-		expect(frame).toContain('Keep me');
-		expect(frame).toContain('Remove me');
+		await waitForFrame(lastFrame, 'Keep me');
+		expect(lastFrame()).toContain('Remove me');
 
 		// Dismiss the info toast — we need its id. Since show() was
 		// called second, the second return is its id. But the ids are
@@ -242,19 +221,13 @@ describe('toast service — dismiss', () => {
 
 		const id1 = toasts.error('msg-one', {id: 'test-dismiss-1'});
 		const id2 = toasts.info('msg-two', {id: 'test-dismiss-2'});
-		await delay(200);
-
-		frame = lastFrame();
-		expect(frame).toContain('msg-one');
-		expect(frame).toContain('msg-two');
+		await waitForFrame(lastFrame, 'msg-one');
+		expect(lastFrame()).toContain('msg-two');
 
 		// Dismiss only the second toast.
 		toasts.dismiss(id2);
-		await delay(200);
-
-		frame = lastFrame();
-		expect(frame).toContain('msg-one');
-		expect(frame).not.toContain('msg-two');
+		await waitForFrame(lastFrame, 'msg-two', {present: false});
+		expect(lastFrame()).toContain('msg-one');
 	});
 
 	test('dismiss on unknown id is a no-op', async () => {
@@ -262,8 +235,7 @@ describe('toast service — dismiss', () => {
 		await delay(100);
 
 		toasts.success('stable', {id: 'stable-toast'});
-		await delay(200);
-		expect(lastFrame()).toContain('stable');
+		await waitForFrame(lastFrame, 'stable');
 
 		// Dismiss a non-existent id.
 		toasts.dismiss('nonexistent');
@@ -286,20 +258,14 @@ describe('toast service — dismissAll', () => {
 		toasts.success('x');
 		toasts.error('y');
 		toasts.info('z');
-		await delay(200);
-
-		let frame = lastFrame();
-		expect(frame).toContain('x');
-		expect(frame).toContain('y');
-		expect(frame).toContain('z');
+		await waitForFrame(lastFrame, 'x');
+		expect(lastFrame()).toContain('y');
+		expect(lastFrame()).toContain('z');
 
 		toasts.dismissAll();
-		await delay(200);
-
-		frame = lastFrame();
-		expect(frame).not.toContain('x');
-		expect(frame).not.toContain('y');
-		expect(frame).not.toContain('z');
+		await waitForFrame(lastFrame, 'x', {present: false});
+		expect(lastFrame()).not.toContain('y');
+		expect(lastFrame()).not.toContain('z');
 	});
 });
 
@@ -315,10 +281,7 @@ describe('toast service — queue before host', () => {
 
 		// Now mount the host.
 		const {lastFrame} = renderWithHost(<Text>app</Text>);
-		await delay(500);
-
-		const frame = lastFrame();
-		expect(frame).toContain('queued');
+		await waitForFrame(lastFrame, 'queued');
 	});
 
 	test('multiple toasts queued before host all appear', async () => {
@@ -327,11 +290,8 @@ describe('toast service — queue before host', () => {
 		await delay(50);
 
 		const {lastFrame} = renderWithHost(<Text>app</Text>);
-		await delay(500);
-
-		const frame = lastFrame();
-		expect(frame).toContain('first');
-		expect(frame).toContain('second');
+		await waitForFrame(lastFrame, 'first');
+		expect(lastFrame()).toContain('second');
 	});
 });
 
@@ -356,8 +316,7 @@ describe('toast service — non-capturing', () => {
 
 		// Show a toast.
 		toasts.success('overlay-toast');
-		await delay(200);
-		expect(lastFrame()).toContain('overlay-toast');
+		await waitForFrame(lastFrame, 'overlay-toast');
 
 		// Verify the overlay store entry has capture: false.
 		const entries = overlayStore.getAll();
