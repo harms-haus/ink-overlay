@@ -13,16 +13,22 @@
  * single-char input, so we type CHAR BY CHAR with a delay between
  * each so each keystroke becomes its own event:
  *
- *   for (const c of 'save') { stdin.write(c); await delay(80); }
+ *   for (const c of 'save') { stdin.write(c); await delay(TYPING_DELAY); }
  */
 import {describe, test, expect, vi, afterEach} from 'vitest';
 import {useState} from 'react';
 import {Text} from 'ink';
 import {CommandPalette} from '../src/command-palette.js';
-import {OverlayHost} from '../src/host.js';
 import type {CommandPaletteItem, FilterFunction} from '../src/types.js';
 import {renderWithHost} from './helpers/render-with-host.js';
-import {delay} from './helpers/delay.js';
+import {
+	delay,
+	KEY_PRESS_DELAY,
+	RENDER_DELAY,
+	INITIAL_RENDER_DELAY,
+	CLEANUP_DELAY,
+} from './helpers/delay.js';
+import {typeString} from './helpers/type-string.js';
 
 // ── Key sequences recognised by ink-testing-library ────────────────
 
@@ -51,32 +57,17 @@ const manyItems: CommandPaletteItem[] = Array.from({length: 15}, (_, i) => ({
 // ── Helpers ────────────────────────────────────────────────────────
 
 /**
- * Type a string one character at a time with delays between each.
- * Required because stdin.write sends the whole string as one event,
- * but the palette handler only processes input.length === 1.
- */
-async function typeString(
-	stdin: {write: (input: string) => void},
-	text: string,
-) {
-	for (const char of text) {
-		stdin.write(char);
-		await delay(80);
-	}
-}
-
-/**
  * Press a key (arrow / enter / esc) and wait for re-render.
  */
 async function pressKey(stdin: {write: (input: string) => void}, key: string) {
 	stdin.write(key);
-	await delay(150);
+	await delay(KEY_PRESS_DELAY);
 }
 
 // ── Isolation ──────────────────────────────────────────────────────
 
 afterEach(async () => {
-	await delay(50);
+	await delay(CLEANUP_DELAY);
 });
 
 // ═══════════════════════════════════════════════════════════════════
@@ -86,13 +77,13 @@ afterEach(async () => {
 describe('command palette — render, filter, select, dismiss', () => {
 	test('initial frame shows all items with the first selected', async () => {
 		const {lastFrame} = renderWithHost(
-			<OverlayHost>
+			<>
 				<Text>base</Text>
 				<CommandPalette items={basicItems} defaultOpen />
-			</OverlayHost>,
+			</>,
 		);
 
-		await delay(300);
+		await delay(INITIAL_RENDER_DELAY);
 
 		const frame = lastFrame();
 
@@ -109,22 +100,22 @@ describe('command palette — render, filter, select, dismiss', () => {
 	test('typing filters to a single item; arrows do not move; enter selects it', async () => {
 		const onItemSelect = vi.fn();
 		const {lastFrame, stdin} = renderWithHost(
-			<OverlayHost>
+			<>
 				<Text>base</Text>
 				<CommandPalette
 					items={basicItems}
 					defaultOpen
 					onItemSelect={onItemSelect}
 				/>
-			</OverlayHost>,
+			</>,
 		);
 
-		await delay(300);
+		await delay(INITIAL_RENDER_DELAY);
 
 		// Type 'save' one char at a time — progressively filters down to
 		// exactly 'Save File' (match-sorter 'save' matches only Save File).
 		await typeString(stdin, 'save');
-		await delay(200);
+		await delay(RENDER_DELAY);
 
 		const frame = lastFrame();
 
@@ -157,13 +148,13 @@ describe('command palette — render, filter, select, dismiss', () => {
 		const onDismiss = vi.fn();
 
 		const {stdin} = renderWithHost(
-			<OverlayHost>
+			<>
 				<Text>base</Text>
 				<CommandPalette items={basicItems} defaultOpen onDismiss={onDismiss} />
-			</OverlayHost>,
+			</>,
 		);
 
-		await delay(300);
+		await delay(INITIAL_RENDER_DELAY);
 
 		// Escape triggers dismissal.
 		await pressKey(stdin, ESC);
@@ -183,7 +174,7 @@ describe('command palette — render, filter, select, dismiss', () => {
 			setOpen = setOpenState;
 
 			return (
-				<OverlayHost>
+				<>
 					<Text>base</Text>
 					<CommandPalette
 						items={basicItems}
@@ -197,16 +188,16 @@ describe('command palette — render, filter, select, dismiss', () => {
 							setOpenState(false);
 						}}
 					/>
-				</OverlayHost>
+				</>
 			);
 		}
 
 		const {stdin} = renderWithHost(<App />);
-		await delay(300);
+		await delay(INITIAL_RENDER_DELAY);
 
 		// Filter to Save File and select it.
 		await typeString(stdin, 'save');
-		await delay(150);
+		await delay(KEY_PRESS_DELAY);
 		await pressKey(stdin, ENTER);
 
 		expect(onItemSelect).toHaveBeenCalledOnce();
@@ -216,7 +207,7 @@ describe('command palette — render, filter, select, dismiss', () => {
 
 		// Palette is now closed (onItemSelect closed it). Reopen.
 		setOpen(true);
-		await delay(300);
+		await delay(INITIAL_RENDER_DELAY);
 
 		// Escape dismisses the reopened palette.
 		await pressKey(stdin, ESC);
@@ -231,13 +222,13 @@ describe('command palette — render, filter, select, dismiss', () => {
 describe('command palette — windowed list & scroll', () => {
 	test('15 items with maxVisible=5 shows both more-indicators', async () => {
 		const {lastFrame} = renderWithHost(
-			<OverlayHost>
+			<>
 				<Text>base</Text>
 				<CommandPalette items={manyItems} maxVisible={5} defaultOpen />
-			</OverlayHost>,
+			</>,
 		);
 
-		await delay(300);
+		await delay(INITIAL_RENDER_DELAY);
 
 		const frame = lastFrame();
 
@@ -249,13 +240,13 @@ describe('command palette — windowed list & scroll', () => {
 
 	test('navigating down past the visible window scrolls and reveals top indicator', async () => {
 		const {lastFrame, stdin} = renderWithHost(
-			<OverlayHost>
+			<>
 				<Text>base</Text>
 				<CommandPalette items={manyItems} maxVisible={5} defaultOpen />
-			</OverlayHost>,
+			</>,
 		);
 
-		await delay(300);
+		await delay(INITIAL_RENDER_DELAY);
 
 		// Match-sorter empty query returns alphabetical (already sorted):
 		// Item 00 .. Item 14. First selected.
@@ -297,7 +288,7 @@ describe('command palette — custom filter', () => {
 			.reverse();
 
 		const {lastFrame, stdin} = renderWithHost(
-			<OverlayHost>
+			<>
 				<Text>base</Text>
 				<CommandPalette
 					items={manyItems}
@@ -305,14 +296,14 @@ describe('command palette — custom filter', () => {
 					defaultOpen
 					filter={customFilter}
 				/>
-			</OverlayHost>,
+			</>,
 		);
 
-		await delay(300);
+		await delay(INITIAL_RENDER_DELAY);
 
 		// Type something — the custom filter ignores the query entirely.
 		await typeString(stdin, 'zzz');
-		await delay(200);
+		await delay(RENDER_DELAY);
 
 		const frame = lastFrame();
 

@@ -5,8 +5,7 @@
  * Uses renderWithHost to ensure <OverlayHost> is present.
  */
 import {describe, test, expect, afterEach} from 'vitest';
-import {useCallback, useState} from 'react';
-import {Text, useInput, Box} from 'ink';
+import {Text, useInput} from 'ink';
 import {toasts, overlay} from '../src/manager.js';
 import {overlayStore} from '../src/store.js';
 import {renderWithHost} from './helpers/render-with-host.js';

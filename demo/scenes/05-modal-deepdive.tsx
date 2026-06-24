@@ -1,7 +1,8 @@
 /**
  * Scene 05 — Modal Deep Dive.
  *
- * Exercises EVERY prop of the opinionated `<Modal>` component, the
+ * Exercises the opinionated `<Modal>` component (all overridable props
+ * except `defaultOpen`; `backdrop` and `z` use their defaults), the
  * `role='alertdialog'` variant (which blocks all dismissal), and two bare
  * `<Layer>` variants that cover the otherwise-unexercised `role='toast'`
  * and `role='tooltip'` values.
@@ -22,7 +23,8 @@
  * If you need different positioning, a non-capturing layer, or visible
  * overflow, drop down to a bare `<Layer>` and style the children yourself.
  *
- * OVERRIDABLE props (every one is demonstrated below):
+ * OVERRIDABLE props (demonstrated below; `backdrop`, `z`, and `defaultOpen`
+ * are not explicitly set, so they use their documented defaults):
  *
  *   ──────────────── prop ──────────────── default ───────────────────
  *   open                  undefined (→ uncontrolled via defaultOpen)
@@ -40,7 +42,7 @@
  *   role                  'dialog'
  *
  * borderStyle OPTIONS: 'single', 'double', 'round', 'bold', 'classic',
- *                       'arrow', 'singleDouble'.
+ *                       'arrow', 'singleDouble', 'doubleSingle'.
  *
  * ── onDismiss vs onOpenChange ──────────────────────────────────────
  *
@@ -208,7 +210,7 @@ export default function Scene05ModalDeepdive() {
 	return (
 		<SceneShell
 			title="Scene 05 — Modal Deep Dive"
-			description="Every <Modal> prop, role=alertdialog, and bare toast/tooltip Layers."
+			description="Modal props (except defaultOpen), role=alertdialog, and bare toast/tooltip Layers."
 			hints={[
 				{key: '1', label: 'standard modal'},
 				{key: '2', label: 'custom modal'},

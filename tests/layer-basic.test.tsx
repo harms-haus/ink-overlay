@@ -7,16 +7,25 @@
  * Uses REAL timers — ink breaks with fake timers.
  */
 import React, {useState} from 'react';
-import {test, expect, vi} from 'vitest';
+import {test, expect, vi, afterEach} from 'vitest';
 import {Box, Text} from 'ink';
 import {Layer} from '../src/layer.js';
 import {renderWithHost} from './helpers/render-with-host.js';
 import {delay} from './helpers/delay.js';
+import type {RenderWithHostResult} from './helpers/render-with-host.js';
+
+let instance: RenderWithHostResult | undefined;
+
+afterEach(async () => {
+	instance?.unmount();
+	instance = undefined;
+	await delay(50);
+});
 
 // ── Test 1: basic rendering ─────────────────────────────────────────
 
 test('Layer renders overlay content over base content', async () => {
-	const {lastFrame} = renderWithHost(
+	instance = renderWithHost(
 		<>
 			<Text>base</Text>
 			<Layer anchor="center">
@@ -24,6 +33,7 @@ test('Layer renders overlay content over base content', async () => {
 			</Layer>
 		</>,
 	);
+	const {lastFrame} = instance;
 
 	await delay(200);
 
@@ -53,7 +63,8 @@ test('Layer with open={false} renders nothing; open={true} shows content', async
 		);
 	}
 
-	const {lastFrame} = renderWithHost(<App />);
+	instance = renderWithHost(<App />);
+	const {lastFrame} = instance;
 
 	await delay(200);
 
@@ -79,7 +90,7 @@ test('Layer with overflow="hidden" clips content exceeding box width', async () 
 	// only the first 5 characters should be visible.
 	// Uses anchor="top-left" so the content is positioned at a known
 	// location where ink's clipping is effective.
-	const {lastFrame} = renderWithHost(
+	instance = renderWithHost(
 		<>
 			<Text>base</Text>
 			<Layer anchor="top-left" overflow="hidden" id="clip-test">
@@ -89,6 +100,7 @@ test('Layer with overflow="hidden" clips content exceeding box width', async () 
 			</Layer>
 		</>,
 	);
+	const {lastFrame} = instance;
 
 	await delay(200);
 
@@ -105,7 +117,7 @@ test('Layer with overflow="hidden" clips content exceeding box width', async () 
 test('Capturing Layer calls onDismiss on Escape', async () => {
 	const onDismiss = vi.fn();
 
-	const {lastFrame, stdin} = renderWithHost(
+	instance = renderWithHost(
 		<>
 			<Text>base</Text>
 			<Layer open={true} capture onDismiss={onDismiss}>
@@ -113,6 +125,7 @@ test('Capturing Layer calls onDismiss on Escape', async () => {
 			</Layer>
 		</>,
 	);
+	const {lastFrame, stdin} = instance;
 
 	await delay(200);
 
@@ -133,7 +146,7 @@ test('Layer with marginLeft shifts content right vs. no margin', async () => {
 	// We test marginLeft rather than marginTop because ink's Yoga
 	// layout engine has a rendering limitation with marginTop in
 	// absolutely-positioned flexbox containers.
-	const {lastFrame} = renderWithHost(
+	instance = renderWithHost(
 		<>
 			<Text>base</Text>
 			<Layer anchor="top-left" id="with-margin" margin={{left: 5}}>
@@ -141,6 +154,7 @@ test('Layer with marginLeft shifts content right vs. no margin', async () => {
 			</Layer>
 		</>,
 	);
+	const {lastFrame} = instance;
 
 	await delay(200);
 
@@ -175,7 +189,7 @@ test('Layer re-registers after React StrictMode unmount-remount cycle', async ()
 	// Without the re-register guard, the cleanup clears registeredRef and
 	// the second mount's effect skips registration (wasOpen=true, registered=false).
 	// The fix adds an else branch that re-registers in this case.
-	const {lastFrame} = renderWithHost(
+	instance = renderWithHost(
 		<React.StrictMode>
 			<Text>base</Text>
 			<Layer anchor="center" open={true} id="strict-test">
@@ -183,6 +197,7 @@ test('Layer re-registers after React StrictMode unmount-remount cycle', async ()
 			</Layer>
 		</React.StrictMode>,
 	);
+	const {lastFrame} = instance;
 
 	// StrictMode may need extra time for the double-effect cycle.
 	await delay(400);
@@ -210,7 +225,8 @@ test('Layer with exit transition remains visible during exit phase', async () =>
 		);
 	}
 
-	const {lastFrame} = renderWithHost(<App />);
+	instance = renderWithHost(<App />);
+	const {lastFrame} = instance;
 
 	await delay(200);
 	expect(lastFrame()).toContain('fading');
@@ -230,7 +246,7 @@ test('Layer with exit transition remains visible during exit phase', async () =>
 // ── Test 8: backdrop is rendered when backdrop != 'none' ───────────
 
 test('Layer with backdrop="opaque" renders a background block', async () => {
-	const {lastFrame} = renderWithHost(
+	instance = renderWithHost(
 		<>
 			<Text>base</Text>
 			<Layer anchor="center" backdrop="opaque">
@@ -238,6 +254,7 @@ test('Layer with backdrop="opaque" renders a background block', async () => {
 			</Layer>
 		</>,
 	);
+	const {lastFrame} = instance;
 
 	await delay(200);
 

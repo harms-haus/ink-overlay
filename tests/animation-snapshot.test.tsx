@@ -7,61 +7,31 @@
  * ink's rendering loop only advances under real timers.
  *
  * frames[] accumulates every rendered frame; transitions step on a
- * ~80ms setInterval so we `await delay(500)` after each state change.
+ * ~80ms setInterval so we `await delay(LONG_RENDER_DELAY)` after each state change.
  */
 import {describe, test, expect, afterEach} from 'vitest';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {Text} from 'ink';
 import {Layer} from '../src/layer.js';
 import {
 	renderWithHost,
 	type RenderWithHostResult,
 } from './helpers/render-with-host.js';
-import {delay} from './helpers/delay.js';
+import {delay, LONG_RENDER_DELAY, CLEANUP_DELAY} from './helpers/delay.js';
+import {stripAnsi} from './helpers/strip-ansi.js';
 
-// ── Controlled wrapper for enter → exit toggling ───────────────────
-
-type ToggleAppProperties = {
-	anchor?: Parameters<typeof Layer>[0]['anchor'];
-	transition?: Parameters<typeof Layer>[0]['transition'];
-};
-
-/**
- * Wrapper whose `setOpen` is exposed via a ref so tests can flip
- * between enter and exit without re-creating the component tree.
- */
-function ToggleApp({
-	anchor = 'center',
-	transition = 'slide-up',
-}: ToggleAppProperties) {
-	const [open, setOpen] = useState(true);
-	// Attach the setter to the component instance for the test to call.
-	React.useImperativeHandle(React.useRef({}), () => ({setOpen}));
-	return (
-		<Layer open={open} anchor={anchor} transition={transition}>
-			<Text>animated</Text>
-		</Layer>
-	);
-}
+// Render instances created during the current test, torn down in afterEach.
+let activeInstances: RenderWithHostResult[] = [];
 
 // ── Helpers ────────────────────────────────────────────────────────
 
 /**
- * Strip ANSI escape codes and trailing whitespace so that string
- * comparisons focus on content + layout, not color codes.
- */
-function stripAnsi(input: string): string {
-	// eslint-disable-next-line no-control-regex
-	return input.replaceAll(/\u001B\[[\d;]*m/g, '');
-}
-
-/**
- * Return a compact signature of a frame: the trimmed lines that contain
+ * Return a compact fingerprint of a frame: the trimmed lines that contain
  * the content, joined by '⏎'. This collapses leading/trailing blank
  * rows so position shifts (extra marginTop) show up as a different
  * number of leading blank lines.
  */
-function frameSignature(frame: string): string {
+function frameFingerprint(frame: string): string {
 	return stripAnsi(frame)
 		.split('\n')
 		.map(line => line.replace(/\s+$/u, ''))
@@ -69,8 +39,13 @@ function frameSignature(frame: string): string {
 }
 
 afterEach(async () => {
+	for (const instance of activeInstances) {
+		instance.unmount();
+	}
+
+	activeInstances = [];
 	// Let ink's render loop settle between tests.
-	await delay(50);
+	await delay(CLEANUP_DELAY);
 });
 
 // ════════════════════════════════════════════════════════════════════
@@ -79,21 +54,23 @@ afterEach(async () => {
 
 describe('enter animation: slide-up', () => {
 	test('produces multiple frames whose first/last positions differ', async () => {
-		const {lastFrame, frames}: RenderWithHostResult = renderWithHost(
+		const result: RenderWithHostResult = renderWithHost(
 			<Layer anchor="center" transition="slide-up">
 				<Text>animated</Text>
 			</Layer>,
 		);
+		activeInstances.push(result);
+		const {lastFrame, frames} = result;
 
-		await delay(500);
+		await delay(LONG_RENDER_DELAY);
 
 		// Multiple frames should have been captured during the enter.
 		expect(frames.length).toBeGreaterThanOrEqual(2);
 
 		// The first frame (start of slide-up) should differ in layout
 		// from the final resting frame.
-		const first = frameSignature(frames[0]!);
-		const last = frameSignature(frames.at(-1)!);
+		const first = frameFingerprint(frames[0]!);
+		const last = frameFingerprint(frames.at(-1)!);
 		expect(first).not.toBe(last);
 
 		// Content is present at rest.
@@ -147,16 +124,18 @@ describe('exit animation: slide-up', () => {
 			);
 		}
 
-		const {lastFrame, frames}: RenderWithHostResult = renderWithHost(<App />);
+		const result: RenderWithHostResult = renderWithHost(<App />);
+		activeInstances.push(result);
+		const {lastFrame, frames} = result;
 
 		// Allow the enter animation to complete.
-		await delay(500);
+		await delay(LONG_RENDER_DELAY);
 		const framesAfterEnter = frames.length;
 		expect(stripAnsi(lastFrame())).toContain('animated');
 
 		// Trigger the exit.
 		setOpen!(false);
-		await delay(500);
+		await delay(LONG_RENDER_DELAY);
 
 		// The exit produced additional frames (the layer slid away).
 		expect(frames.length).toBeGreaterThan(framesAfterEnter);
@@ -173,13 +152,15 @@ describe('exit animation: slide-up', () => {
 
 describe('transition="none"', () => {
 	test('produces few frames with no position change', async () => {
-		const {lastFrame, frames}: RenderWithHostResult = renderWithHost(
+		const result: RenderWithHostResult = renderWithHost(
 			<Layer anchor="center" transition="none">
 				<Text>animated</Text>
 			</Layer>,
 		);
+		activeInstances.push(result);
+		const {lastFrame, frames} = result;
 
-		await delay(500);
+		await delay(LONG_RENDER_DELAY);
 
 		// 'none' should produce very few frames (content appears at its
 		// final position immediately) — distinctly fewer than slide-up.
@@ -196,19 +177,21 @@ describe('transition="none"', () => {
 				<Text>animated</Text>
 			</Layer>,
 		);
+		activeInstances.push(noneResult);
 		const slideResult: RenderWithHostResult = renderWithHost(
 			<Layer anchor="center" transition="slide-up">
 				<Text>animated</Text>
 			</Layer>,
 		);
+		activeInstances.push(slideResult);
 
-		await delay(500);
+		await delay(LONG_RENDER_DELAY);
 
 		// 'none' clearly has fewer frames than 'slide-up'.
 		expect(noneResult.frames.length).toBeLessThan(slideResult.frames.length);
 
-		noneResult.cleanup();
-		slideResult.cleanup();
+		noneResult.unmount();
+		slideResult.unmount();
 	});
 });
 
@@ -218,20 +201,22 @@ describe('transition="none"', () => {
 
 describe('fade transition', () => {
 	test('produces multiple frames ending with content at full height', async () => {
-		const {lastFrame, frames}: RenderWithHostResult = renderWithHost(
+		const result: RenderWithHostResult = renderWithHost(
 			<Layer anchor="center" transition="fade">
 				<Text>animated</Text>
 			</Layer>,
 		);
+		activeInstances.push(result);
+		const {lastFrame, frames} = result;
 
-		await delay(500);
+		await delay(LONG_RENDER_DELAY);
 
 		// Fade steps through several dim/height-grow frames.
 		expect(frames.length).toBeGreaterThanOrEqual(2);
 
 		// First and final frames differ (early frame is dim/shorter).
-		const first = frameSignature(frames[0]!);
-		const last = frameSignature(frames.at(-1)!);
+		const first = frameFingerprint(frames[0]!);
+		const last = frameFingerprint(frames.at(-1)!);
 		expect(first).not.toBe(last);
 
 		// Final resting frame shows content at full visibility.

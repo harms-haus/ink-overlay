@@ -10,6 +10,9 @@ import {Box, Text, type BoxProps} from 'ink';
 import {Layer} from './layer.js';
 import type {BackdropKind, Role} from './types.js';
 
+/** Default border color for the modal box. */
+const DEFAULT_BORDER_COLOR = 'cyan';
+
 // ── Props ───────────────────────────────────────────────────────────
 
 export type ModalProps = {
@@ -59,7 +62,7 @@ export function Modal({
 	children,
 	width = 50,
 	borderStyle = 'round',
-	borderColor = 'cyan',
+	borderColor = DEFAULT_BORDER_COLOR,
 	backdrop = 'dim',
 	z = 100,
 	role = 'dialog',

@@ -191,7 +191,7 @@ export default function Scene13Runtime() {
 				 * interactive features.
 				 */}
 				<Box marginTop={1} flexDirection="column">
-					<Text bold>Limitations &amp; graceful degradation</Text>
+					<Text bold>Limitations & graceful degradation</Text>
 
 					<Box marginTop={1} flexDirection="column">
 						<Text>
@@ -217,9 +217,9 @@ export default function Scene13Runtime() {
 									Non-TTY / CI:
 								</Text>{' '}
 								layers render their backdrops and content, but input is inert
-								(InputDispatcher&apos;s useInput has isActive:false; setRawMode
-								is never called). Overlays are visible but keyboard interaction
-								is unavailable.
+								(InputDispatcher's useInput has isActive:false; setRawMode is
+								never called). Overlays are visible but keyboard interaction is
+								unavailable.
 							</Text>
 						</Box>
 

@@ -12,19 +12,10 @@ import {Text} from 'ink';
 import {OverlayHost, Layer} from '../src/index.js';
 import {overlayStore} from '../src/store.js';
 import {renderResizable} from './helpers/create-resizable-stdout.js';
-import {delay} from './helpers/delay.js';
+import {delay, RENDER_DELAY, RESIZE_SETTLE_DELAY} from './helpers/delay.js';
+import {stripAnsi} from './helpers/strip-ansi.js';
 
 // ── Helpers ─────────────────────────────────────────────────────────
-
-const escapeCharacter = '\u001B';
-
-// Built via RegExp constructor to satisfy no-control-regex / escape-case.
-const ansiPattern = new RegExp(`${escapeCharacter}\\[[\\d;?]*[a-zA-Z]`, 'g');
-
-/** Strip ANSI escape sequences from a raw ink frame. */
-function stripAnsi(rawFrame: string): string {
-	return rawFrame.replaceAll(ansiPattern, '');
-}
 
 /**
  * Find the {row, col} of `needle` in a raw ink frame.
@@ -75,7 +66,7 @@ test('resize: centered layer recenters after terminal resize', async () => {
 	);
 	active = result;
 
-	await delay(200);
+	await delay(RENDER_DELAY);
 
 	// Content present and roughly centered in 80×24.
 	const frameBefore = result.lastFrame();
@@ -86,7 +77,7 @@ test('resize: centered layer recenters after terminal resize', async () => {
 
 	// Resize to 120×40.
 	result.resize(120, 40);
-	await delay(100);
+	await delay(RESIZE_SETTLE_DELAY);
 
 	const frameAfter = result.lastFrame();
 	expect(frameAfter).toContain('RESIZE-ME');
@@ -118,7 +109,7 @@ test('resize: bottom-anchored layer moves to new bottom edge after resize', asyn
 	);
 	active = result;
 
-	await delay(200);
+	await delay(RENDER_DELAY);
 
 	const frameBefore = result.lastFrame();
 	expect(frameBefore).toContain('BOTTOM');
@@ -128,7 +119,7 @@ test('resize: bottom-anchored layer moves to new bottom edge after resize', asyn
 
 	// Resize to 120×40 — bottom edge moves down.
 	result.resize(120, 40);
-	await delay(100);
+	await delay(RESIZE_SETTLE_DELAY);
 
 	const frameAfter = result.lastFrame();
 	expect(frameAfter).toContain('BOTTOM');

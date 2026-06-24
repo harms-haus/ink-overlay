@@ -5,7 +5,7 @@ export type OverlayHostContextValue = {
 	registerLayer: (descriptor: Omit<OverlayDescriptor, 'order'>) => void;
 	unregisterLayer: (id: string) => void;
 	updateLayer: (id: string, patch: Partial<OverlayDescriptor>) => void;
-	onLayerExited: (id: string) => void;
+	removeLayerAfterExit: (id: string) => void;
 };
 
 export const OverlayHostContext = createContext<OverlayHostContextValue | null>(

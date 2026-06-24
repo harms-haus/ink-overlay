@@ -47,6 +47,9 @@ import type {
 	AnchorRect,
 } from './types.js';
 
+/** Offscreen position used before the popover is measured (flash-free). */
+const OFFSCREEN_SENTINEL = -9999;
+
 // ── Props ───────────────────────────────────────────────────────────
 
 export type PopoverProps = {
@@ -163,7 +166,7 @@ export function Popover({
 		top: number;
 		left: number;
 		placement: Placement;
-	}>({top: -9999, left: -9999, placement: 'bottom'});
+	}>({top: OFFSCREEN_SENTINEL, left: OFFSCREEN_SENTINEL, placement: 'bottom'});
 
 	const isMeasured =
 		anchorMetrics.hasMeasured &&
@@ -242,8 +245,8 @@ export function Popover({
 
 	return (
 		<Layer
-			top={isMeasured ? position.top : -9999}
-			left={isMeasured ? position.left : -9999}
+			top={isMeasured ? position.top : OFFSCREEN_SENTINEL}
+			left={isMeasured ? position.left : OFFSCREEN_SENTINEL}
 			capture={capture}
 			backdrop={backdrop}
 			z={z}

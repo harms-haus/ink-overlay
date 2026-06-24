@@ -250,5 +250,3 @@ export function useInputDispatcher(): InputDispatcherContextValue {
 	return context;
 }
 
-// Re-export the context value type for downstream consumers.
-export type {InputDispatcherContextValue};

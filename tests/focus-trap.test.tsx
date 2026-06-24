@@ -17,9 +17,9 @@
  * arg is the cleanest way to drive enter/exit lifecycle from a parent.
  */
 import {test, expect, vi, afterEach} from 'vitest';
-import React, {type ReactNode} from 'react';
+import {type ReactNode} from 'react';
 import {render} from 'ink-testing-library';
-import {Text, useFocus, useFocusManager} from 'ink';
+import {Text, useFocus} from 'ink';
 import {
 	InputDispatcher,
 	useInputCaptureState,

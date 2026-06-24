@@ -23,6 +23,9 @@ import {Layer} from './layer.js';
 import {useRegisterInput} from './input-dispatcher.js';
 import type {CommandPaletteItem, FilterFunction} from './types.js';
 
+/** Border color for the command palette box. */
+const BORDER_COLOR = 'cyan';
+
 // ── Props ────────────────────────────────────────────────────────────
 
 export type CommandPaletteProps = {
@@ -266,7 +269,7 @@ export function CommandPalette({
 			<Box
 				flexDirection="column"
 				borderStyle="round"
-				borderColor="cyan"
+				borderColor={BORDER_COLOR}
 				width={width}
 				padding={1}
 			>

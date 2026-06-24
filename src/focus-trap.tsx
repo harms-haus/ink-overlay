@@ -5,19 +5,6 @@
  * that confine Tab / Shift+Tab cycling to a fixed set of children,
  * disabling Ink's global focus navigation while the trap is active.
  *
- * ## Signature decision
- *
- * `useFocusTrap` takes **`active` as its first positional arg**:
- *
- * ```ts
- * useFocusTrap(active: boolean, options?: {onEscape?, restoreFocus?})
- * ```
- *
- * This deviates from the original task sketch (which placed options first)
- * because the hook must know *when* activation occurs to snapshot the
- * previous focus ID and disable global Tab navigation.  A boolean first
- * arg is the cleanest way to drive enter/exit lifecycle from a parent.
- *
  * ## Cooperative scoping (documented limitation)
  *
  * Ink's focus system is **global** — `focusNext` / `focusPrevious` cycle

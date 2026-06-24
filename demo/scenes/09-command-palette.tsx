@@ -259,8 +259,6 @@ export default function Scene09CommandPalette() {
 			 *   onItemSelect — fires when the user presses Enter on a
 			 *     row. We record the label in lastSelected.
 			 *
-			 *   onDismiss — fires on Esc. We close the palette.
-			 *
 			 *   closeOnSelect (default true) — whether Enter also
 			 *     closes the palette. Set false for multi-select
 			 *     patterns where the user picks several items in a row.
@@ -317,10 +315,6 @@ export default function Scene09CommandPalette() {
 				/* OnItemSelect — record the chosen label. */
 				onItemSelect={item => {
 					setLastSelected(item.label);
-				}}
-				/* OnDismiss — fires on Esc; close the palette. */
-				onDismiss={() => {
-					setShowPalette(false);
 				}}
 				/* CloseOnSelect — default true; false in multi-select mode. */
 				closeOnSelect={!multiSelect}

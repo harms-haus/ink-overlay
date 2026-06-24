@@ -68,10 +68,9 @@
  */
 
 import {useState} from 'react';
-import {Box, Text, useInput} from 'ink';
+import {Box, Text} from 'ink';
 import {
 	Layer,
-	useInputCaptureState,
 	type BackdropKind,
 } from '../../src/index.js';
 import {SceneShell} from '../ui.js';
@@ -97,33 +96,6 @@ export function Scene03Backdrop() {
 	 */
 	const [lastBackdropKey, setLastBackdropKey] = useState('—');
 
-	// ── Input gating ─────────────────────────────────────────────────
-	//
-	// `useInputCaptureState()` returns true when an overlay with `capture`
-	// is active. We gate this scene's own key handling so that a captured
-	// layer's input is never stolen by the background scene.
-	const isCaptured = useInputCaptureState();
-
-	useInput(
-		(input, key) => {
-			if (key.escape) {
-				return;
-			}
-
-			// `b` → cycle backdrop kind with wrap-around.
-			if (input === 'b') {
-				setKindIndex(previous => (previous + 1) % kinds.length);
-				return;
-			}
-
-			// `c` → toggle the custom backdropColor override.
-			if (input === 'c') {
-				setCustomColor(value => !value);
-			}
-		},
-		{isActive: !isCaptured},
-	);
-
 	// ── Resolve current backdrop kind ────────────────────────────────
 
 	const kind = kinds[kindIndex];
@@ -135,10 +107,9 @@ export function Scene03Backdrop() {
 	// `onBackdropInput` actually fires. We pass `role='dialog'` so the
 	// framework keeps backdrop input handling active; combined with an
 	// explicit `onBackdropInput` we observe backdrop keypresses directly.
-	// Because `capture` is on, the scene-level `useInput` is gated off
-	// (via `!isCaptured`), so the cycling logic is duplicated inside
-	// `onBackdropInput` to keep the scene interactive. (See the file-level
-	// doc comment for the full rationale.)
+	// Because `capture` is on, the scene has no scene-level input handler —
+	// the Layer captures all keypresses, so the cycling logic lives inside
+	// `onBackdropInput` to keep the scene interactive.
 
 	return (
 		<SceneShell
@@ -165,10 +136,20 @@ export function Scene03Backdrop() {
 				open
 				onBackdropInput={input => {
 					setLastBackdropKey(`"${input}"`);
-					if (input === 'b') {
-						setKindIndex(previous => (previous + 1) % kinds.length);
-					} else if (input === 'c') {
-						setCustomColor(value => !value);
+					switch (input) {
+						case 'b': {
+							setKindIndex(previous => (previous + 1) % kinds.length);
+							break;
+						}
+
+						case 'c': {
+							setCustomColor(value => !value);
+							break;
+						}
+
+						default: {
+							break;
+						}
 					}
 				}}
 			>

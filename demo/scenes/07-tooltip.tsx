@@ -85,7 +85,7 @@ function FocusAnchor() {
 /**
  * Scene 07 — Tooltip trigger modes, custom key, and dismiss delay.
  */
-export function Scene07Tooltip() {
+function Scene07Tooltip() {
 	// ── Anchor refs ─────────────────────────────────────────────────
 	//
 	// Each key-trigger tooltip needs a ref to the DOMElement it

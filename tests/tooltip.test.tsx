@@ -4,13 +4,35 @@
  *
  * Uses REAL timers — ink breaks with fake timers.
  */
-import {describe, test, expect} from 'vitest';
+import {describe, test, expect, afterEach} from 'vitest';
 import React, {useRef, useState} from 'react';
 import {Box, Text, type DOMElement} from 'ink';
 import {Tooltip} from '../src/tooltip.js';
 import {Layer} from '../src/layer.js';
-import {renderWithHost} from './helpers/render-with-host.js';
+import {renderWithHost as baseRenderWithHost, type RenderWithHostResult} from './helpers/render-with-host.js';
 import {delay} from './helpers/delay.js';
+
+// Track the active render instance so afterEach can tear it down.
+let activeInstance: RenderWithHostResult | undefined;
+
+afterEach(async () => {
+	activeInstance?.unmount();
+	activeInstance = undefined;
+	await delay(50);
+});
+
+/**
+ * renderWithHost wrapper that tracks the instance for afterEach cleanup.
+ * Any previous instance is unmounted before creating a new one.
+ */
+function renderWithHost(
+	tree: React.ReactElement,
+	hostProperties?: Parameters<typeof baseRenderWithHost>[1],
+): RenderWithHostResult {
+	activeInstance?.unmount();
+	activeInstance = baseRenderWithHost(tree, hostProperties);
+	return activeInstance;
+}
 
 // ── Helpers ─────────────────────────────────────────────────────────
 

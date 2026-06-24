@@ -272,14 +272,4 @@ export const toasts: ToastService = {
 	},
 };
 
-// ── Exported for testing ────────────────────────────────────────
 
-/** @internal Visible for testing — reset the toast overlay id. */
-export function _resetToastOverlayId(): void {
-	currentOverlayId = null;
-}
-
-/** @internal Visible for testing — get the current overlay id. */
-export function _getToastOverlayId(): string | null {
-	return currentOverlayId;
-}

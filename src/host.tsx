@@ -35,7 +35,6 @@ import {
 } from './host-context.js';
 import {overlayStore} from './store.js';
 import {sortLayers} from './primitives.js';
-import {warnBunInput} from './runtime.js';
 import {resolveTransition} from './animation.js';
 import type {OverlayDescriptor, OverlayEntry} from './types.js';
 
@@ -145,7 +144,7 @@ export function OverlayHost({children}: OverlayHostProps) {
 		[bumpVersion],
 	);
 
-	const onLayerExited = useCallback(
+	const removeLayerAfterExit = useCallback(
 		(id: string) => {
 			unregisterLayer(id);
 		},
@@ -158,9 +157,9 @@ export function OverlayHost({children}: OverlayHostProps) {
 			registerLayer,
 			unregisterLayer,
 			updateLayer,
-			onLayerExited,
+			removeLayerAfterExit,
 		}),
-		[registerLayer, unregisterLayer, updateLayer, onLayerExited],
+		[registerLayer, unregisterLayer, updateLayer, removeLayerAfterExit],
 	);
 
 	// ── Subscribe to imperative store ────────────────────────────────
@@ -227,8 +226,6 @@ export function OverlayHost({children}: OverlayHostProps) {
 					console.warn('[@harms-haus/ink-overlay] setRawMode failed:', error);
 				}
 			}
-
-			warnBunInput();
 		} else if (
 			previous > 0 &&
 			capturingCount === 0 && // Positive → 0: disable raw mode.

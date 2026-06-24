@@ -61,6 +61,9 @@ const IDENTITY_TRANSITION: TransitionConfig = {
 	duration: 0,
 };
 
+/** Default backdrop color for a dim (non-opaque) backdrop. */
+const DEFAULT_DIM_BACKDROP_COLOR = '#1a1a2e';
+
 // ── Layer Component ─────────────────────────────────────────────────
 
 /**
@@ -238,18 +241,13 @@ export function Layer({
 		bottom,
 		overflow,
 		margin,
-		transition,
+		resolvedTransition,
 		onBackdropInput,
 	]);
 
 	// ── Content sync: push contentRef changes to the host ────────
-	//
-	// Because `children` was deliberately removed from the main
-	// effect deps (to avoid churning register/update on every
-	// render), content-only updates would leave the host descriptor
-	// stale.  This effect runs after every render, compares the
-	// current contentRef with the last-synced snapshot, and pushes
-	// an update when they differ.
+	// Content-only updates: push contentRef changes to the host
+	// without re-running the registration effect.
 	const previousContentSyncReference = useRef<ReactNode>(contentRef.current);
 	useEffect(() => {
 		if (
@@ -306,7 +304,7 @@ export function LayerRenderer({descriptor}: {descriptor: OverlayDescriptor}) {
 		descriptor.exiting
 			? {
 					onExited() {
-						host.onLayerExited(descriptor.id);
+						host.removeLayerAfterExit(descriptor.id);
 					},
 				}
 			: undefined,
@@ -357,7 +355,7 @@ export function LayerRenderer({descriptor}: {descriptor: OverlayDescriptor}) {
 
 	const backdropColor =
 		descriptor.backdropColor ??
-		(descriptor.backdrop === 'opaque' ? 'black' : '#1a1a2e');
+		(descriptor.backdrop === 'opaque' ? 'black' : DEFAULT_DIM_BACKDROP_COLOR);
 
 	// ── Transition style overrides ──────────────────────────────────
 

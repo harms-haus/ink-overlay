@@ -9,10 +9,9 @@
  * Uses REAL timers — ink breaks with fake timers.
  * Uses renderWithHost so <OverlayHost> is present.
  */
-import {describe, test, expect, afterEach, vi} from 'vitest';
+import {describe, test, expect, afterEach} from 'vitest';
 import {useState} from 'react';
 import {Text, useInput} from 'ink';
-import {OverlayHost} from '../src/index.js';
 import {toasts} from '../src/manager.js';
 import {useInputCaptureState} from '../src/input-dispatcher.js';
 import {renderWithHost} from './helpers/render-with-host.js';
@@ -45,11 +44,7 @@ function lineIndexOf(lines: string[], needle: string): number {
 
 describe('toast stacking', () => {
 	test('rapid toasts.success/error/info all appear stacked on distinct rows', async () => {
-		const {lastFrame} = renderWithHost(
-			<OverlayHost>
-				<Text>app</Text>
-			</OverlayHost>,
-		);
+		const {lastFrame} = renderWithHost(<Text>app</Text>);
 		await delay(150);
 
 		// Fire three toasts back-to-back (synchronous).
@@ -79,11 +74,7 @@ describe('toast stacking', () => {
 	});
 
 	test('icons for each kind render alongside their messages', async () => {
-		const {lastFrame} = renderWithHost(
-			<OverlayHost>
-				<Text>app</Text>
-			</OverlayHost>,
-		);
+		const {lastFrame} = renderWithHost(<Text>app</Text>);
 		await delay(150);
 
 		toasts.success('ok-msg');
@@ -105,11 +96,7 @@ describe('toast stacking', () => {
 
 describe('toast auto-dismiss', () => {
 	test('toast with short duration disappears after duration+buffer', async () => {
-		const {lastFrame} = renderWithHost(
-			<OverlayHost>
-				<Text>app</Text>
-			</OverlayHost>,
-		);
+		const {lastFrame} = renderWithHost(<Text>app</Text>);
 		await delay(150);
 
 		toasts.success('Fleeting', {duration: 150});
@@ -124,11 +111,7 @@ describe('toast auto-dismiss', () => {
 	});
 
 	test('toasts auto-dismiss individually — short one gone, long one remains', async () => {
-		const {lastFrame} = renderWithHost(
-			<OverlayHost>
-				<Text>app</Text>
-			</OverlayHost>,
-		);
+		const {lastFrame} = renderWithHost(<Text>app</Text>);
 		await delay(150);
 
 		// Short-lived toast and a long-lived toast, shown together.
@@ -153,11 +136,7 @@ describe('toast auto-dismiss', () => {
 
 describe('toast dismissAll', () => {
 	test('dismissAll clears all stacked toasts', async () => {
-		const {lastFrame} = renderWithHost(
-			<OverlayHost>
-				<Text>app</Text>
-			</OverlayHost>,
-		);
+		const {lastFrame} = renderWithHost(<Text>app</Text>);
 		await delay(150);
 
 		toasts.success('Clear-1');
@@ -207,11 +186,7 @@ describe('toast non-capturing', () => {
 			return <Text>{`count:${count}`}</Text>;
 		}
 
-		const {lastFrame, stdin} = renderWithHost(
-			<OverlayHost>
-				<Background />
-			</OverlayHost>,
-		);
+		const {lastFrame, stdin} = renderWithHost(<Background />);
 		await delay(150);
 
 		// Show a toast — the layer is non-capturing.

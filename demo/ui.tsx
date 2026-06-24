@@ -37,6 +37,9 @@
 import {type ReactNode} from 'react';
 import {Box, Text} from 'ink';
 
+/** Width of the separator rule above the footer hints (in characters). */
+const SEPARATOR_WIDTH = 48;
+
 // ---------------------------------------------------------------------------
 // SceneShell
 // ---------------------------------------------------------------------------
@@ -110,7 +113,7 @@ export function SceneShell({
 			{/* Footer: keybinding hints, separated by a horizontal rule. */}
 			{hints.length > 0 && (
 				<Box flexDirection="column" marginTop={1}>
-					<Text dimColor>{'─'.repeat(48)}</Text>
+					<Text dimColor>{'─'.repeat(SEPARATOR_WIDTH)}</Text>
 					<Box flexWrap="wrap">{hintElements}</Box>
 				</Box>
 			)}

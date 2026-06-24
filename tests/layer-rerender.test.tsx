@@ -7,8 +7,8 @@
  * so that child identity churn (new React element refs on every parent
  * render) does not trigger host.updateLayer() + bumpVersion().
  */
-import React, {useState} from 'react';
-import {test, expect, vi} from 'vitest';
+import {useState} from 'react';
+import {test, expect} from 'vitest';
 import {Text} from 'ink';
 import {Layer} from '../src/layer.js';
 import {renderWithHost} from './helpers/render-with-host.js';

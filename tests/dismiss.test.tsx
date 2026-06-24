@@ -20,19 +20,33 @@
  * `rerender`.
  */
 import {test, expect, afterEach, vi} from 'vitest';
-import {useState} from 'react';
+import {useState, type ReactElement} from 'react';
 import {Text} from 'ink';
 import {Layer, overlay} from '../src/index.js';
-import {renderWithHost} from './helpers/render-with-host.js';
+import {renderWithHost as baseRenderWithHost, type RenderWithHostResult} from './helpers/render-with-host.js';
 import {delay} from './helpers/delay.js';
 
 const ESC = '\u001B';
 
+let activeInstance: RenderWithHostResult | undefined;
+
 afterEach(async () => {
+	activeInstance?.unmount();
+	activeInstance = undefined;
 	// Ensure no imperative overlays leak between tests.
 	overlay.closeAll();
 	await delay(50);
 });
+
+/** renderWithHost wrapper that tracks the instance for afterEach cleanup. */
+function renderWithHost(
+	tree: ReactElement,
+	hostProperties?: Parameters<typeof baseRenderWithHost>[1],
+): RenderWithHostResult {
+	activeInstance?.unmount();
+	activeInstance = baseRenderWithHost(tree, hostProperties);
+	return activeInstance;
+}
 
 // ════════════════════════════════════════════════════════════════════
 // (a) Esc closes the topmost dismissible capturing layer

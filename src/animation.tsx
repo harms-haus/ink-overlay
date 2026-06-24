@@ -5,10 +5,46 @@ import type {
 	TransitionConfig,
 } from './types.js';
 
+/** Milliseconds between animation frames for all built-in transitions. */
+const FRAME_INTERVAL_MS = 80;
+
+/** Maximum margin (character cells) used by slide transitions. */
+const SLIDE_STEPS = 4;
+
 // ── getTransitionSteps (cached) ────────────────────────────────────
 
 /** Module-level cache: deterministic per TransitionName. */
 const transitionCache = new Map<TransitionName, TransitionConfig>();
+
+/** Margin keys a slide transition may target. */
+type MarginKey = 'marginTop' | 'marginBottom' | 'marginLeft' | 'marginRight';
+
+/**
+ * Build a slide transition config for the given margin key.
+ *
+ * Enter steps the margin `steps → steps/2 → 0` (collapse in); exit reverses
+ * it `0 → steps/2 → steps` (slide away). Identical structure for every
+ * direction — only the margin key differs.
+ */
+function createSlideTransition(
+	marginKey: MarginKey,
+	steps: number,
+	interval: number,
+): TransitionConfig {
+	return {
+		enter: [
+			{style: {[marginKey]: steps}},
+			{style: {[marginKey]: steps / 2}},
+			{style: {[marginKey]: 0}},
+		],
+		exit: [
+			{style: {[marginKey]: 0}},
+			{style: {[marginKey]: steps / 2}},
+			{style: {[marginKey]: steps}},
+		],
+		duration: interval,
+	};
+}
 
 /**
  * Returns predefined enter/exit frame sequences for a named transition.
@@ -35,91 +71,29 @@ export function getTransitionSteps(name: TransitionName): TransitionConfig {
 
 		case 'fade': {
 			// Fade = stepped height grow (terminals have no real opacity).
-			//
-			// The previous implementation applied `dim`/`dimColor` to the
-			// wrapper <Box> via the transition style, but those are <Text>
-			// props — Ink silently ignores them on <Box>, so there was no
-			// visible dimming. The name 'fade' is kept for API compatibility;
-			// the visual effect is a 0→1 height grow (collapse/expand).
 			config = {
 				enter: [{style: {height: 0}}, {style: {height: 1}}],
 				exit: [{style: {height: 1}}, {style: {height: 0}}],
-				duration: 80,
+				duration: FRAME_INTERVAL_MS,
 			};
 			break;
 		}
 
-		case 'slide-up': {
-			const n = 4;
-			config = {
-				enter: [
-					{style: {marginTop: n}},
-					{style: {marginTop: n / 2}},
-					{style: {marginTop: 0}},
-				],
-				exit: [
-					{style: {marginTop: 0}},
-					{style: {marginTop: n / 2}},
-					{style: {marginTop: n}},
-				],
-				duration: 80,
-			};
+		case 'slide-up':
+			config = createSlideTransition('marginTop', SLIDE_STEPS, FRAME_INTERVAL_MS);
 			break;
-		}
 
-		case 'slide-down': {
-			const n = 4;
-			config = {
-				enter: [
-					{style: {marginBottom: n}},
-					{style: {marginBottom: n / 2}},
-					{style: {marginBottom: 0}},
-				],
-				exit: [
-					{style: {marginBottom: 0}},
-					{style: {marginBottom: n / 2}},
-					{style: {marginBottom: n}},
-				],
-				duration: 80,
-			};
+		case 'slide-down':
+			config = createSlideTransition('marginBottom', SLIDE_STEPS, FRAME_INTERVAL_MS);
 			break;
-		}
 
-		case 'slide-left': {
-			const n = 4;
-			config = {
-				enter: [
-					{style: {marginLeft: n}},
-					{style: {marginLeft: n / 2}},
-					{style: {marginLeft: 0}},
-				],
-				exit: [
-					{style: {marginLeft: 0}},
-					{style: {marginLeft: n / 2}},
-					{style: {marginLeft: n}},
-				],
-				duration: 80,
-			};
+		case 'slide-left':
+			config = createSlideTransition('marginLeft', SLIDE_STEPS, FRAME_INTERVAL_MS);
 			break;
-		}
 
-		case 'slide-right': {
-			const n = 4;
-			config = {
-				enter: [
-					{style: {marginRight: n}},
-					{style: {marginRight: n / 2}},
-					{style: {marginRight: 0}},
-				],
-				exit: [
-					{style: {marginRight: 0}},
-					{style: {marginRight: n / 2}},
-					{style: {marginRight: n}},
-				],
-				duration: 80,
-			};
+		case 'slide-right':
+			config = createSlideTransition('marginRight', SLIDE_STEPS, FRAME_INTERVAL_MS);
 			break;
-		}
 
 		default: {
 			config = {enter: [{style: {}}], exit: [{style: {}}], duration: 0};
@@ -194,7 +168,7 @@ export function useEnterExit(
 ): UseEnterExitResult {
 	const enterFrames: TransitionStep[] = config.enter ?? [{style: {}}];
 	const exitFrames: TransitionStep[] = config.exit ?? [{style: {}}];
-	const interval = config.duration ?? 80;
+	const interval = config.duration ?? FRAME_INTERVAL_MS;
 	const canSkip = enterFrames.length <= 1 && exitFrames.length <= 1;
 
 	// ── State ───────────────────────────────────────────────────────
@@ -215,6 +189,8 @@ export function useEnterExit(
 	const previousVisibleReference = useRef(visible);
 	const onExitedReference = useRef(options?.onExited);
 	onExitedReference.current = options?.onExited;
+	const frameReference = useRef(frame);
+	frameReference.current = frame;
 
 	// ── Frame-stepper interval ──────────────────────────────────────
 
@@ -229,15 +205,13 @@ export function useEnterExit(
 		setFrame(0);
 
 		const id = setInterval(() => {
-			setFrame(f => {
-				const next = f + 1;
-				if (next >= activeFrames.length) {
-					clearInterval(id);
-					return f;
-				}
+			const next = frameReference.current + 1;
+			if (next >= activeFrames.length) {
+				clearInterval(id);
+				return;
+			}
 
-				return next;
-			});
+			setFrame(next);
 		}, interval);
 
 		return () => {

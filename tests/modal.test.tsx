@@ -6,21 +6,31 @@
  *
  * Uses REAL timers — ink breaks with fake timers.
  */
-import React, {useState} from 'react';
-import {test, expect, vi} from 'vitest';
+import {useState} from 'react';
+import {test, expect, vi, afterEach} from 'vitest';
 import {Text} from 'ink';
 import {Modal} from '../src/modal.js';
 import {renderWithHost} from './helpers/render-with-host.js';
 import {delay} from './helpers/delay.js';
+import type {RenderWithHostResult} from './helpers/render-with-host.js';
+
+let instance: RenderWithHostResult | undefined;
+
+afterEach(async () => {
+	instance?.unmount();
+	instance = undefined;
+	await delay(50);
+});
 
 // ── Test 1: renders title, footer, and body ────────────────────────
 
 test('Modal renders title, footer, and body content', async () => {
-	const {lastFrame} = renderWithHost(
+	instance = renderWithHost(
 		<Modal title="Confirm" footer="[Y]es [N]o">
 			<Text>Are you sure?</Text>
 		</Modal>,
 	);
+	const {lastFrame} = instance;
 
 	await delay(200);
 
@@ -33,11 +43,12 @@ test('Modal renders title, footer, and body content', async () => {
 // ── Test 2: border characters are present ──────────────────────────
 
 test('Modal renders with border characters', async () => {
-	const {lastFrame} = renderWithHost(
+	instance = renderWithHost(
 		<Modal title="Dialog">
 			<Text>content</Text>
 		</Modal>,
 	);
+	const {lastFrame} = instance;
 
 	await delay(200);
 
@@ -62,11 +73,12 @@ test('Modal renders with border characters', async () => {
 test('Modal calls onDismiss when Escape is pressed', async () => {
 	const onDismiss = vi.fn();
 
-	const {stdin} = renderWithHost(
+	instance = renderWithHost(
 		<Modal title="Close me" onDismiss={onDismiss}>
 			<Text>body</Text>
 		</Modal>,
 	);
+	const {stdin} = instance;
 
 	await delay(200);
 
@@ -80,7 +92,7 @@ test('Modal calls onDismiss when Escape is pressed', async () => {
 // ── Test 4: backdrop renders (dim backdrop overpaints base) ────────
 
 test('Modal with default backdrop renders a dim backdrop over base', async () => {
-	const {lastFrame} = renderWithHost(
+	instance = renderWithHost(
 		<>
 			<Text>base content</Text>
 			<Modal title="Overlay">
@@ -88,6 +100,7 @@ test('Modal with default backdrop renders a dim backdrop over base', async () =>
 			</Modal>
 		</>,
 	);
+	const {lastFrame} = instance;
 
 	await delay(200);
 
@@ -121,7 +134,8 @@ test('Modal with defaultOpen={false} renders nothing initially', async () => {
 		);
 	}
 
-	const {lastFrame} = renderWithHost(<App />);
+	instance = renderWithHost(<App />);
+	const {lastFrame} = instance;
 
 	await delay(200);
 
@@ -140,11 +154,12 @@ test('Modal with defaultOpen={false} renders nothing initially', async () => {
 // ── Test 6: controlled open={false} hides modal ───────────────────
 
 test('Modal with open={false} renders nothing', async () => {
-	const {lastFrame} = renderWithHost(
+	instance = renderWithHost(
 		<Modal open={false} title="Hidden">
 			<Text>secret</Text>
 		</Modal>,
 	);
+	const {lastFrame} = instance;
 
 	await delay(200);
 
@@ -154,33 +169,41 @@ test('Modal with open={false} renders nothing', async () => {
 
 // ── Test 7: onOpenChange fires ────────────────────────────────────
 
-test('Modal calls onOpenChange with open state', async () => {
+test('Modal calls onOpenChange(false) when dismissed via Escape', async () => {
 	const onOpenChange = vi.fn();
 	const onDismiss = vi.fn();
 
-	const {stdin} = renderWithHost(
+	instance = renderWithHost(
 		<Modal title="Track" onOpenChange={onOpenChange} onDismiss={onDismiss}>
 			<Text>trackable</Text>
 		</Modal>,
 	);
+	const {stdin} = instance;
 
 	await delay(200);
+
+	// OnOpenChange should not have been called yet (modal is open).
+	expect(onOpenChange).not.toHaveBeenCalled();
 
 	// Dismiss via Escape — Layer calls onDismiss then onOpenChange(false).
 	stdin.write('\u001B');
 	await delay(200);
 
-	expect(onDismiss).toHaveBeenCalled();
+	expect(onDismiss).toHaveBeenCalledOnce();
+	// OnOpenChange must be called with false to signal the modal closed.
+	expect(onOpenChange).toHaveBeenCalledOnce();
+	expect(onOpenChange).toHaveBeenCalledWith(false);
 });
 
 // ── Test 8: no title renders no header ────────────────────────────
 
 test('Modal without title renders no header border line', async () => {
-	const {lastFrame} = renderWithHost(
+	instance = renderWithHost(
 		<Modal>
 			<Text>just body</Text>
 		</Modal>,
 	);
+	const {lastFrame} = instance;
 
 	await delay(200);
 

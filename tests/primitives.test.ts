@@ -188,8 +188,8 @@ describe('computePopoverPosition', () => {
 			width: 10,
 			height: 2,
 		};
-		// Bottom with default offset=4, variant center
-		// top = anchorRect.top + anchorRect.height + offset = 5+2+4 = 11
+		// Bottom with default offset=1, variant center
+		// top = anchorRect.top + anchorRect.height + offset = 5+2+1 = 8
 		// left = anchorRect.left + (anchorRect.width - popoverSize.width)/2 = 30 + (10-20)/2 = 30-5 = 25
 		const result = computePopoverPosition(
 			anchorRect,
@@ -197,7 +197,7 @@ describe('computePopoverPosition', () => {
 			viewport,
 			'bottom',
 		);
-		expect(result.top).toBe(11);
+		expect(result.top).toBe(8);
 		expect(result.left).toBe(25);
 		expect(result.placement).toBe('bottom');
 	});
@@ -209,14 +209,14 @@ describe('computePopoverPosition', () => {
 			width: 10,
 			height: 2,
 		};
-		// Top = 5+2+4 = 11, left = 30 + 0 = 30
+		// Top = 5+2+1 = 8, left = 30 + 0 = 30
 		const result = computePopoverPosition(
 			anchorRect,
 			popover,
 			viewport,
 			'bottom-start',
 		);
-		expect(result.top).toBe(11);
+		expect(result.top).toBe(8);
 		expect(result.left).toBe(30);
 		expect(result.placement).toBe('bottom-start');
 	});
@@ -228,14 +228,14 @@ describe('computePopoverPosition', () => {
 			width: 10,
 			height: 2,
 		};
-		// Top = 5+2+4 = 11, left = 30 + 10 - 20 = 20
+		// Top = 5+2+1 = 8, left = 30 + 10 - 20 = 20
 		const result = computePopoverPosition(
 			anchorRect,
 			popover,
 			viewport,
 			'bottom-end',
 		);
-		expect(result.top).toBe(11);
+		expect(result.top).toBe(8);
 		expect(result.left).toBe(20);
 		expect(result.placement).toBe('bottom-end');
 	});
@@ -247,9 +247,9 @@ describe('computePopoverPosition', () => {
 			width: 10,
 			height: 2,
 		};
-		// Top = 15 - 4 - 5 = 6, left = 30 + (10-20)/2 = 25
+		// Top = 15 - 1 - 5 = 9, left = 30 + (10-20)/2 = 25
 		const result = computePopoverPosition(anchorRect, popover, viewport, 'top');
-		expect(result.top).toBe(6);
+		expect(result.top).toBe(9);
 		expect(result.left).toBe(25);
 		expect(result.placement).toBe('top');
 	});
@@ -261,7 +261,7 @@ describe('computePopoverPosition', () => {
 			width: 5,
 			height: 2,
 		};
-		// Right: left = anchorRect.left + anchorRect.width + offset = 10+5+4 = 19
+		// Right: left = anchorRect.left + anchorRect.width + offset = 10+5+1 = 16
 		// top (center variant) = anchorRect.top + (anchorRect.height - popoverSize.height)/2 = 10 + (2-5)/2 = 8.5, floor → 8
 		const result = computePopoverPosition(
 			anchorRect,
@@ -269,7 +269,7 @@ describe('computePopoverPosition', () => {
 			viewport,
 			'right',
 		);
-		expect(result.left).toBe(19);
+		expect(result.left).toBe(16);
 		expect(result.top).toBe(8);
 		expect(result.placement).toBe('right');
 	});
@@ -281,7 +281,7 @@ describe('computePopoverPosition', () => {
 			width: 5,
 			height: 2,
 		};
-		// Left: left = 40 - 4 - 20 = 16
+		// Left: left = 40 - 1 - 20 = 19
 		// top (center) = 10 + (2-5)/2 = 8.5, floor → 8
 		const result = computePopoverPosition(
 			anchorRect,
@@ -289,7 +289,7 @@ describe('computePopoverPosition', () => {
 			viewport,
 			'left',
 		);
-		expect(result.left).toBe(16);
+		expect(result.left).toBe(19);
 		expect(result.top).toBe(8);
 		expect(result.placement).toBe('left');
 	});
@@ -310,6 +310,93 @@ describe('computePopoverPosition', () => {
 			{offset: 8},
 		);
 		expect(result.top).toBe(15);
+	});
+
+	test('default offset is 1 (matches Popover component default)', () => {
+		// This test pins down the default offset so it stays consistent
+		// with the Popover component's `offset = 1` default.
+		const anchorRect = {
+			left: 0,
+			top: 0,
+			width: 5,
+			height: 1,
+		};
+		// bottom placement with NO offset option: top = 0 + 1 + offset
+		// With default offset=1: top = 0 + 1 + 1 = 2
+		const result = computePopoverPosition(
+			anchorRect,
+			popover,
+			viewport,
+			'bottom',
+		);
+		expect(result.top).toBe(2);
+
+		// For the left placement, default offset applies on the horizontal axis.
+		const anchorRect2 = {
+			left: 30,
+			top: 0,
+			width: 5,
+			height: 1,
+		};
+		// right placement with NO offset option: left = 30 + 5 + offset = 36
+		const result2 = computePopoverPosition(
+			anchorRect2,
+			popover,
+			viewport,
+			'right',
+		);
+		expect(result2.left).toBe(36);
+	});
+
+	test('default offset is 1, NOT 4 (pins docs/impl agreement — regression guard)', () => {
+		// Regression guard: the API reference and the Popover component both
+		// document the default `offset` as 1. This test fails loudly if the
+		// primitive reverts to the old default of 4. We assert on all four axes
+		// so a partial regression on any axis is caught.
+		const anchor = {
+			left: 10,
+			top: 10,
+			width: 5,
+			height: 2,
+		};
+
+		// bottom axis: top = top + height + offset = 10 + 2 + 1 = 13 (would be 16 if offset=4)
+		expect(
+			computePopoverPosition(anchor, popover, viewport, 'bottom').top,
+		).toBe(13);
+
+		// top axis: top = top - offset - height = 10 - 1 - 5 = 4 (would be 1 if offset=4)
+		expect(
+			computePopoverPosition(anchor, popover, viewport, 'top').top,
+		).toBe(4);
+
+		// right axis: left = left + width + offset = 10 + 5 + 1 = 16 (would be 19 if offset=4)
+		expect(
+			computePopoverPosition(anchor, popover, viewport, 'right').left,
+		).toBe(16);
+
+		// left axis (flip/shift disabled to test raw offset math):
+		// left = left - offset - width = 10 - 1 - 20 = -11 (would be -14 if offset=4)
+		expect(
+			computePopoverPosition(anchor, popover, viewport, 'left', {
+				flip: false,
+				shift: false,
+			}).left,
+		).toBe(-11);
+
+		// Omitting offset must be identical to passing offset: 1 explicitly.
+		const implicit = computePopoverPosition(anchor, popover, viewport, 'bottom');
+		const explicit = computePopoverPosition(anchor, popover, viewport, 'bottom', {
+			offset: 1,
+		});
+		expect(implicit).toEqual(explicit);
+
+		// And it must NOT equal the old offset: 4 behavior.
+		const legacy = computePopoverPosition(anchor, popover, viewport, 'bottom', {
+			offset: 4,
+		});
+		expect(implicit).not.toEqual(legacy);
+		expect(legacy.top).toBe(16);
 	});
 
 	test('crossOffset shifts position on the cross axis', () => {
@@ -340,8 +427,8 @@ describe('computePopoverPosition', () => {
 			width: 10,
 			height: 2,
 		};
-		// Bottom: top = 20+2+4 = 26 — exceeds viewport rows=24
-		// flip → placement 'top': top = 20 - 4 - 5 = 11, left = 30 + (10-20)/2 = 25
+		// Bottom: top = 20+2+1 = 23; 23+5=28 > viewport rows=24 → overflow
+		// flip → placement 'top': top = 20 - 1 - 5 = 14, left = 30 + (10-20)/2 = 25
 		const result = computePopoverPosition(
 			anchorRect,
 			popover,
@@ -349,7 +436,7 @@ describe('computePopoverPosition', () => {
 			'bottom',
 		);
 		expect(result.placement).toBe('top');
-		expect(result.top).toBe(11);
+		expect(result.top).toBe(14);
 		expect(result.left).toBe(25);
 	});
 
@@ -360,11 +447,11 @@ describe('computePopoverPosition', () => {
 			width: 10,
 			height: 2,
 		};
-		// Top: top = 0 - 4 - 5 = -9 — overflows
-		// flip → bottom: top = 0+2+4 = 6, left = 25
+		// Top: top = 0 - 1 - 5 = -6 — overflows
+		// flip → bottom: top = 0+2+1 = 3, left = 25
 		const result = computePopoverPosition(anchorRect, popover, viewport, 'top');
 		expect(result.placement).toBe('bottom');
-		expect(result.top).toBe(6);
+		expect(result.top).toBe(3);
 	});
 
 	test('flip disabled: position can overflow viewport', () => {
@@ -374,7 +461,7 @@ describe('computePopoverPosition', () => {
 			width: 10,
 			height: 2,
 		};
-		// Top: top = -9, no flip, no shift
+		// Top: top = -6, no flip, no shift
 		const result = computePopoverPosition(
 			anchorRect,
 			popover,
@@ -386,7 +473,7 @@ describe('computePopoverPosition', () => {
 			},
 		);
 		expect(result.placement).toBe('top');
-		expect(result.top).toBe(-9);
+		expect(result.top).toBe(-6);
 	});
 
 	test('flip: near-right anchor with right placement flips to left', () => {
@@ -396,8 +483,8 @@ describe('computePopoverPosition', () => {
 			width: 5,
 			height: 2,
 		};
-		// Right: left = 65+5+4 = 74; popover width=20 → right edge=94 > 80 → flip to left
-		// left: left = 65 - 4 - 20 = 41, top = 10 + (2-5)/2 = 9
+		// Right: left = 65+5+1 = 71; popover width=20 → right edge=91 > 80 → flip to left
+		// left: left = 65 - 1 - 20 = 44, top = 10 + (2-5)/2 = 9
 		const result = computePopoverPosition(
 			anchorRect,
 			popover,
@@ -405,7 +492,7 @@ describe('computePopoverPosition', () => {
 			'right',
 		);
 		expect(result.placement).toBe('left');
-		expect(result.left).toBe(41);
+		expect(result.left).toBe(44);
 	});
 
 	test('shift: clamp right overflow', () => {
@@ -415,8 +502,8 @@ describe('computePopoverPosition', () => {
 			width: 5,
 			height: 2,
 		};
-		// Right-start: left = 65+5+4 = 74, popover width=20, right edge=94 > 80
-		// flip → left-start: left = 65-4-20 = 41 (fits fine, no shift needed)
+		// Right-start: left = 65+5+1 = 71, popover width=20, right edge=91 > 80
+		// flip → left-start: left = 65-1-20 = 44 (fits fine, no shift needed)
 		// Use bottom-end to force a shift case instead:
 		const anchorRect2 = {
 			left: 0,
@@ -424,8 +511,8 @@ describe('computePopoverPosition', () => {
 			width: 10,
 			height: 2,
 		};
-		// Bottom-end: top = 20+2+4 = 26, left = 0+10-20 = -10
-		// flip → top-end: top = 20-4-5 = 11, left = 0+10-20 = -10
+		// Bottom-end: top = 20+2+1 = 23, left = 0+10-20 = -10
+		// flip → top-end: top = 20-1-5 = 14, left = 0+10-20 = -10
 		// shift: clamp left to >= 0 → left = 0
 		const result = computePopoverPosition(
 			anchorRect2,
@@ -437,7 +524,7 @@ describe('computePopoverPosition', () => {
 			},
 		);
 		expect(result.placement).toBe('top-end');
-		expect(result.top).toBe(11);
+		expect(result.top).toBe(14);
 		expect(result.left).toBe(0);
 	});
 
@@ -449,7 +536,7 @@ describe('computePopoverPosition', () => {
 			width: 10,
 			height: 1,
 		};
-		// Bottom: top = 22+1+4 = 27, but shift clamps: top in [0, rows-height] = [0, 19]
+		// Bottom: top = 22+1+1 = 24, but shift clamps: top in [0, rows-height] = [0, 19]
 		const result = computePopoverPosition(
 			anchorRect,
 			popover,
@@ -471,8 +558,8 @@ describe('computePopoverPosition', () => {
 			width: 5,
 			height: 2,
 		};
-		// Right: left = 65+5+4 = 74 → popover right=94 > 80 → flip to left
-		// left: left = 65-4-20 = 41, left fits
+		// Right: left = 65+5+1 = 71 → popover right=91 > 80 → would flip to left
+		// left: left = 65-1-20 = 44, left fits
 		// To force shift: use right placement, disable flip, allow shift
 		const result = computePopoverPosition(
 			anchorRect,
@@ -485,7 +572,7 @@ describe('computePopoverPosition', () => {
 				collisionPadding: {right: 5, left: 5},
 			},
 		);
-		// Right: left=74, right edge = 74+20 = 94, max left = 80 - 20 - 5 = 55
+		// Right: left=71, right edge = 71+20 = 91, max left = 80 - 20 - 5 = 55
 		expect(result.left).toBe(55);
 	});
 
@@ -496,7 +583,7 @@ describe('computePopoverPosition', () => {
 			width: 5,
 			height: 2,
 		};
-		// Top: top = 0-4-5 = -9 → flip → bottom: top = 0+2+4 = 6 (fine)
+		// Top: top = 0-1-5 = -6 → flip → bottom: top = 0+2+1 = 3 (fine)
 		const result = computePopoverPosition(anchorRect, popover, viewport, 'top');
 		expect(result.top).toBeGreaterThanOrEqual(0);
 		expect(result.left).toBeGreaterThanOrEqual(0);

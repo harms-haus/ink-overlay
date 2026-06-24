@@ -14,7 +14,6 @@ export type RenderWithHostResult = {
 	unmount: () => void;
 	stdin: {write: (input: string) => void; setRawMode: (mode: boolean) => void};
 	stdout: {toString: () => string};
-	cleanup: () => void;
 };
 
 /**

@@ -4,8 +4,8 @@
  * Uses REAL timers — ink breaks with fake timers.
  */
 import {describe, test, expect, afterEach} from 'vitest';
-import React, {type ReactElement} from 'react';
-import {render} from 'ink-testing-library';
+import {type ReactElement} from 'react';
+import {render as baseRender} from 'ink-testing-library';
 import {Text} from 'ink';
 import {
 	getTransitionSteps,
@@ -14,6 +14,9 @@ import {
 } from '../src/animation.js';
 import type {TransitionConfig} from '../src/types.js';
 import {delay} from './helpers/delay.js';
+
+// Track the active render instance so afterEach can tear it down.
+let activeInstance: ReturnType<typeof baseRender> | undefined;
 
 // ── Helpers ────────────────────────────────────────────────────────
 
@@ -49,9 +52,18 @@ function Harness({
 }
 
 afterEach(async () => {
+	activeInstance?.unmount();
+	activeInstance = undefined;
 	// Small delay between tests to let ink's rendering loop settle.
 	await delay(50);
 });
+
+/** render wrapper that tracks the instance for afterEach cleanup. */
+function render(tree: ReactElement) {
+	activeInstance?.unmount();
+	activeInstance = baseRender(tree);
+	return activeInstance;
+}
 
 // ════════════════════════════════════════════════════════════════════
 // (a) getTransitionSteps

@@ -234,7 +234,7 @@ export function computePopoverPosition(
 		collisionPadding?: number | Partial<OffsetEdges>;
 	} = {},
 ): {top: number; left: number; placement: Placement} {
-	const offset = options.offset ?? 4;
+	const offset = options.offset ?? 1;
 	const crossOffset = options.crossOffset ?? 0;
 	const shouldFlip = options.flip !== false;
 	const shouldShift = options.shift !== false;

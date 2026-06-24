@@ -302,8 +302,7 @@ export default function Scene12InputFocus() {
 				<Box flexDirection="column">
 					<Text>While this modal is open, isCaptured is true.</Text>
 					<Text>
-						The scene&apos;s j/k keys do nothing — the cooperative gate is in
-						action.
+						The scene's j/k keys do nothing — the cooperative gate is in action.
 					</Text>
 					<Text dimColor>Press Esc to close; j/k resume.</Text>
 				</Box>
@@ -398,8 +397,8 @@ export default function Scene12InputFocus() {
 				<Box flexDirection="column">
 					<Text>Inner modal. Esc closes ONLY this one.</Text>
 					<Text dimColor>
-						The outer modal&apos;s handler never sees the Esc event — it was
-						consumed at the top of the LIFO stack.
+						The outer modal's handler never sees the Esc event — it was consumed
+						at the top of the LIFO stack.
 					</Text>
 				</Box>
 			</Modal>

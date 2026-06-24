@@ -314,7 +314,7 @@ export function computePopoverPosition(
 ): {top: number; left: number; placement: Placement};
 ```
 
-Computes popover coordinates relative to `anchorRect` (root-relative). Defaults: `offset` 4, `crossOffset` 0, `flip` `true`, `shift` `true`, `collisionPadding` 0. **Flip** mirrors the main-axis placement (`top`↔`bottom`, `left`↔`right`) when the popover would overflow the viewport on the main axis; **shift** clamps both axes inside `[collisionPadding, viewport − size − collisionPadding]`. The returned `placement` reflects any flip that occurred (bare axis for `-center`). When `shift` is disabled the coordinates are still `Math.floor`-rounded but not clamped. See [Positioning](../concepts/positioning.md).
+Computes popover coordinates relative to `anchorRect` (root-relative). Defaults: `offset` 1, `crossOffset` 0, `flip` `true`, `shift` `true`, `collisionPadding` 0. **Flip** mirrors the main-axis placement (`top`↔`bottom`, `left`↔`right`) when the popover would overflow the viewport on the main axis; **shift** clamps both axes inside `[collisionPadding, viewport − size − collisionPadding]`. The returned `placement` reflects any flip that occurred (bare axis for `-center`). When `shift` is disabled the coordinates are still `Math.floor`-rounded but not clamped. See [Positioning](../concepts/positioning.md).
 
 ### `sortLayers`
 

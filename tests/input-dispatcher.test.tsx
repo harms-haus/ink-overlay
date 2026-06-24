@@ -5,7 +5,7 @@
  * Uses REAL timers (ink breaks with fake timers).
  */
 import {test, expect, vi, afterEach} from 'vitest';
-import React, {type ReactNode} from 'react';
+import {type ReactNode} from 'react';
 import {render} from 'ink-testing-library';
 import {Text} from 'ink';
 import {
