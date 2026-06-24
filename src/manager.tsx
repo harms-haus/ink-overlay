@@ -138,7 +138,8 @@ function publishToasts(): void {
 		? DEFAULT_ANCHOR
 		: (toastMap.get(firstKey)!.anchor);
 
-	// Build the combined content — column-reverse so newest is at the bottom.
+	// Build the combined content — column-reverse so the OLDEST toast is at the
+	// bottom (nearest the anchor corner) and newer toasts stack above it.
 	const entries = [...toastMap.entries()];
 	const content = (
 		<Box flexDirection='column-reverse'>
@@ -229,9 +230,9 @@ function addToast(
  * Stacking auto-dismiss toast service.
  *
  * All active toasts are rendered as a single overlay store entry using
- * `<Box flexDirection="column-reverse">` so the newest toast appears
- * at the bottom (near the anchor corner) and older toasts stack
- * naturally above it.
+ * `<Box flexDirection="column-reverse">` so the OLDEST toast appears
+ * at the bottom (nearest the anchor corner) and newer toasts stack
+ * above it.
  */
 export const toasts: ToastService = {
 	show(message, options) {
