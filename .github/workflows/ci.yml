@@ -40,3 +40,7 @@ jobs:
 
       - name: Test
         run: npm run test
+        env:
+          # The library degrades rendering when CI is set. The dedicated
+          # non-tty test simulates non-interactive conditions itself.
+          CI: ''
