@@ -57,7 +57,7 @@ For the full `toasts` API reference (`show`, `success`, `error`, `info`, `warn`,
 
 ### Stacking Direction
 
-All active toasts render as a **single overlay store entry** using `<Box flexDirection="column-reverse">`. Insertion order in the internal `toastMap` is preserved, and `column-reverse` causes the **oldest** toast to appear at the **bottom** (closest to the anchor corner) while newer toasts stack above it.
+All active toasts render as a **single overlay store entry** using `<Box flexDirection="column">`. Insertion order in the internal `toastMap` is preserved, so the **newest** toast appears at the **bottom** (closest to the anchor corner) while older toasts stack above it.
 
 ### Max-Stack Cap
 

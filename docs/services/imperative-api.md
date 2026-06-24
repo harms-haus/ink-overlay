@@ -66,7 +66,7 @@ overlay.closeAll();  // remove every imperative overlay
 
 ## Part 2 — The `toasts` service
 
-A stacking, auto-dismiss toast service built on top of `overlayStore`. All active toasts are published as a **single** overlay entry so only one store notification fires per change. The combined content uses `flexDirection="column-reverse"` so the **oldest** toast appears at the bottom (nearest the anchor corner) and newer toasts stack above it.
+A stacking, auto-dismiss toast service built on top of `overlayStore`. All active toasts are published as a **single** overlay entry so only one store notification fires per change. The combined content uses `flexDirection="column"` so the **newest** toast appears at the bottom (nearest the anchor corner) and older toasts stack above it.
 
 ```ts
 import {toasts} from '@harms-haus/ink-overlay';
