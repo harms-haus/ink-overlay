@@ -11,7 +11,7 @@
  * @returns `true` when `globalThis.Bun` is defined.
  */
 export function isBun(): boolean {
-	return globalThis.Bun !== undefined;
+	return 'Bun' in globalThis;
 }
 
 /**
