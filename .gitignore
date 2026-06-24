@@ -3,3 +3,4 @@ dist/
 *.tgz
 coverage/
 .spir-scout/
+.engin
