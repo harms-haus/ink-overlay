@@ -105,6 +105,8 @@ The host's `overlayStore.subscribe` effect turns those store entries into render
 
 Always wrap at the `render()` root so that *all* overlay-capable subtrees — background components that need `useInputCaptureState()`, modals, popovers, command palettes — live inside one host. Nesting a second `<OverlayHost>` is unnecessary and unsupported; there is one input dispatcher, one raw-mode/focus owner, and one sorted layer list per host.
 
+> See the [demo app](../../demo/README.md) for a working example of mounting a single `<OverlayHost>` shared by many scenes.
+
 ```tsx
 // ✅ One host at the root
 render(

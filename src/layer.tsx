@@ -338,7 +338,7 @@ export function LayerRenderer({
 
 			// Any other input → backdrop handling
 			if (effectiveBackdropInput) {
-				effectiveBackdropInput();
+				effectiveBackdropInput(input);
 				return true;
 			}
 

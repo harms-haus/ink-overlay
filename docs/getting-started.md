@@ -37,7 +37,7 @@ The app below does three things:
 2. Shows a **declarative** `<Modal>` whose `open` state is controlled via `useState`.
 3. Fires an **imperative** toast from a `useInput` handler — `toasts.success(...)` requires no hook and no provider plumbing beyond the host.
 
-Save it as `app.tsx` and run it with `tsx app.tsx` (or compile with `tsc` and run with `node`).
+Save it as `app.tsx` and run it with `tsx app.tsx` (or compile with `tsc` and run with `node`). Prefer a zero-setup alternative? Clone the repo, run `npm install && npm run demo` to explore every component interactively — no extra code required (requires an interactive Node.js TTY; see [demo/README.md](../demo/README.md)).
 
 ```tsx
 import {render, useInput, Box, Text} from 'ink';
@@ -89,6 +89,8 @@ render(<App />);
 - `<OverlayHost>` owns the absolute-positioned layer list, the LIFO input dispatcher, and raw-mode bookkeeping — so both the modal and the toast paint with correct z-order without any manual layering.
 
 ## Where to go next
+
+> **Interactive demo** — run `npm run demo` to explore every component, service, and concept in a keyboard-navigable showcase. (Requires an interactive Node.js TTY.) See [demo/README.md](../demo/README.md).
 
 - **[OverlayHost](components/overlay-host.md)** — the root provider: what it mounts, its single `children` prop, and why you only need one.
 - **[Layers & Components](components/layers.md)** — `<Layer>`, `<Modal>`, `<Popover>`, `<Tooltip>`, and `<CommandPalette>`, all built on the same layer registration model.

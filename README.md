@@ -48,6 +48,8 @@ render(<App />);
 toasts.success('Saved!');
 ```
 
+**See it all live.** Run `npm run demo` for an interactive, keyboard-navigable showcase of every component and concept (requires an interactive Node.js TTY — the demo does not run under Bun, in CI, or with piped stdin, since Ink throws `Raw mode is not supported`; see [demo/README.md](./demo/README.md)).
+
 ## Documentation
 
 👉 **Full documentation: [docs/README.md](./docs/README.md)**
@@ -56,6 +58,7 @@ Two entry points:
 
 - **[docs/concepts/](./docs/concepts/)** — how it works: [architecture](./docs/concepts/architecture.md), [positioning](./docs/concepts/positioning.md), [input & focus](./docs/concepts/input-and-focus.md), [animation](./docs/concepts/animation.md), [limitations](./docs/concepts/limitations.md), and [runtime & environments](./docs/concepts/runtime-and-environments.md).
 - **[docs/components/](./docs/components/)** — usage: `<OverlayHost>`, `<Layer>`, `<Modal>`, `<Popover>`, `<Tooltip>`, `<Toast>`, `<CommandPalette>`. See also [services/](./docs/services/) (hooks, imperative API, animations) and the [API reference](./docs/reference/api-reference.md).
+- **[demo/](./demo/)** — interactive keyboard-navigable showcase of every component, service, and concept. Run with `npm run demo` (requires an interactive Node.js TTY; see [demo/README.md](./demo/README.md)).
 
 > **Note:** Interactive features (input, focus trap, keyboard dismiss) require Node. See [Runtime & Environments](./docs/concepts/runtime-and-environments.md).
 

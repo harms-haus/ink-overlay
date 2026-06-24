@@ -91,7 +91,7 @@ export type LayerOpts = {
 	margin?: OffsetEdges;
 	transition?: TransitionName | TransitionConfig;
 	onDismiss?: () => void;
-	onBackdropInput?: () => void;
+	onBackdropInput?: (input: string) => void;
 };
 
 export type OverlayDescriptor = {
@@ -109,7 +109,7 @@ export type OverlayDescriptor = {
 	margin?: OffsetEdges;
 	transition?: TransitionConfig;
 	onDismiss?: () => void;
-	onBackdropInput?: () => void;
+	onBackdropInput?: (input: string) => void;
 	exiting?: boolean;
 };
 

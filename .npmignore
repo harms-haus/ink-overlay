@@ -5,3 +5,4 @@ docs/
 *.config.*
 tsconfig.json
 .gitignore
+demo/

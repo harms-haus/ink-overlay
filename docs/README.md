@@ -6,7 +6,22 @@ React renderer for the terminal. It layers floating UI on top of your app,
 manages input dispatch, focus trapping, z-order, positioning, and animation,
 and degrades gracefully in non-TTY and CI environments.
 
-This index offers two reading paths depending on what you need:
+This index offers three entry points depending on what you need:
+
+---
+
+## 🎬 See it in action
+
+Run **`npm run demo`** for an interactive, keyboard-navigable showcase of
+*every* component and concept in this framework — modals, popovers, tooltips,
+toasts, command palette, animations, z-ordering, input/focus, and more.
+
+> **Requires an interactive Node.js TTY.** Ink throws
+> *"Raw mode is not supported"* when stdin is not a real terminal, so the demo
+> cannot run inside CI or any piped/non-interactive shell.
+
+➡️ **[Demo Guide (../demo/README.md)](../demo/README.md)** — scene-by-scene
+walkthrough, controls, and what each demo covers.
 
 ---
 
