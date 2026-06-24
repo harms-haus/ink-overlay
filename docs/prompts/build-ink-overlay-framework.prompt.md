@@ -31,6 +31,7 @@ input capture, resize-aware repositioning) is something every non-trivial Ink ap
 ends up reinventing. This package should be the one everyone reaches for.
 
 **Success criteria:**
+
 - Correct floating overlays that paint above base content and reposition on
   resize, without flicker under `incrementalRendering`.
 - A deterministic **z-stack** so authors can open many layers at once and reason
@@ -54,8 +55,8 @@ Before designing anything, read and confirm these facts in the Ink source
 2. **Paint order = tree-traversal order = z-order.** Nodes are written into the
    grid in the order their `write(x, y, text)` operations are pushed; a later
    write **overwrites** an earlier one at the same cell. **There is no `z-index`
-   prop.** To stack overlays, you control the *order in which they appear in the
-   React tree* (later sibling = on top). Confirm by reading `Output.get()`.
+   prop.** To stack overlays, you control the _order in which they appear in the
+   React tree_ (later sibling = on top). Confirm by reading `Output.get()`.
 3. **`position="absolute"` removes a node from flex flow** and positions it via
    `top`/`right`/`bottom`/`left` (numbers, or `'% strings'` for percentages),
    relative to its containing block. Verify the containing-block rules (Yoga:
@@ -92,7 +93,7 @@ Before designing anything, read and confirm these facts in the Ink source
 
 Survey these and extract the patterns (don't copy blindly — generalize):
 
-- **`@matthesketh/ink-modal`** — a *centered* modal. Study how it centers: it does
+- **`@matthesketh/ink-modal`** — a _centered_ modal. Study how it centers: it does
   **not** use `position="absolute"`; it uses a full-width
   `<Box alignItems="center">` wrapping a fixed-`width`, `borderStyle="round"`
   box. This is the **inline-centering pattern** (cheap, but the modal occupies
@@ -116,11 +117,12 @@ Survey these and extract the patterns (don't copy blindly — generalize):
   Extract their anchor math.
 
 ### Recurring patterns people converge on (confirm)
+
 - **Centered dialog (cheap):** flexbox `alignItems="center"` + fixed `width`.
   Occupies flow; does not float. Good enough for many modals.
 - **Floating overlay (full control):** `position="absolute"` + `top`/`left`
   computed from `useWindowSize()` (center = `(columns-width)/2`,
-  `(rows-height)/2`). This is the only way to *float* and to do corners/edges.
+  `(rows-height)/2`). This is the only way to _float_ and to do corners/edges.
 - **Input capture:** a single dispatcher + LIFO consumed-handler stack; a modal
   registers itself on mount, restoring the prior handler on unmount.
 - **Backdrop:** a full-screen `position="absolute"` box (inset 0) with a
@@ -131,10 +133,11 @@ Survey these and extract the patterns (don't copy blindly — generalize):
   (lowest z first in the tree).
 - **View-swap as the non-overlay alternative:** many apps avoid overlays
   entirely by conditionally rendering a full-screen view (e.g. a command
-  palette). Note this is a *different* feature; your framework should support
+  palette). Note this is a _different_ feature; your framework should support
   true floating layers, not just view swaps.
 
 ### Known gotchas to handle
+
 - No native z-index — purely tree-order; a managed stack is required for sane
   multi-layer behavior.
 - A `position="absolute"` child needs a positioned (`relative`) ancestor or it
@@ -157,6 +160,7 @@ Build a **rich** overlay framework. Implement all of the **core** tier; implemen
 as many **extended** features as you reasonably can, clearly marking any you defer.
 
 ### Core (must-have)
+
 - **`<OverlayHost>` (root):** a single provider that owns the layer stack and an
   absolutely-positioned, full-screen, pointer/`position="relative"` container.
   All overlays render into this host. Mount once near the app root.
@@ -173,7 +177,7 @@ as many **extended** features as you reasonably can, clearly marking any you def
     When not capturing (`capture={false}`), input passes through to the app
     underneath (e.g. a non-blocking toast or a top-right info overlay).
   - **Backdrop:** optional full-screen underlay (`backdrop` prop: `'none' |
-    'opaque' | 'dim'`) rendered just below the layer; `onBackdropClick`
+'opaque' | 'dim'`) rendered just below the layer; `onBackdropClick`
     equivalent = `onBackdropInput` (any key dismisses). Document the overpaint
     limitation for `'dim'`.
   - **Clipping:** content clipped to the layer's box via `overflow="hidden"`;
@@ -191,6 +195,7 @@ as many **extended** features as you reasonably can, clearly marking any you def
 - **TypeScript-first:** strict types, full JSX generics, exported prop interfaces.
 
 ### Extended (rich, build what you can)
+
 - **`<Popover anchorRef={…} placement="top|right|bottom|left|…">`:** element-
   anchored layer positioned relative to a measured box via `useBoxMetrics`,
   with collision detection (flip when it would overflow the terminal edge) and
@@ -221,7 +226,7 @@ as many **extended** features as you reasonably can, clearly marking any you def
   unmount (no leaked handlers/layers).
 - **Accessibility-ish:** `aria`-equivalent metadata is N/A in terminals, but
   expose a `role`-like prop (`'dialog' | 'alertdialog' | 'menu' | 'tooltip' |
-  'toast'`) that drives default behaviors (e.g. alertdialog → backdrop blocks
+'toast'`) that drives default behaviors (e.g. alertdialog → backdrop blocks
   dismiss).
 - **SSR/non-TTY safety:** degrade gracefully (render final frame, no raw mode)
   consistent with Ink's non-interactive behavior.
@@ -329,6 +334,7 @@ monolithic component.
 ---
 
 ## 9. Out of scope (do not build)
+
 - A general layout/flexbox system, a theme engine, a state manager, or a router.
 - Mouse support (terminals rarely have it; ignore).
 - Real transparency/blur (impossible in terminals — overpaint only).
@@ -337,12 +343,13 @@ monolithic component.
 ---
 
 ## 10. Deliverable checklist
+
 - [ ] Standalone package, ESM + TS, correct peer deps on `ink`/`react`.
 - [ ] `<OverlayHost>`, `<Layer>` (anchors, z, capture, backdrop, clip, resize).
 - [ ] Input dispatcher + focus trap; modal capture works; focus restores on close.
 - [ ] Imperative `OverlayManager` + toast service.
 - [ ] Built-ins: `<Modal>`, `<Popover>`, `<Tooltip>`, `<Toast>`, `<CommandPalette>`.
 - [ ] Tests (anchor math, z-order, capture, dismiss, resize, popover flip,
-  stacking, unmount cleanup) passing on Node (+ Bun report).
+      stacking, unmount cleanup) passing on Node (+ Bun report).
 - [ ] `README.md` with mental model, props tables, examples, runtime caveats.
 - [ ] §2 claims verified against source with citations.

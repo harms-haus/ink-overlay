@@ -1,0 +1,7 @@
+tests/
+.spir-scout/
+docs/
+*.test.*
+*.config.*
+tsconfig.json
+.gitignore
