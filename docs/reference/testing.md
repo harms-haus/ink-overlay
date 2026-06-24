@@ -1,6 +1,6 @@
 # Testing helpers
 
-The `tests/helpers/` directory ships three helpers that cover the two things `ink-testing-library` cannot do on its own — wrapping a tree in a real [`<OverlayHost>`](../components/overlay-host.md) so that `<Layer>`-based components have their context, and simulating a terminal *resize* — plus a small `delay()` helper that works with Ink's real-timer rendering loop. Together they let you render any component in this package the same way it renders in production.
+The `tests/helpers/` directory ships three helpers that cover the two things `ink-testing-library` cannot do on its own — wrapping a tree in a real [`<OverlayHost>`](../components/overlay-host.md) so that `<Layer>`-based components have their context, and simulating a terminal _resize_ — plus a small `delay()` helper that works with Ink's real-timer rendering loop. Together they let you render any component in this package the same way it renders in production.
 
 > ## ⚠️ These are source files — copy them, don't import them
 >
@@ -31,14 +31,14 @@ import {renderWithHost} from './helpers/render-with-host.js';
 import {Modal} from '@harms-haus/ink-overlay';
 
 test('modal renders its title and children', () => {
-  const {lastFrame} = renderWithHost(
-    <Modal open title="Confirm" onDismiss={() => {}}>
-      <Text>Are you sure?</Text>
-    </Modal>,
-  );
+	const {lastFrame} = renderWithHost(
+		<Modal open title="Confirm" onDismiss={() => {}}>
+			<Text>Are you sure?</Text>
+		</Modal>,
+	);
 
-  expect(lastFrame()).toContain('Confirm');
-  expect(lastFrame()).toContain('Are you sure?');
+	expect(lastFrame()).toContain('Confirm');
+	expect(lastFrame()).toContain('Are you sure?');
 });
 ```
 
@@ -70,25 +70,25 @@ import {delay} from './helpers/delay.js';
 import {Layer} from '@harms-haus/ink-overlay';
 
 test('layer reflows after a resize', async () => {
-  const {lastFrame, resize, unmountAndCleanup} = renderResizable(
-    <Layer open anchor="bottom">
-      <Box flexDirection="column">
-        <Text>layered content</Text>
-      </Box>
-    </Layer>,
-    {columns: 80, rows: 24},
-  );
+	const {lastFrame, resize, unmountAndCleanup} = renderResizable(
+		<Layer open anchor="bottom">
+			<Box flexDirection="column">
+				<Text>layered content</Text>
+			</Box>
+		</Layer>,
+		{columns: 80, rows: 24},
+	);
 
-  await delay(20); // let the initial frame flush
-  expect(lastFrame()).toContain('layered content');
+	await delay(20); // let the initial frame flush
+	expect(lastFrame()).toContain('layered content');
 
-  resize(40, 12); // shrink the terminal
-  await delay(20); // let the re-render flush
+	resize(40, 12); // shrink the terminal
+	await delay(20); // let the re-render flush
 
-  // The layer is re-laid-out against the new 40-column width.
-  expect(lastFrame()).toContain('layered content');
+	// The layer is re-laid-out against the new 40-column width.
+	expect(lastFrame()).toContain('layered content');
 
-  unmountAndCleanup();
+	unmountAndCleanup();
 });
 ```
 
@@ -100,8 +100,8 @@ import {createResizableStdout} from './helpers/create-resizable-stdout.js';
 import {delay} from './helpers/delay.js';
 
 const {stdout, stdin, resize, getFrames, cleanup} = createResizableStdout({
-  columns: 100,
-  rows: 30,
+	columns: 100,
+	rows: 30,
 });
 
 const instance = render(<App />, {stdout, stdin, exitOnCtrlC: false});

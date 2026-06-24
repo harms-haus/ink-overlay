@@ -13,11 +13,11 @@ This index offers three entry points depending on what you need:
 ## 🎬 See it in action
 
 Run **`npm run demo`** for an interactive, keyboard-navigable showcase of
-*every* component and concept in this framework — modals, popovers, tooltips,
+_every_ component and concept in this framework — modals, popovers, tooltips,
 toasts, command palette, animations, z-ordering, input/focus, and more.
 
 > **Requires an interactive Node.js TTY.** Ink throws
-> *"Raw mode is not supported"* when stdin is not a real terminal, so the demo
+> _"Raw mode is not supported"_ when stdin is not a real terminal, so the demo
 > cannot run inside CI or any piped/non-interactive shell.
 
 ➡️ **[Demo Guide (../demo/README.md)](../demo/README.md)** — scene-by-scene
@@ -27,7 +27,7 @@ walkthrough, controls, and what each demo covers.
 
 ## 📖 Understand how it works
 
-Start here if you want to learn the *concepts and architecture* before writing
+Start here if you want to learn the _concepts and architecture_ before writing
 code. Read in order:
 
 1. **[Architecture](./concepts/architecture.md)** — How the `OverlayHost`

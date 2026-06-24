@@ -263,8 +263,8 @@ export default function Scene08Toasts() {
 
 	return (
 		<SceneShell
-			title='Scene 08 — Toasts'
-			description='Imperative toast service + presentational <Toast> component'
+			title="Scene 08 — Toasts"
+			description="Imperative toast service + presentational <Toast> component"
 			hints={[
 				{key: 's', label: 'success'},
 				{key: 'e', label: 'error'},
@@ -279,14 +279,12 @@ export default function Scene08Toasts() {
 			]}
 		>
 			{/* ── Instructional copy ──────────────────────────────── */}
-			<Box flexDirection='column'>
+			<Box flexDirection="column">
 				<Text>
-					Press the keys below to fire toasts via the imperative
-					service.
+					Press the keys below to fire toasts via the imperative service.
 				</Text>
 				<Text dimColor>
-					At most three are visible; the newest sits nearest the
-					anchor corner.
+					At most three are visible; the newest sits nearest the anchor corner.
 				</Text>
 			</Box>
 
@@ -308,18 +306,18 @@ export default function Scene08Toasts() {
 			 *   success → ✓, error → ✗, warn → ⚠, info → ℹ.
 			 * ════════════════════════════════════════════════════════
 			 */}
-			<Box flexDirection='column' marginTop={1}>
+			<Box flexDirection="column" marginTop={1}>
 				<Text bold>Presentational &lt;Toast&gt; (no overlay logic):</Text>
-				<Box flexDirection='row' gap={1} marginTop={1}>
+				<Box flexDirection="row" gap={1} marginTop={1}>
 					{/*
 					 * kind defaults per ToastKind. The border colour comes
 					 * from defaultToastColors[kind]; the icon from the
 					 * default icon map (✓ ✗ ⚠ ℹ).
 					 */}
-					<Toast kind='success'>Static success</Toast>
-					<Toast kind='error'>Static error</Toast>
-					<Toast kind='warn'>Static warn</Toast>
-					<Toast kind='info'>Static info</Toast>
+					<Toast kind="success">Static success</Toast>
+					<Toast kind="error">Static error</Toast>
+					<Toast kind="warn">Static warn</Toast>
+					<Toast kind="info">Static info</Toast>
 				</Box>
 
 				{/*
@@ -329,7 +327,7 @@ export default function Scene08Toasts() {
 				 * still follows defaultToastColors (info → blue).
 				 */}
 				<Box marginTop={1}>
-					<Toast kind='info' icon='★'>
+					<Toast kind="info" icon="★">
 						Custom icon
 					</Toast>
 				</Box>
@@ -342,12 +340,12 @@ export default function Scene08Toasts() {
 			 * visible at a glance. defaultToastColors is the same map the
 			 * <Toast> component (and the service) use internally.
 			 */}
-			<Box flexDirection='column' marginTop={1}>
+			<Box flexDirection="column" marginTop={1}>
 				<Text dimColor>defaultToastColors:</Text>
 				<Text dimColor>
 					success→{defaultToastColors.success}, error→
-					{defaultToastColors.error}, warn→{defaultToastColors.warn},
-					info→{defaultToastColors.info}
+					{defaultToastColors.error}, warn→{defaultToastColors.warn}, info→
+					{defaultToastColors.info}
 				</Text>
 			</Box>
 		</SceneShell>

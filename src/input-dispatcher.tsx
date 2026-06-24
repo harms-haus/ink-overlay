@@ -79,7 +79,8 @@ type InputDispatcherContextValue = {
 	isCaptured: boolean;
 };
 
-const InputDispatcherContext = createContext<InputDispatcherContextValue | null>(null);
+const InputDispatcherContext =
+	createContext<InputDispatcherContextValue | null>(null);
 
 // ── InputDispatcher component ────────────────────────────────────────
 
@@ -139,14 +140,11 @@ export function InputDispatcher({children}: {children: ReactNode}) {
 	useInput(dispatchWalk, {isActive: isRawModeSupported});
 
 	// ── Context API ───────────────────────────────────────────────────
-	const registerInput = useCallback(
-		(id: string, handler: InputHandler) => {
-			// Dedupe: remove any existing entry with the same id first.
-			stackReference.current = stackReference.current.filter(e => e.id !== id);
-			stackReference.current.push({id, handler});
-		},
-		[],
-	);
+	const registerInput = useCallback((id: string, handler: InputHandler) => {
+		// Dedupe: remove any existing entry with the same id first.
+		stackReference.current = stackReference.current.filter(e => e.id !== id);
+		stackReference.current.push({id, handler});
+	}, []);
 
 	const unregisterInput = useCallback((id: string) => {
 		stackReference.current = stackReference.current.filter(e => e.id !== id);
@@ -244,8 +242,8 @@ export function useInputDispatcher(): InputDispatcherContextValue {
 	const context = useContext(InputDispatcherContext);
 	if (context === null) {
 		throw new Error(
-			'useInputDispatcher must be used within an <InputDispatcher>. '
-			+ 'Mount <InputDispatcher> once (typically inside <OverlayHost>).',
+			'useInputDispatcher must be used within an <InputDispatcher>. ' +
+				'Mount <InputDispatcher> once (typically inside <OverlayHost>).',
 		);
 	}
 

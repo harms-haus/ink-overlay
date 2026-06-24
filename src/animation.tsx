@@ -1,6 +1,8 @@
 import {useState, useEffect, useRef} from 'react';
 import type {
-	TransitionName, TransitionStep, TransitionConfig,
+	TransitionName,
+	TransitionStep,
+	TransitionConfig,
 } from './types.js';
 
 // ── getTransitionSteps (cached) ────────────────────────────────────
@@ -40,14 +42,8 @@ export function getTransitionSteps(name: TransitionName): TransitionConfig {
 			// visible dimming. The name 'fade' is kept for API compatibility;
 			// the visual effect is a 0→1 height grow (collapse/expand).
 			config = {
-				enter: [
-					{style: {height: 0}},
-					{style: {height: 1}},
-				],
-				exit: [
-					{style: {height: 1}},
-					{style: {height: 0}},
-				],
+				enter: [{style: {height: 0}}, {style: {height: 1}}],
+				exit: [{style: {height: 1}}, {style: {height: 0}}],
 				duration: 80,
 			};
 			break;

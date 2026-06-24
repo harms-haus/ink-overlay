@@ -9,7 +9,7 @@ must use. For the mechanism behind the stack and `captureDepth`, see
 enforced, see [Limitations](../concepts/limitations.md).
 
 > **Read this before wiring up background components:** every `useInput` /
-> `useFocus` that lives *outside* a capturing overlay **MUST** be gated with
+> `useFocus` that lives _outside_ a capturing overlay **MUST** be gated with
 > `useInputCaptureState()` — otherwise those handlers keep firing while a modal,
 > palette, or other capturing layer is open.
 
@@ -21,12 +21,12 @@ Declarative wrapper around [`useFocusTrap`](#usefocustrap). While `active`, it
 confines Tab / Shift+Tab focus cycling to its children and signals capture
 (cooperatively, via `captureDepth`) so background components deactivate.
 
-| Prop           | Type         | Default | Description                                                          |
-| -------------- | ------------ | ------- | -------------------------------------------------------------------- |
-| `active`       | `boolean`    | `true`  | Whether the trap is engaged.                                         |
-| `onEscape`     | `() => void` | —       | Called when Escape is pressed inside the trap.                       |
-| `restoreFocus` | `boolean`    | `true`  | Restore focus to the previously-focused element on deactivation.     |
-| `children`     | `ReactNode`  | —       | Content whose focus should be confined.                              |
+| Prop           | Type         | Default | Description                                                      |
+| -------------- | ------------ | ------- | ---------------------------------------------------------------- |
+| `active`       | `boolean`    | `true`  | Whether the trap is engaged.                                     |
+| `onEscape`     | `() => void` | —       | Called when Escape is pressed inside the trap.                   |
+| `restoreFocus` | `boolean`    | `true`  | Restore focus to the previously-focused element on deactivation. |
+| `children`     | `ReactNode`  | —       | Content whose focus should be confined.                          |
 
 The body renders `children` unchanged inside a fragment; all behavior delegates
 to `useFocusTrap(active, {onEscape, restoreFocus})`.
@@ -37,24 +37,24 @@ import {Box, Text, useInput} from 'ink';
 import {FocusTrap} from '@harms-haus/ink-overlay';
 
 function Menu() {
-  const [open, setOpen] = useState(false);
-  useInput((_input, key) => {
-    if (key.return) setOpen(true);
-  });
-  return (
-    <Box flexDirection="column">
-      <Text>Press Enter to open the menu</Text>
+	const [open, setOpen] = useState(false);
+	useInput((_input, key) => {
+		if (key.return) setOpen(true);
+	});
+	return (
+		<Box flexDirection="column">
+			<Text>Press Enter to open the menu</Text>
 
-      {open && (
-        <FocusTrap active onEscape={() => setOpen(false)} restoreFocus>
-          <Box flexDirection="column" borderStyle="round" padding={1}>
-            <Text>Tab cycles between these items</Text>
-            <Text>Esc to close</Text>
-          </Box>
-        </FocusTrap>
-      )}
-    </Box>
-  );
+			{open && (
+				<FocusTrap active onEscape={() => setOpen(false)} restoreFocus>
+					<Box flexDirection="column" borderStyle="round" padding={1}>
+						<Text>Tab cycles between these items</Text>
+						<Text>Esc to close</Text>
+					</Box>
+				</FocusTrap>
+			)}
+		</Box>
+	);
 }
 ```
 
@@ -64,16 +64,16 @@ function Menu() {
 
 ```ts
 function useFocusTrap(
-  active: boolean,
-  options?: {onEscape?: () => void; restoreFocus?: boolean},
+	active: boolean,
+	options?: {onEscape?: () => void; restoreFocus?: boolean},
 ): {trapId: string; isTrapped: boolean};
 ```
 
-| Parameter           | Type         | Default | Description                                     |
-| ------------------- | ------------ | ------- | ----------------------------------------------- |
-| `active`            | `boolean`    | —       | Engages/disengages the trap.                    |
-| `options.onEscape`  | `() => void` | —       | Escape handler invoked while trapped.           |
-| `options.restoreFocus` | `boolean` | `true`  | Return focus to the previously-focused element. |
+| Parameter              | Type         | Default | Description                                     |
+| ---------------------- | ------------ | ------- | ----------------------------------------------- |
+| `active`               | `boolean`    | —       | Engages/disengages the trap.                    |
+| `options.onEscape`     | `() => void` | —       | Escape handler invoked while trapped.           |
+| `options.restoreFocus` | `boolean`    | `true`  | Return focus to the previously-focused element. |
 
 | Return field | Type      | Description                                    |
 | ------------ | --------- | ---------------------------------------------- |
@@ -104,16 +104,18 @@ import {Box, Text} from 'ink';
 import {useFocusTrap} from '@harms-haus/ink-overlay';
 
 function CustomRegion({open, onClose}: {open: boolean; onClose: () => void}) {
-  const {trapId, isTrapped} = useFocusTrap(open, {
-    onEscape: onClose,
-    restoreFocus: true,
-  });
+	const {trapId, isTrapped} = useFocusTrap(open, {
+		onEscape: onClose,
+		restoreFocus: true,
+	});
 
-  return (
-    <Box>
-      <Text>trap {trapId} active={String(isTrapped)}</Text>
-    </Box>
-  );
+	return (
+		<Box>
+			<Text>
+				trap {trapId} active={String(isTrapped)}
+			</Text>
+		</Box>
+	);
 }
 ```
 
@@ -130,17 +132,17 @@ inline closure on each render does **not** churn the stack.
 
 ```ts
 function useRegisterInput(
-  id: string,
-  handler: (input: string, key: Key) => boolean | void,
-  isActive?: boolean, // default true
+	id: string,
+	handler: (input: string, key: Key) => boolean | void,
+	isActive?: boolean, // default true
 ): void;
 ```
 
-| Parameter  | Type                                           | Default | Description                                                                  |
-| ---------- | ---------------------------------------------- | ------- | ---------------------------------------------------------------------------- |
+| Parameter  | Type                                           | Default | Description                                                                 |
+| ---------- | ---------------------------------------------- | ------- | --------------------------------------------------------------------------- |
 | `id`       | `string`                                       | —       | Stable unique id. Re-registering with the same id replaces the prior entry. |
-| `handler`  | `(input: string, key: Key) => boolean \| void` | —       | Handler invoked when this entry is reached during the walk.                  |
-| `isActive` | `boolean`                                      | `true`  | When `false`, the handler is not registered.                                 |
+| `handler`  | `(input: string, key: Key) => boolean \| void` | —       | Handler invoked when this entry is reached during the walk.                 |
+| `isActive` | `boolean`                                      | `true`  | When `false`, the handler is not registered.                                |
 
 The `Key` type comes from `ink`; import it directly via `import {type Key} from 'ink'`.
 
@@ -148,15 +150,15 @@ The `Key` type comes from `ink`; import it directly via `import {type Key} from 
 import {useRegisterInput} from '@harms-haus/ink-overlay';
 
 function HotkeyRow({onConfirm}: {onConfirm: () => void}) {
-  useRegisterInput('hotkey-row', (input, key) => {
-    if (key.return) {
-      onConfirm();
-      return true; // consume — stop the walk
-    }
-    return false; // pass through to lower handlers
-  });
+	useRegisterInput('hotkey-row', (input, key) => {
+		if (key.return) {
+			onConfirm();
+			return true; // consume — stop the walk
+		}
+		return false; // pass through to lower handlers
+	});
 
-  return null;
+	return null;
 }
 ```
 
@@ -186,22 +188,26 @@ import {useInput, useFocus} from 'ink';
 import {useInputCaptureState} from '@harms-haus/ink-overlay';
 
 function BackgroundList() {
-  const isCaptured = useInputCaptureState();
+	const isCaptured = useInputCaptureState();
 
-  // Keyboard shortcuts stay silent while a modal / palette is open.
-  useInput(
-    (input, key) => {
-      if (input === 'j') {/* move down */}
-      if (input === 'k') {/* move up */}
-    },
-    {isActive: !isCaptured},
-  );
+	// Keyboard shortcuts stay silent while a modal / palette is open.
+	useInput(
+		(input, key) => {
+			if (input === 'j') {
+				/* move down */
+			}
+			if (input === 'k') {
+				/* move up */
+			}
+		},
+		{isActive: !isCaptured},
+	);
 
-  // Focus cycling deactivates so the active trap's focusNext/focusPrevious
-  // skip this component entirely.
-  const {isFocused} = useFocus({isActive: !isCaptured});
+	// Focus cycling deactivates so the active trap's focusNext/focusPrevious
+	// skip this component entirely.
+	const {isFocused} = useFocus({isActive: !isCaptured});
 
-  return null;
+	return null;
 }
 ```
 

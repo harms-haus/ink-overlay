@@ -66,19 +66,19 @@ export function Modal({
 }: ModalProps) {
 	return (
 		<Layer
-			anchor='center'
+			anchor="center"
 			capture
 			backdrop={backdrop}
 			z={z}
 			role={role}
-			overflow='hidden'
+			overflow="hidden"
 			open={open}
 			defaultOpen={defaultOpen}
 			onOpenChange={onOpenChange}
 			onDismiss={onDismiss}
 		>
 			<Box
-				flexDirection='column'
+				flexDirection="column"
 				borderStyle={borderStyle}
 				borderColor={borderColor}
 				width={width}
@@ -89,7 +89,7 @@ export function Modal({
 						<Text bold>{title}</Text>
 					</Box>
 				)}
-				<Box flexDirection='column' flexGrow={1} paddingX={1}>
+				<Box flexDirection="column" flexGrow={1} paddingX={1}>
 					{children}
 				</Box>
 				{footer && (

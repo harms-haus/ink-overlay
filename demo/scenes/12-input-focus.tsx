@@ -74,12 +74,7 @@
  */
 
 import {useState} from 'react';
-import {
-	Box,
-	Text,
-	useFocus,
-	useInput,
-} from 'ink';
+import {Box, Text, useFocus, useInput} from 'ink';
 import {
 	FocusTrap,
 	Modal,
@@ -257,8 +252,8 @@ export default function Scene12InputFocus() {
 
 	return (
 		<SceneShell
-			title='Scene 12 — Input & Focus'
-			description='Cooperative gating, LIFO dispatch, focus traps, nested layers.'
+			title="Scene 12 — Input & Focus"
+			description="Cooperative gating, LIFO dispatch, focus traps, nested layers."
 			hints={[
 				{key: 'j', label: 'counter −1'},
 				{key: 'k', label: 'counter +1'},
@@ -270,16 +265,18 @@ export default function Scene12InputFocus() {
 			]}
 		>
 			{/* ── Live status readout ─────────────────────────────── */}
-			<Box flexDirection='column'>
+			<Box flexDirection="column">
 				<Text>
 					{'Counter: '}
-					<Text bold color='cyan'>
+					<Text bold color="cyan">
 						{counter}
 					</Text>
 				</Text>
 				<Text dimColor>{`Last intercepted: ${lastIntercepted}`}</Text>
 				<Text dimColor>{`isCaptured: ${isCaptured}`}</Text>
-				<Text dimColor>{`Nested — outer: ${nestedOuter}, inner: ${nestedInner}`}</Text>
+				<Text
+					dimColor
+				>{`Nested — outer: ${nestedOuter}, inner: ${nestedInner}`}</Text>
 			</Box>
 
 			{/*
@@ -299,14 +296,14 @@ export default function Scene12InputFocus() {
 			<Modal
 				open={showModal}
 				onOpenChange={setShowModal}
-				title='Gating Modal (sub-demo 1)'
+				title="Gating Modal (sub-demo 1)"
 				z={100}
 			>
-				<Box flexDirection='column'>
+				<Box flexDirection="column">
 					<Text>While this modal is open, isCaptured is true.</Text>
 					<Text>
-						The scene&apos;s j/k keys do nothing — the cooperative gate
-						is in action.
+						The scene&apos;s j/k keys do nothing — the cooperative gate is in
+						action.
 					</Text>
 					<Text dimColor>Press Esc to close; j/k resume.</Text>
 				</Box>
@@ -334,7 +331,7 @@ export default function Scene12InputFocus() {
 			 * ════════════════════════════════════════════════════════
 			 */}
 			{trapActive && (
-				<Box marginTop={1} flexDirection='column'>
+				<Box marginTop={1} flexDirection="column">
 					<Text bold underline>
 						FocusTrap (component form, restoreFocus: true)
 					</Text>
@@ -345,14 +342,14 @@ export default function Scene12InputFocus() {
 						}}
 						restoreFocus={true}
 					>
-						<Box flexDirection='row' gap={1}>
-							<FocusableBox label='Item 1' />
-							<FocusableBox label='Item 2' />
+						<Box flexDirection="row" gap={1}>
+							<FocusableBox label="Item 1" />
+							<FocusableBox label="Item 2" />
 						</Box>
 					</FocusTrap>
 					<Text dimColor>
-						Tab cycles focus; Esc closes the trap. restoreFocus: true
-						(focus returns to the prior element on close).
+						Tab cycles focus; Esc closes the trap. restoreFocus: true (focus
+						returns to the prior element on close).
 					</Text>
 				</Box>
 			)}
@@ -381,13 +378,13 @@ export default function Scene12InputFocus() {
 			<Modal
 				open={nestedOuter}
 				onOpenChange={setNestedOuter}
-				title='Outer (z=100)'
+				title="Outer (z=100)"
 				z={100}
 			>
-				<Box flexDirection='column'>
+				<Box flexDirection="column">
 					<Text>
-						Outer modal (z=100). Esc closes the inner modal first
-						(LIFO), then this one.
+						Outer modal (z=100). Esc closes the inner modal first (LIFO), then
+						this one.
 					</Text>
 				</Box>
 			</Modal>
@@ -395,14 +392,14 @@ export default function Scene12InputFocus() {
 			<Modal
 				open={nestedInner}
 				onOpenChange={setNestedInner}
-				title='Inner (z=150)'
+				title="Inner (z=150)"
 				z={150}
 			>
-				<Box flexDirection='column'>
+				<Box flexDirection="column">
 					<Text>Inner modal. Esc closes ONLY this one.</Text>
 					<Text dimColor>
-						The outer modal&apos;s handler never sees the Esc event —
-						it was consumed at the top of the LIFO stack.
+						The outer modal&apos;s handler never sees the Esc event — it was
+						consumed at the top of the LIFO stack.
 					</Text>
 				</Box>
 			</Modal>

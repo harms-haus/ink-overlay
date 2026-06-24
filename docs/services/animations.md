@@ -1,19 +1,19 @@
 # Transitions & Animations — Implementation Guide
 
-This page is the practical, usage-oriented companion to the [concepts › animation](../concepts/animation.md) reference. That page explains *why* transitions are frame-stepped style mutations rather than continuous interpolations (terminals have no alpha channel and no sub-cell rendering); this page shows how to actually apply them — built-in named transitions, hand-authored `TransitionConfig` objects, the `'fade'` caveat, and the two exported resolution helpers. Every signature, default, and frame value below is taken directly from `src/animation.tsx` and `src/layer.tsx`. For the component that owns the `transition` prop, see [`<Layer>`](../components/layers.md).
+This page is the practical, usage-oriented companion to the [concepts › animation](../concepts/animation.md) reference. That page explains _why_ transitions are frame-stepped style mutations rather than continuous interpolations (terminals have no alpha channel and no sub-cell rendering); this page shows how to actually apply them — built-in named transitions, hand-authored `TransitionConfig` objects, the `'fade'` caveat, and the two exported resolution helpers. Every signature, default, and frame value below is taken directly from `src/animation.tsx` and `src/layer.tsx`. For the component that owns the `transition` prop, see [`<Layer>`](../components/layers.md).
 
 ## Built-in named transitions
 
 The `transition` prop is currently accepted only by [`<Layer>`](../components/layers.md); none of the higher-level components (`<Modal>`, `<Popover>`, `<Tooltip>`, `<Toast>`, `<CommandPalette>`) expose it. When passed to `<Layer>`, it accepts a `TransitionName` string. Six names are predefined; `getTransitionSteps` (covered below) resolves each to a cached, deterministic `TransitionConfig`. All four slide variants step through three frames at 80 ms each (≈240 ms total); `fade` carries two frames at 80 ms; `none` is a single no-op frame with zero duration (instantaneous).
 
-| Name | Enter frames | Exit frames | `duration` |
-|------|--------------|-------------|------------|
-| `'none'` | `{style: {}}` | `{style: {}}` | `0` |
-| `'fade'` | `height: 0` → `height: 1` | `height: 1` → `height: 0` | `80` |
-| `'slide-up'` | `marginTop: 4` → `2` → `0` | `0` → `2` → `4` | `80` |
-| `'slide-down'` | `marginBottom: 4` → `2` → `0` | `0` → `2` → `4` | `80` |
-| `'slide-left'` | `marginLeft: 4` → `2` → `0` | `0` → `2` → `4` | `80` |
-| `'slide-right'` | `marginRight: 4` → `2` → `0` | `0` → `2` → `4` | `80` |
+| Name            | Enter frames                  | Exit frames               | `duration` |
+| --------------- | ----------------------------- | ------------------------- | ---------- |
+| `'none'`        | `{style: {}}`                 | `{style: {}}`             | `0`        |
+| `'fade'`        | `height: 0` → `height: 1`     | `height: 1` → `height: 0` | `80`       |
+| `'slide-up'`    | `marginTop: 4` → `2` → `0`    | `0` → `2` → `4`           | `80`       |
+| `'slide-down'`  | `marginBottom: 4` → `2` → `0` | `0` → `2` → `4`           | `80`       |
+| `'slide-left'`  | `marginLeft: 4` → `2` → `0`   | `0` → `2` → `4`           | `80`       |
+| `'slide-right'` | `marginRight: 4` → `2` → `0`  | `0` → `2` → `4`           | `80`       |
 
 A named transition on a `<Layer>`:
 
@@ -23,24 +23,26 @@ import {Box, Text} from 'ink';
 import {OverlayHost, Layer} from '@harms-haus/ink-overlay';
 
 function App() {
-  const [open, setOpen] = useState(false);
+	const [open, setOpen] = useState(false);
 
-  return (
-    <OverlayHost>
-      <Box padding={1}><Text>Press o to toggle</Text></Box>
+	return (
+		<OverlayHost>
+			<Box padding={1}>
+				<Text>Press o to toggle</Text>
+			</Box>
 
-      <Layer
-        open={open}
-        onOpenChange={setOpen}
-        anchor="bottom"
-        transition="slide-up"
-      >
-        <Box paddingX={1}>
-          <Text>Slides up from the bottom edge</Text>
-        </Box>
-      </Layer>
-    </OverlayHost>
-  );
+			<Layer
+				open={open}
+				onOpenChange={setOpen}
+				anchor="bottom"
+				transition="slide-up"
+			>
+				<Box paddingX={1}>
+					<Text>Slides up from the bottom edge</Text>
+				</Box>
+			</Layer>
+		</OverlayHost>
+	);
 }
 ```
 
@@ -53,9 +55,9 @@ A transition is just a plain object — no registration needed. The `TransitionC
 ```ts
 type TransitionStep = {style: Record<string, number | string>};
 type TransitionConfig = {
-  enter?: TransitionStep[];
-  exit?: TransitionStep[];
-  duration?: number; // ms per frame
+	enter?: TransitionStep[];
+	exit?: TransitionStep[];
+	duration?: number; // ms per frame
 };
 ```
 
@@ -72,22 +74,29 @@ import {Layer} from '@harms-haus/ink-overlay';
 import type {TransitionConfig} from '@harms-haus/ink-overlay';
 
 const customSlide: TransitionConfig = {
-  enter: [
-    {style: {marginTop: 6}},
-    {style: {marginTop: 3}},
-    {style: {marginTop: 0}},
-  ],
-  exit: [
-    {style: {marginTop: 0}},
-    {style: {marginTop: 3}},
-    {style: {marginTop: 6}},
-  ],
-  duration: 60, // 60 ms per frame → ~180 ms total enter
+	enter: [
+		{style: {marginTop: 6}},
+		{style: {marginTop: 3}},
+		{style: {marginTop: 0}},
+	],
+	exit: [
+		{style: {marginTop: 0}},
+		{style: {marginTop: 3}},
+		{style: {marginTop: 6}},
+	],
+	duration: 60, // 60 ms per frame → ~180 ms total enter
 };
 
-<Layer open={show} onOpenChange={setShow} anchor="center" transition={customSlide}>
-  <Box padding={1}><Text>Custom three-step slide</Text></Box>
-</Layer>
+<Layer
+	open={show}
+	onOpenChange={setShow}
+	anchor="center"
+	transition={customSlide}
+>
+	<Box padding={1}>
+		<Text>Custom three-step slide</Text>
+	</Box>
+</Layer>;
 ```
 
 A custom fade-like effect built from margin steps (since there is no true opacity, stepping a margin toward zero mimics a gentle close):
@@ -96,18 +105,18 @@ A custom fade-like effect built from margin steps (since there is no true opacit
 // Assumes `TransitionConfig` is in scope (see imports above)
 // and `show`/`setShow` are declared: const [show, setShow] = useState(false)
 const gentleClose: TransitionConfig = {
-  enter: [
-    {style: {marginLeft: 10}},
-    {style: {marginLeft: 4}},
-    {style: {marginLeft: 1}},
-    {style: {marginLeft: 0}},
-  ],
-  exit: [
-    {style: {marginLeft: 0}},
-    {style: {marginLeft: 4}},
-    {style: {marginLeft: 10}},
-  ],
-  duration: 50,
+	enter: [
+		{style: {marginLeft: 10}},
+		{style: {marginLeft: 4}},
+		{style: {marginLeft: 1}},
+		{style: {marginLeft: 0}},
+	],
+	exit: [
+		{style: {marginLeft: 0}},
+		{style: {marginLeft: 4}},
+		{style: {marginLeft: 10}},
+	],
+	duration: 50,
 };
 ```
 
@@ -138,20 +147,27 @@ import {getTransitionSteps, Layer} from '@harms-haus/ink-overlay';
 
 // Clone the built-in slide-up and slow it down
 const slowSlideUp = {
-  ...getTransitionSteps('slide-up'),
-  duration: 200,
+	...getTransitionSteps('slide-up'),
+	duration: 200,
 };
 
-<Layer open={show} onOpenChange={setShow} anchor="bottom" transition={slowSlideUp}>
-  <Box padding={1}><Text>Slow slide-up</Text></Box>
-</Layer>
+<Layer
+	open={show}
+	onOpenChange={setShow}
+	anchor="bottom"
+	transition={slowSlideUp}
+>
+	<Box padding={1}>
+		<Text>Slow slide-up</Text>
+	</Box>
+</Layer>;
 ```
 
 ### `resolveTransition(spec)`
 
 ```ts
 function resolveTransition(
-  transition: TransitionName | TransitionConfig | undefined,
+	transition: TransitionName | TransitionConfig | undefined,
 ): TransitionConfig | undefined;
 ```
 
@@ -168,19 +184,19 @@ import {resolveTransition, Layer} from '@harms-haus/ink-overlay';
 import type {TransitionName, TransitionConfig} from '@harms-haus/ink-overlay';
 
 function MyPanel({
-  transition,
+	transition,
 }: {
-  transition?: TransitionName | TransitionConfig;
+	transition?: TransitionName | TransitionConfig;
 }) {
-  // Resolve once outside JSX to inspect/branch on the concrete config
-  const resolved = resolveTransition(transition);
-  const hasExit = (resolved?.exit?.length ?? 0) > 1;
+	// Resolve once outside JSX to inspect/branch on the concrete config
+	const resolved = resolveTransition(transition);
+	const hasExit = (resolved?.exit?.length ?? 0) > 1;
 
-  return (
-    <Layer transition={transition} anchor="center">
-      {/* hasExit tells you whether close will animate */}
-    </Layer>
-  );
+	return (
+		<Layer transition={transition} anchor="center">
+			{/* hasExit tells you whether close will animate */}
+		</Layer>
+	);
 }
 ```
 

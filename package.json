@@ -84,6 +84,9 @@
 			"import/no-duplicates": "off",
 			"@typescript-eslint/ban-types": "off"
 		},
-		"ignores": [".spir-scout/**", "dist/**"]
+		"ignores": [
+			".spir-scout/**",
+			"dist/**"
+		]
 	}
 }

@@ -3,9 +3,7 @@
  *
  * Uses REAL timers — ink breaks with fake timers.
  */
-import {
-	describe, test, expect, afterEach,
-} from 'vitest';
+import {describe, test, expect, afterEach} from 'vitest';
 import React, {type ReactElement} from 'react';
 import {render} from 'ink-testing-library';
 import {Text} from 'ink';
@@ -60,14 +58,14 @@ afterEach(async () => {
 // ════════════════════════════════════════════════════════════════════
 
 describe('getTransitionSteps', () => {
-	test('\'none\' returns single-frame enter/exit with duration 0', () => {
+	test("'none' returns single-frame enter/exit with duration 0", () => {
 		const cfg = getTransitionSteps('none');
 		expect(cfg.enter).toHaveLength(1);
 		expect(cfg.exit).toHaveLength(1);
 		expect(cfg.duration).toBe(0);
 	});
 
-	test('\'slide-up\' enter has 3+ frames with strictly decreasing marginTop', () => {
+	test("'slide-up' enter has 3+ frames with strictly decreasing marginTop", () => {
 		const cfg = getTransitionSteps('slide-up');
 		expect(cfg.enter!.length).toBeGreaterThanOrEqual(3);
 
@@ -77,7 +75,7 @@ describe('getTransitionSteps', () => {
 		}
 	});
 
-	test('\'slide-up\' exit has 3+ frames with strictly increasing marginTop', () => {
+	test("'slide-up' exit has 3+ frames with strictly increasing marginTop", () => {
 		const cfg = getTransitionSteps('slide-up');
 		expect(cfg.exit!.length).toBeGreaterThanOrEqual(3);
 
@@ -87,7 +85,7 @@ describe('getTransitionSteps', () => {
 		}
 	});
 
-	test('\'slide-down\' enter has 3+ frames with strictly decreasing marginBottom', () => {
+	test("'slide-down' enter has 3+ frames with strictly decreasing marginBottom", () => {
 		const cfg = getTransitionSteps('slide-down');
 		expect(cfg.enter!.length).toBeGreaterThanOrEqual(3);
 
@@ -97,7 +95,7 @@ describe('getTransitionSteps', () => {
 		}
 	});
 
-	test('\'slide-left\' enter has 3+ frames with strictly decreasing marginLeft', () => {
+	test("'slide-left' enter has 3+ frames with strictly decreasing marginLeft", () => {
 		const cfg = getTransitionSteps('slide-left');
 		expect(cfg.enter!.length).toBeGreaterThanOrEqual(3);
 
@@ -107,7 +105,7 @@ describe('getTransitionSteps', () => {
 		}
 	});
 
-	test('\'slide-right\' enter has 3+ frames with strictly decreasing marginRight', () => {
+	test("'slide-right' enter has 3+ frames with strictly decreasing marginRight", () => {
 		const cfg = getTransitionSteps('slide-right');
 		expect(cfg.enter!.length).toBeGreaterThanOrEqual(3);
 
@@ -117,7 +115,7 @@ describe('getTransitionSteps', () => {
 		}
 	});
 
-	test('\'fade\' is a 2-frame height-grow (terminals have no real opacity)', () => {
+	test("'fade' is a 2-frame height-grow (terminals have no real opacity)", () => {
 		const cfg = getTransitionSteps('fade');
 		expect(cfg.enter).toHaveLength(2);
 		expect(cfg.exit).toHaveLength(2);
@@ -177,10 +175,7 @@ describe('mergeTransitionStyle', () => {
 	});
 
 	test('base keys not in transition are preserved', () => {
-		const result = mergeTransitionStyle(
-			{width: 20, height: 10},
-			{height: 5},
-		);
+		const result = mergeTransitionStyle({width: 20, height: 10}, {height: 5});
 		expect(result).toEqual({width: 20, height: 5});
 	});
 
@@ -207,7 +202,7 @@ describe('mergeTransitionStyle', () => {
 describe('useEnterExit', () => {
 	// ── 'none' transition: instant skip ─────────────────────────────
 
-	test('with \'none\' (single-frame) config, visible=true goes straight to \'visible\'', async () => {
+	test("with 'none' (single-frame) config, visible=true goes straight to 'visible'", async () => {
 		const config = getTransitionSteps('none');
 		let snapshot: HookSnapshot | undefined;
 
@@ -229,7 +224,7 @@ describe('useEnterExit', () => {
 		unmount();
 	});
 
-	test('with \'none\' (single-frame) config, visible=false is \'exited\'', async () => {
+	test("with 'none' (single-frame) config, visible=false is 'exited'", async () => {
 		const config = getTransitionSteps('none');
 		let snapshot: HookSnapshot | undefined;
 

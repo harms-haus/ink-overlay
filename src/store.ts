@@ -16,9 +16,7 @@ import {generateId} from './id.js';
  */
 export class OverlayStore {
 	private readonly overlays = new Map<string, OverlayEntry>();
-	private readonly listeners = new Set<
-	(entries: OverlayEntry[]) => void
-	>();
+	private readonly listeners = new Set<(entries: OverlayEntry[]) => void>();
 
 	/**
 	 * Open a new overlay.
@@ -77,9 +75,7 @@ export class OverlayStore {
 	 *
 	 * @returns An unsubscribe function.
 	 */
-	subscribe(
-		listener: (entries: OverlayEntry[]) => void,
-	): () => void {
+	subscribe(listener: (entries: OverlayEntry[]) => void): () => void {
 		this.listeners.add(listener);
 
 		// Immediate synchronous call with current state.

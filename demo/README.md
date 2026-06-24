@@ -32,13 +32,13 @@ It executes `demo/app.tsx` directly against the TypeScript source via a separate
 
 ## Controls
 
-| Key      | Action                                                              |
-| -------- | ------------------------------------------------------------------- |
+| Key       | Action                                                              |
+| --------- | ------------------------------------------------------------------- |
 | `↑` / `↓` | Move the highlight in the scene menu                                |
-| `Enter`  | Open the highlighted scene                                          |
-| `Esc`    | Leave the active scene and return to the menu (no-op on the menu)   |
-| `q`      | Quit the entire app                                                 |
-| `Ctrl+C` | Force-exit the process (kept working via Ink's `exitOnCtrlC: true`) |
+| `Enter`   | Open the highlighted scene                                          |
+| `Esc`     | Leave the active scene and return to the menu (no-op on the menu)   |
+| `q`       | Quit the entire app                                                 |
+| `Ctrl+C`  | Force-exit the process (kept working via Ink's `exitOnCtrlC: true`) |
 
 > **Cooperative input model.** The global `q` and `Esc` hotkeys are **voluntarily gated** on `useInputCaptureState()` — they yield whenever a capturing overlay (a `<Modal>` or the `<CommandPalette>`) is open. This means you cannot accidentally quit or back out while a modal is on screen. Individual scenes gate their own `useInput` listeners the same way. The framework cannot enforce this; it is a contract every background component must honor. See [Input & Focus](../docs/concepts/input-and-focus.md) for the full model.
 
@@ -46,21 +46,21 @@ It executes `demo/app.tsx` directly against the TypeScript source via a separate
 
 The menu renders this registry verbatim — order below is the order shown on screen.
 
-| #  | Scene                          | What it demonstrates                                                              |
-| -- | ------------------------------ | --------------------------------------------------------------------------------- |
-| 01 | **Getting Started**            | `OverlayHost`, declarative `<Modal>`, imperative toasts                            |
-| 02 | **Layer & Anchors**            | 9 anchor positions, explicit offsets, overflow, margin                            |
-| 03 | **Backdrop**                    | `none` / `dim` / `opaque`, custom color, `onBackdropInput`                        |
-| 04 | **Z-Ordering**                 | `z` paint order across stacked layers                                             |
-| 05 | **Modal Deep-Dive**            | Every `<Modal>` prop, `alertdialog`, role variants                                |
-| 06 | **Popover**                     | `anchorRef`, placements, flip/shift, `collisionPadding`                          |
-| 07 | **Tooltip**                     | Key/focus triggers, custom `triggerKey` & `dismissDelay`                          |
-| 08 | **Toasts**                      | Imperative `toasts` service + presentational `<Toast>`                            |
-| 09 | **Command Palette**            | Filtering, navigation, windowing, custom `renderItem`                             |
-| 10 | **Animations**                  | Named transitions (`fade`, `slide-*`), custom config, exit animations             |
-| 11 | **Imperative Overlay**         | `overlay.open` / `close` / `closeAll` / `update`                                  |
-| 12 | **Input & Focus**              | Capture gating, LIFO dispatch, `FocusTrap`, nesting                               |
-| 13 | **Runtime & Environments**     | `getRuntimeInfo`, Bun / non-TTY graceful degradation                              |
+| #   | Scene                      | What it demonstrates                                                  |
+| --- | -------------------------- | --------------------------------------------------------------------- |
+| 01  | **Getting Started**        | `OverlayHost`, declarative `<Modal>`, imperative toasts               |
+| 02  | **Layer & Anchors**        | 9 anchor positions, explicit offsets, overflow, margin                |
+| 03  | **Backdrop**               | `none` / `dim` / `opaque`, custom color, `onBackdropInput`            |
+| 04  | **Z-Ordering**             | `z` paint order across stacked layers                                 |
+| 05  | **Modal Deep-Dive**        | Every `<Modal>` prop, `alertdialog`, role variants                    |
+| 06  | **Popover**                | `anchorRef`, placements, flip/shift, `collisionPadding`               |
+| 07  | **Tooltip**                | Key/focus triggers, custom `triggerKey` & `dismissDelay`              |
+| 08  | **Toasts**                 | Imperative `toasts` service + presentational `<Toast>`                |
+| 09  | **Command Palette**        | Filtering, navigation, windowing, custom `renderItem`                 |
+| 10  | **Animations**             | Named transitions (`fade`, `slide-*`), custom config, exit animations |
+| 11  | **Imperative Overlay**     | `overlay.open` / `close` / `closeAll` / `update`                      |
+| 12  | **Input & Focus**          | Capture gating, LIFO dispatch, `FocusTrap`, nesting                   |
+| 13  | **Runtime & Environments** | `getRuntimeInfo`, Bun / non-TTY graceful degradation                  |
 
 Source files live in [`demo/scenes/`](./scenes/), named to match the registry order (e.g. `01-overlay-host.tsx` … `13-runtime.tsx`). Note the **mixed export styles**: scenes `01` and `03` use named exports; all others use default exports.
 
@@ -74,16 +74,16 @@ These notes are for developers reading the demo source. They mirror the extensiv
 
 ### Only one scene is mounted at a time
 
-`App` renders either the menu *or* exactly one scene (`activeScene ? <Scene/> : <Menu/>`). This is deliberate: each scene registers its own `useInput` listener, and Ink has no event-consumption mechanism — every active `useInput` callback fires on every keypress. Mounting several scenes at once would let their listeners collide. Mounting just one at a time keeps exactly one set of input handlers active.
+`App` renders either the menu _or_ exactly one scene (`activeScene ? <Scene/> : <Menu/>`). This is deliberate: each scene registers its own `useInput` listener, and Ink has no event-consumption mechanism — every active `useInput` callback fires on every keypress. Mounting several scenes at once would let their listeners collide. Mounting just one at a time keeps exactly one set of input handlers active.
 
 ### Global hotkeys live inside the host
 
 The app is split into two components:
 
 - **`App`** — the root. Owns the active-scene state and mounts `<OverlayHost>`.
-- **`DemoShell`** — rendered *inside* `<OverlayHost>`. Owns the global `q` / `Esc` hotkeys and switches between the menu and the active scene.
+- **`DemoShell`** — rendered _inside_ `<OverlayHost>`. Owns the global `q` / `Esc` hotkeys and switches between the menu and the active scene.
 
-This split is mandatory. `useInputCaptureState()` (and every other overlay hook) reads from the `InputDispatcher` context, which is only provided *inside* the `<OverlayHost>` subtree. `App` is the *parent* of the host, so calling `useInputCaptureState()` there throws `useInputDispatcher must be used within an <InputDispatcher>`. `DemoShell`, being a child of the host, is within the context.
+This split is mandatory. `useInputCaptureState()` (and every other overlay hook) reads from the `InputDispatcher` context, which is only provided _inside_ the `<OverlayHost>` subtree. `App` is the _parent_ of the host, so calling `useInputCaptureState()` there throws `useInputDispatcher must be used within an <InputDispatcher>`. `DemoShell`, being a child of the host, is within the context.
 
 ### Every scene gates itself (the cooperative input model)
 

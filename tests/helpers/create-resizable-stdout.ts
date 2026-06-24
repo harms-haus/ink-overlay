@@ -70,9 +70,10 @@ type ResizableStdout = {
  * Ink uses REAL timers — tests must `await delay(...)` after rendering or
  * resize to let frames flush.
  */
-export function createResizableStdout(
-	initial?: {columns?: number; rows?: number},
-): ResizableStdout {
+export function createResizableStdout(initial?: {
+	columns?: number;
+	rows?: number;
+}): ResizableStdout {
 	const columns = initial?.columns ?? 80;
 	const rows = initial?.rows ?? 24;
 
@@ -155,8 +156,8 @@ export function renderResizable(
 	tree: ReactElement,
 	options?: {columns?: number; rows?: number},
 ): RenderResizableResult {
-	const {stdout, stdin, resize, getFrames, lastFrame, cleanup}
-		= createResizableStdout(options);
+	const {stdout, stdin, resize, getFrames, lastFrame, cleanup} =
+		createResizableStdout(options);
 
 	const instance = render(tree, {
 		stdout,

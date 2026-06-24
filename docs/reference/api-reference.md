@@ -138,20 +138,20 @@ export type LayerOpts = {
 
 Field semantics:
 
-| Field | Purpose |
-| --- | --- |
-| `anchor` | Viewport region to pin the layer to ([Anchor](#anchor)). |
+| Field                               | Purpose                                                                                       |
+| ----------------------------------- | --------------------------------------------------------------------------------------------- |
+| `anchor`                            | Viewport region to pin the layer to ([Anchor](#anchor)).                                      |
 | `top` / `left` / `right` / `bottom` | Explicit position overrides (number or `'%'` string); take precedence over `anchor` when set. |
-| `z` | Stacking order; higher draws on top. Ties broken by insertion order. |
-| `capture` | When `true`, the layer claims keyboard focus (focus trap / input capture). |
-| `backdrop` | Backdrop mode ([BackdropKind](#backdropkind)). |
-| `backdropColor` | Optional color override for the backdrop. |
-| `role` | ARIA role ([Role](#role)). |
-| `overflow` | `'visible'` (default) or `'hidden'`. |
-| `margin` | Inward insets per edge ([OffsetEdges](#offsetedges)). |
-| `transition` | Named transition or inline config (see [Animation](../concepts/animation.md)). |
-| `onDismiss` | Called when the layer is dismissed (e.g. Escape on a capturing layer). |
-| `onBackdropInput` | Called when input lands on the backdrop. |
+| `z`                                 | Stacking order; higher draws on top. Ties broken by insertion order.                          |
+| `capture`                           | When `true`, the layer claims keyboard focus (focus trap / input capture).                    |
+| `backdrop`                          | Backdrop mode ([BackdropKind](#backdropkind)).                                                |
+| `backdropColor`                     | Optional color override for the backdrop.                                                     |
+| `role`                              | ARIA role ([Role](#role)).                                                                    |
+| `overflow`                          | `'visible'` (default) or `'hidden'`.                                                          |
+| `margin`                            | Inward insets per edge ([OffsetEdges](#offsetedges)).                                         |
+| `transition`                        | Named transition or inline config (see [Animation](../concepts/animation.md)).                |
+| `onDismiss`                         | Called when the layer is dismissed (e.g. Escape on a capturing layer).                        |
+| `onBackdropInput`                   | Called when input lands on the backdrop.                                                      |
 
 ### `OverlayDescriptor`
 
@@ -259,25 +259,23 @@ export type FilterFunction = (
 
 All helpers below are pure (no I/O, no global side effects) unless noted, and are safe to call outside React.
 
-| Export | Signature | Description |
-| --- | --- | --- |
-| [`anchorToFlexbox`](#anchortoflexbox) | `(anchor: Anchor) => {alignItems; justifyContent}` | Maps an `Anchor` to `alignItems`/`justifyContent` for a `flexDirection='row'` wrapper. |
-| [`computeAnchorCoords`](#computeanchorcoords) | `(anchor, viewport, layerSize, margin?) => {top, left}` | Pure coordinate math for anchoring a layer of known size inside a viewport. |
-| [`computePopoverPosition`](#computepopoverposition) | `(anchorRect, popoverSize, viewport, placement, opts?) => {top, left, placement}` | Popover positioning with flip + shift collision handling. |
-| [`sortLayers`](#sortlayers) | `<T extends {z: number; order: number}>(layers: T[]) => T[]` | Returns a new array sorted ascending by `(z, order)`; non-mutating. |
-| [`isBun`](#isbun) | `() => boolean` | `true` when `globalThis.Bun` is defined. |
-| [`isNonInteractive`](#isnoninteractive) | `() => boolean` | `true` when stdout is not a TTY or `CI` is set. |
-| [`getRuntimeInfo`](#getruntimeinfo) | `() => RuntimeInfo` | Snapshot of `bun`, `interactive`, `rawModeSupported`. |
-| [`defaultToastColors`](#defaulttoastcolors) | `Record<ToastKind, string>` | Default color per `ToastKind`. |
-| [`resolveTransition`](#resolvetransition) | `(transition) => TransitionConfig \| undefined` | Normalizes a name/config/undefined to a config. |
-| [`getTransitionSteps`](#gettransitionsteps) | `(name: TransitionName) => TransitionConfig` | Returns the cached built-in config for a named transition. |
+| Export                                              | Signature                                                                         | Description                                                                            |
+| --------------------------------------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| [`anchorToFlexbox`](#anchortoflexbox)               | `(anchor: Anchor) => {alignItems; justifyContent}`                                | Maps an `Anchor` to `alignItems`/`justifyContent` for a `flexDirection='row'` wrapper. |
+| [`computeAnchorCoords`](#computeanchorcoords)       | `(anchor, viewport, layerSize, margin?) => {top, left}`                           | Pure coordinate math for anchoring a layer of known size inside a viewport.            |
+| [`computePopoverPosition`](#computepopoverposition) | `(anchorRect, popoverSize, viewport, placement, opts?) => {top, left, placement}` | Popover positioning with flip + shift collision handling.                              |
+| [`sortLayers`](#sortlayers)                         | `<T extends {z: number; order: number}>(layers: T[]) => T[]`                      | Returns a new array sorted ascending by `(z, order)`; non-mutating.                    |
+| [`isBun`](#isbun)                                   | `() => boolean`                                                                   | `true` when `globalThis.Bun` is defined.                                               |
+| [`isNonInteractive`](#isnoninteractive)             | `() => boolean`                                                                   | `true` when stdout is not a TTY or `CI` is set.                                        |
+| [`getRuntimeInfo`](#getruntimeinfo)                 | `() => RuntimeInfo`                                                               | Snapshot of `bun`, `interactive`, `rawModeSupported`.                                  |
+| [`defaultToastColors`](#defaulttoastcolors)         | `Record<ToastKind, string>`                                                       | Default color per `ToastKind`.                                                         |
+| [`resolveTransition`](#resolvetransition)           | `(transition) => TransitionConfig \| undefined`                                   | Normalizes a name/config/undefined to a config.                                        |
+| [`getTransitionSteps`](#gettransitionsteps)         | `(name: TransitionName) => TransitionConfig`                                      | Returns the cached built-in config for a named transition.                             |
 
 ### `anchorToFlexbox`
 
 ```ts
-export function anchorToFlexbox(
-	anchor: Anchor,
-): {
+export function anchorToFlexbox(anchor: Anchor): {
 	alignItems: 'flex-start' | 'center' | 'flex-end';
 	justifyContent: 'flex-start' | 'center' | 'flex-end';
 };
@@ -321,7 +319,9 @@ Computes popover coordinates relative to `anchorRect` (root-relative). Defaults:
 ### `sortLayers`
 
 ```ts
-export function sortLayers<T extends {z: number; order: number}>(layers: T[]): T[];
+export function sortLayers<T extends {z: number; order: number}>(
+	layers: T[],
+): T[];
 ```
 
 Returns a **new** array (the input is not mutated) sorted ascending by `z`, with ties broken by `order` ascending. The companion comparator `compareLayers` is defined in `src/primitives.ts` but is not re-exported from the public barrel.
@@ -366,12 +366,12 @@ export const defaultToastColors: Record<ToastKind, string>;
 
 The default color per `ToastKind`:
 
-| `ToastKind` | Color |
-| --- | --- |
-| `success` | `'green'` |
-| `error` | `'red'` |
-| `warn` | `'yellow'` |
-| `info` | `'blue'` |
+| `ToastKind` | Color      |
+| ----------- | ---------- |
+| `success`   | `'green'`  |
+| `error`     | `'red'`    |
+| `warn`      | `'yellow'` |
+| `info`      | `'blue'`   |
 
 These strings are passed straight to Ink's `color` prop, so any value Ink accepts (named color, hex, `rgb()`) is valid when overriding. Used internally by the `Toast` component for both the border and the icon/text color.
 
@@ -393,13 +393,13 @@ export function getTransitionSteps(name: TransitionName): TransitionConfig;
 
 Returns the built-in enter/exit frame sequence for a named transition. Results are memoized in a module-level `Map<TransitionName, TransitionConfig>` keyed by name, so repeated calls return the same cached object. Each named transition maps to a fixed `TransitionConfig`:
 
-| Name | Effect | `duration` |
-| --- | --- | --- |
-| `none` | Single empty-style enter/exit frame (no animation). | `0` |
-| `fade` | Stepped `height` 0→1 grow on enter, 1→0 collapse on exit. Named "fade" for API compatibility — terminals have no real opacity. | `80` |
-| `slide-up` | `marginTop` 4→2→0 on enter, 0→2→4 on exit. | `80` |
-| `slide-down` | `marginBottom` 4→2→0 on enter, 0→2→4 on exit. | `80` |
-| `slide-left` | `marginLeft` 4→2→0 on enter, 0→2→4 on exit. | `80` |
-| `slide-right` | `marginRight` 4→2→0 on enter, 0→2→4 on exit. | `80` |
+| Name          | Effect                                                                                                                         | `duration` |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| `none`        | Single empty-style enter/exit frame (no animation).                                                                            | `0`        |
+| `fade`        | Stepped `height` 0→1 grow on enter, 1→0 collapse on exit. Named "fade" for API compatibility — terminals have no real opacity. | `80`       |
+| `slide-up`    | `marginTop` 4→2→0 on enter, 0→2→4 on exit.                                                                                     | `80`       |
+| `slide-down`  | `marginBottom` 4→2→0 on enter, 0→2→4 on exit.                                                                                  | `80`       |
+| `slide-left`  | `marginLeft` 4→2→0 on enter, 0→2→4 on exit.                                                                                    | `80`       |
+| `slide-right` | `marginRight` 4→2→0 on enter, 0→2→4 on exit.                                                                                   | `80`       |
 
 The fallback `default` case (reachable only if an unknown name bypasses the type system) yields the same config as `none`. See [Animation](../concepts/animation.md) and [Animations service](../services/animations.md) for how these configs are consumed by the `useEnterExit` hook.

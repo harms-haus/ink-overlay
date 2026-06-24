@@ -207,8 +207,8 @@ export default function Scene05ModalDeepdive() {
 
 	return (
 		<SceneShell
-			title='Scene 05 — Modal Deep Dive'
-			description='Every <Modal> prop, role=alertdialog, and bare toast/tooltip Layers.'
+			title="Scene 05 — Modal Deep Dive"
+			description="Every <Modal> prop, role=alertdialog, and bare toast/tooltip Layers."
 			hints={[
 				{key: '1', label: 'standard modal'},
 				{key: '2', label: 'custom modal'},
@@ -219,14 +219,14 @@ export default function Scene05ModalDeepdive() {
 			]}
 		>
 			{/* ── Instructional copy ──────────────────────────────── */}
-			<Box flexDirection='column'>
+			<Box flexDirection="column">
 				<Text>
-					Press <Text bold>1</Text>–<Text bold>5</Text> to toggle each
-					overlay variant.
+					Press <Text bold>1</Text>–<Text bold>5</Text> to toggle each overlay
+					variant.
 				</Text>
 				<Text dimColor>
-					The alertdialog blocks Esc and click-away — Ctrl+C exits the
-					whole demo.
+					The alertdialog blocks Esc and click-away — Ctrl+C exits the whole
+					demo.
 				</Text>
 			</Box>
 
@@ -267,7 +267,7 @@ export default function Scene05ModalDeepdive() {
 					/* Side-effects only */
 				}}
 				/* Title — default undefined (no header row). */
-				title='Standard Modal'
+				title="Standard Modal"
 			>
 				<Text>Basic dialog. Esc or click-away dismisses.</Text>
 			</Modal>
@@ -293,15 +293,15 @@ export default function Scene05ModalDeepdive() {
 				open={showCustom}
 				onOpenChange={setShowCustom}
 				/* Title — default undefined. */
-				title='Custom Styled'
+				title="Custom Styled"
 				/* Footer — default undefined (no footer row). */
-				footer='Press Esc to close'
+				footer="Press Esc to close"
 				/* Width — default 50. */
 				width={40}
 				/* BorderStyle — default 'round'. */
-				borderStyle='single'
+				borderStyle="single"
 				/* BorderColor — default 'cyan'. */
-				borderColor='magenta'
+				borderColor="magenta"
 			>
 				<Text>Custom width, border, and footer.</Text>
 			</Modal>
@@ -339,17 +339,16 @@ export default function Scene05ModalDeepdive() {
 				 * AND backdrop dismissal. Use for destructive
 				 * confirmations.
 				 */
-				role='alertdialog'
-				title='Confirm Action'
-				footer='Esc is blocked — press Enter (or c) to acknowledge and close'
+				role="alertdialog"
+				title="Confirm Action"
+				footer="Esc is blocked — press Enter (or c) to acknowledge and close"
 			>
 				<Text>
-					Destructive confirmation. Escape and click-away are both
-					blocked.
+					Destructive confirmation. Escape and click-away are both blocked.
 				</Text>
 				<Text dimColor>
-					Press Enter (or c) to acknowledge and close — this is the
-					in-modal useRegisterInput dismiss path.
+					Press Enter (or c) to acknowledge and close — this is the in-modal
+					useRegisterInput dismiss path.
 				</Text>
 				{/*
 				 * A real app would render confirm/cancel buttons here. We
@@ -357,9 +356,11 @@ export default function Scene05ModalDeepdive() {
 				 * consumer MUST provide the close path and that
 				 * useRegisterInput still fires inside a capturing layer.
 				 */}
-				<AlertDialogDismiss onClose={() => {
-					setShowAlert(false);
-				}} />
+				<AlertDialogDismiss
+					onClose={() => {
+						setShowAlert(false);
+					}}
+				/>
 			</Modal>
 
 			{/*
@@ -377,8 +378,8 @@ export default function Scene05ModalDeepdive() {
 			 * ════════════════════════════════════════════════════════
 			 */}
 			{showRoleToast && (
-				<Layer role='toast' anchor='bottom-right' z={10} open>
-					<Box borderStyle='round' paddingX={1}>
+				<Layer role="toast" anchor="bottom-right" z={10} open>
+					<Box borderStyle="round" paddingX={1}>
 						<Text dimColor>A bare Layer with role='toast'</Text>
 					</Box>
 				</Layer>
@@ -396,8 +397,8 @@ export default function Scene05ModalDeepdive() {
 			 * ════════════════════════════════════════════════════════
 			 */}
 			{showRoleTooltip && (
-				<Layer role='tooltip' anchor='top' z={10} open>
-					<Box borderStyle='round' paddingX={1}>
+				<Layer role="tooltip" anchor="top" z={10} open>
+					<Box borderStyle="round" paddingX={1}>
 						<Text dimColor>A bare Layer with role='tooltip'</Text>
 					</Box>
 				</Layer>

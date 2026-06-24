@@ -6,9 +6,7 @@
  *
  * Uses REAL timers — ink breaks with fake timers.
  */
-import {
-	test, expect, afterEach, vi,
-} from 'vitest';
+import {test, expect, afterEach, vi} from 'vitest';
 import {useEffect} from 'react';
 import {Text} from 'ink';
 import {render} from 'ink-testing-library';

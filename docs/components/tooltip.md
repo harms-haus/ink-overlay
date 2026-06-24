@@ -4,20 +4,20 @@
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `anchorRef` | `RefObject<DOMElement \| null>` | — | Ref attached to the anchor element the tooltip is positioned relative to. **Required.** |
-| `content` | `ReactNode` | — | Text/content rendered inside the tooltip. **Required.** |
-| `placement` | `Placement` | `'top'` | Preferred placement relative to the anchor. See [Popover](./popover.md) for the full list of 12 values. |
-| `trigger` | `'focus' \| 'key'` | `'key'` | Trigger mode: keyboard toggle or anchor focus. |
-| `triggerKey` | `string` | `'?'` | Key that toggles the tooltip in `'key'` mode. |
-| `anchorFocused` | `boolean` | — | Consumer-driven focus state for `'focus'` mode. Typically wired to `useFocus().isFocused`. `true` → show, `false` → hide. |
-| `dismissDelay` | `number` | `3000` | Auto-dismiss delay in milliseconds. |
-| `offset` | `number` | — | Main-axis offset (character cells) from the anchor edge. Passed through to `<Popover>`. |
-| `crossOffset` | `number` | — | Cross-axis offset. Passed through to `<Popover>`. |
-| `flip` | `boolean` | — | Allow placement to flip on overflow. Passed through to `<Popover>`. |
-| `shift` | `boolean` | — | Clamp position within the viewport. Passed through to `<Popover>`. |
-| `z` | `number` | `10` | Z-level for sorting — higher renders on top. |
+| Prop            | Type                            | Default | Description                                                                                                               |
+| --------------- | ------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `anchorRef`     | `RefObject<DOMElement \| null>` | —       | Ref attached to the anchor element the tooltip is positioned relative to. **Required.**                                   |
+| `content`       | `ReactNode`                     | —       | Text/content rendered inside the tooltip. **Required.**                                                                   |
+| `placement`     | `Placement`                     | `'top'` | Preferred placement relative to the anchor. See [Popover](./popover.md) for the full list of 12 values.                   |
+| `trigger`       | `'focus' \| 'key'`              | `'key'` | Trigger mode: keyboard toggle or anchor focus.                                                                            |
+| `triggerKey`    | `string`                        | `'?'`   | Key that toggles the tooltip in `'key'` mode.                                                                             |
+| `anchorFocused` | `boolean`                       | —       | Consumer-driven focus state for `'focus'` mode. Typically wired to `useFocus().isFocused`. `true` → show, `false` → hide. |
+| `dismissDelay`  | `number`                        | `3000`  | Auto-dismiss delay in milliseconds.                                                                                       |
+| `offset`        | `number`                        | —       | Main-axis offset (character cells) from the anchor edge. Passed through to `<Popover>`.                                   |
+| `crossOffset`   | `number`                        | —       | Cross-axis offset. Passed through to `<Popover>`.                                                                         |
+| `flip`          | `boolean`                       | —       | Allow placement to flip on overflow. Passed through to `<Popover>`.                                                       |
+| `shift`         | `boolean`                       | —       | Clamp position within the viewport. Passed through to `<Popover>`.                                                        |
+| `z`             | `number`                        | `10`    | Z-level for sorting — higher renders on top.                                                                              |
 
 ## Trigger modes
 
@@ -45,22 +45,22 @@ import {Box, Text, type DOMElement} from 'ink';
 import {OverlayHost, Tooltip} from '@harms-haus/ink-overlay';
 
 function App() {
-  const ref = useRef<DOMElement>(null);
+	const ref = useRef<DOMElement>(null);
 
-  return (
-    <OverlayHost>
-      <Box ref={ref} paddingX={1}>
-        <Text>Save (press ? for help)</Text>
-      </Box>
+	return (
+		<OverlayHost>
+			<Box ref={ref} paddingX={1}>
+				<Text>Save (press ? for help)</Text>
+			</Box>
 
-      <Tooltip
-        anchorRef={ref}
-        placement="top"
-        triggerKey="?"
-        content="Ctrl+S saves the current file"
-      />
-    </OverlayHost>
-  );
+			<Tooltip
+				anchorRef={ref}
+				placement="top"
+				triggerKey="?"
+				content="Ctrl+S saves the current file"
+			/>
+		</OverlayHost>
+	);
 }
 ```
 
@@ -72,41 +72,41 @@ Wire `anchorFocused` to ink's `useFocus().isFocused`. The tooltip appears when t
 import {useRef} from 'react';
 import {Box, Text, useFocus, type DOMElement} from 'ink';
 import {
-  OverlayHost,
-  Tooltip,
-  useInputCaptureState,
+	OverlayHost,
+	Tooltip,
+	useInputCaptureState,
 } from '@harms-haus/ink-overlay';
 
 function Field() {
-  const ref = useRef<DOMElement>(null);
-  const isCaptured = useInputCaptureState();
-  const {isFocused} = useFocus({isActive: !isCaptured});
+	const ref = useRef<DOMElement>(null);
+	const isCaptured = useInputCaptureState();
+	const {isFocused} = useFocus({isActive: !isCaptured});
 
-  return (
-    <>
-      <Box ref={ref}>
-        <Text>{isFocused ? '[ Name ]' : 'Name'}</Text>
-      </Box>
+	return (
+		<>
+			<Box ref={ref}>
+				<Text>{isFocused ? '[ Name ]' : 'Name'}</Text>
+			</Box>
 
-      <Tooltip
-        anchorRef={ref}
-        trigger="focus"
-        anchorFocused={isFocused}
-        placement="bottom-start"
-        offset={0}
-        dismissDelay={5000}
-        content="Enter your full display name"
-      />
-    </>
-  );
+			<Tooltip
+				anchorRef={ref}
+				trigger="focus"
+				anchorFocused={isFocused}
+				placement="bottom-start"
+				offset={0}
+				dismissDelay={5000}
+				content="Enter your full display name"
+			/>
+		</>
+	);
 }
 
 function App() {
-  return (
-    <OverlayHost>
-      <Field />
-    </OverlayHost>
-  );
+	return (
+		<OverlayHost>
+			<Field />
+		</OverlayHost>
+	);
 }
 ```
 
@@ -114,12 +114,12 @@ function App() {
 
 ```tsx
 <Tooltip
-  anchorRef={ref}
-  triggerKey="h"
-  placement="right"
-  offset={2}
-  dismissDelay={10_000}
-  content="Press h again to hide this hint"
+	anchorRef={ref}
+	triggerKey="h"
+	placement="right"
+	offset={2}
+	dismissDelay={10_000}
+	content="Press h again to hide this hint"
 />
 ```
 

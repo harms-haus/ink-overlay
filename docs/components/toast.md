@@ -6,11 +6,11 @@ The `<Toast>` component renders a single rounded-border row with an icon and mes
 
 ### Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `kind` | `ToastKind` (`'success' \| 'error' \| 'info' \| 'warn'`) | `'info'` | Selects the border/icon color via `defaultToastColors`. |
-| `children` | `ReactNode` | — | The toast message content. Rendered after a single leading space. |
-| `icon` | `ReactNode` | per-kind default icon | Custom icon override. When omitted, defaults to `'✓'` / `'✗'` / `'⚠'` / `'ℹ'` for success/error/warn/info respectively. |
+| Prop       | Type                                                     | Default               | Description                                                                                                             |
+| ---------- | -------------------------------------------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `kind`     | `ToastKind` (`'success' \| 'error' \| 'info' \| 'warn'`) | `'info'`              | Selects the border/icon color via `defaultToastColors`.                                                                 |
+| `children` | `ReactNode`                                              | —                     | The toast message content. Rendered after a single leading space.                                                       |
+| `icon`     | `ReactNode`                                              | per-kind default icon | Custom icon override. When omitted, defaults to `'✓'` / `'✗'` / `'⚠'` / `'ℹ'` for success/error/warn/info respectively. |
 
 ### Rendering
 
@@ -20,12 +20,12 @@ The `<Toast>` component renders a single rounded-border row with an icon and mes
 
 Exported from `src/toast.tsx` as `Record<ToastKind, string>`:
 
-| Kind | Color |
-|------|-------|
-| `success` | `'green'` |
-| `error` | `'red'` |
-| `warn` | `'yellow'` |
-| `info` | `'blue'` |
+| Kind      | Color      |
+| --------- | ---------- |
+| `success` | `'green'`  |
+| `error`   | `'red'`    |
+| `warn`    | `'yellow'` |
+| `info`    | `'blue'`   |
 
 Import it to reference or override the per-kind palette in custom toast rendering.
 
@@ -36,18 +36,20 @@ import {Box, Text} from 'ink';
 import {Toast, defaultToastColors} from '@harms-haus/ink-overlay';
 
 function App() {
-  return (
-    <Box flexDirection="column" gap={1}>
-      {/* Each toast uses its default icon + color */}
-      <Toast kind="success">File saved</Toast>
-      <Toast kind="error">Connection failed</Toast>
-      <Toast kind="warn">Slow network</Toast>
-      <Toast kind="info">Syncing…</Toast>
+	return (
+		<Box flexDirection="column" gap={1}>
+			{/* Each toast uses its default icon + color */}
+			<Toast kind="success">File saved</Toast>
+			<Toast kind="error">Connection failed</Toast>
+			<Toast kind="warn">Slow network</Toast>
+			<Toast kind="info">Syncing…</Toast>
 
-      {/* Custom icon override */}
-      <Toast kind="success" icon="★">Starred</Toast>
-    </Box>
-  );
+			{/* Custom icon override */}
+			<Toast kind="success" icon="★">
+				Starred
+			</Toast>
+		</Box>
+	);
 }
 ```
 

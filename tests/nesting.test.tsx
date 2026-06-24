@@ -72,11 +72,11 @@ test('nesting: parent modal + popover + child modal stack correctly; input follo
 					onOpenChange={setParentOpen}
 					z={10}
 					capture
-					anchor='center'
+					anchor="center"
 				>
 					<InputCapture
-						id='parent'
-						label='PARENT-MODAL'
+						id="parent"
+						label="PARENT-MODAL"
 						onKey={() => {
 							calls.push('parent');
 						}}
@@ -87,7 +87,7 @@ test('nesting: parent modal + popover + child modal stack correctly; input follo
 					open={popoverOpen}
 					onOpenChange={setPopoverOpen}
 					z={20}
-					anchor='top-left'
+					anchor="top-left"
 				>
 					<Text>POPOVER</Text>
 				</Layer>
@@ -97,11 +97,11 @@ test('nesting: parent modal + popover + child modal stack correctly; input follo
 					onOpenChange={setChildOpen}
 					z={30}
 					capture
-					anchor='bottom-right'
+					anchor="bottom-right"
 				>
 					<InputCapture
-						id='child'
-						label='CHILD-MODAL'
+						id="child"
+						label="CHILD-MODAL"
 						onKey={() => {
 							calls.push('child');
 						}}

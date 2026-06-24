@@ -16,9 +16,7 @@
  * previous focus ID and disable global Tab navigation.  A boolean first
  * arg is the cleanest way to drive enter/exit lifecycle from a parent.
  */
-import {
-	test, expect, vi, afterEach,
-} from 'vitest';
+import {test, expect, vi, afterEach} from 'vitest';
 import React, {type ReactNode} from 'react';
 import {render} from 'ink-testing-library';
 import {Text, useFocus, useFocusManager} from 'ink';
@@ -80,8 +78,8 @@ afterEach(async () => {
 test('Tab cycles focus forward between trap children', async () => {
 	const {stdin, lastFrame} = renderTrapTree(
 		{active: true},
-		<FocusableChild id='A' />,
-		<FocusableChild id='B' />,
+		<FocusableChild id="A" />,
+		<FocusableChild id="B" />,
 	);
 
 	await delay(100);
@@ -118,8 +116,8 @@ test('Tab cycles focus forward between trap children', async () => {
 test('Shift+Tab cycles focus backward between trap children', async () => {
 	const {stdin, lastFrame} = renderTrapTree(
 		{active: true},
-		<FocusableChild id='A' />,
-		<FocusableChild id='B' />,
+		<FocusableChild id="A" />,
+		<FocusableChild id="B" />,
 	);
 
 	await delay(100);
@@ -146,7 +144,7 @@ test('Escape key triggers onEscape callback and is consumed', async () => {
 
 	const {stdin} = renderTrapTree(
 		{active: true, onEscape},
-		<FocusableChild id='A' />,
+		<FocusableChild id="A" />,
 	);
 
 	await delay(100);
@@ -165,8 +163,8 @@ test('Escape key triggers onEscape callback and is consumed', async () => {
 test('background focusable is NOT focused while the trap is active', async () => {
 	const {stdin, lastFrame} = renderTrapTree(
 		{active: true},
-		<FocusableChild id='A' />,
-		<FocusableChild id='B' />,
+		<FocusableChild id="A" />,
+		<FocusableChild id="B" />,
 	);
 
 	await delay(100);
@@ -200,7 +198,7 @@ test('deactivating the trap restores Ink focus management', async () => {
 		<InputDispatcher>
 			<BackgroundFocusable />
 			<FocusTrap active={trapActive}>
-				<FocusableChild id='A' />
+				<FocusableChild id="A" />
 			</FocusTrap>
 		</InputDispatcher>,
 	);
@@ -218,7 +216,7 @@ test('deactivating the trap restores Ink focus management', async () => {
 		<InputDispatcher>
 			<BackgroundFocusable />
 			<FocusTrap active={trapActive}>
-				<FocusableChild id='A' />
+				<FocusableChild id="A" />
 			</FocusTrap>
 		</InputDispatcher>,
 	);
@@ -244,9 +242,9 @@ test('restoreFocus=true restores focus to previously focused element on deactiva
 
 	const {stdin, rerender, lastFrame} = render(
 		<InputDispatcher>
-			<FocusableChild id='bg' />
+			<FocusableChild id="bg" />
 			<FocusTrap active={trapActive}>
-				<FocusableChild id='A' />
+				<FocusableChild id="A" />
 			</FocusTrap>
 		</InputDispatcher>,
 	);
@@ -262,9 +260,9 @@ test('restoreFocus=true restores focus to previously focused element on deactiva
 	trapActive = true;
 	rerender(
 		<InputDispatcher>
-			<FocusableChild id='bg' />
+			<FocusableChild id="bg" />
 			<FocusTrap active={trapActive}>
-				<FocusableChild id='A' />
+				<FocusableChild id="A" />
 			</FocusTrap>
 		</InputDispatcher>,
 	);
@@ -279,9 +277,9 @@ test('restoreFocus=true restores focus to previously focused element on deactiva
 	trapActive = false;
 	rerender(
 		<InputDispatcher>
-			<FocusableChild id='bg' />
+			<FocusableChild id="bg" />
 			<FocusTrap active={trapActive}>
-				<FocusableChild id='A' />
+				<FocusableChild id="A" />
 			</FocusTrap>
 		</InputDispatcher>,
 	);
@@ -301,9 +299,9 @@ test('restoreFocus=false does NOT restore previous focus on deactivation', async
 
 	const {stdin, rerender, lastFrame} = render(
 		<InputDispatcher>
-			<FocusableChild id='bg' />
+			<FocusableChild id="bg" />
 			<FocusTrap active={trapActive} restoreFocus={false}>
-				<FocusableChild id='A' />
+				<FocusableChild id="A" />
 			</FocusTrap>
 		</InputDispatcher>,
 	);
@@ -319,9 +317,9 @@ test('restoreFocus=false does NOT restore previous focus on deactivation', async
 	trapActive = true;
 	rerender(
 		<InputDispatcher>
-			<FocusableChild id='bg' />
+			<FocusableChild id="bg" />
 			<FocusTrap active={trapActive} restoreFocus={false}>
-				<FocusableChild id='A' />
+				<FocusableChild id="A" />
 			</FocusTrap>
 		</InputDispatcher>,
 	);
@@ -336,9 +334,9 @@ test('restoreFocus=false does NOT restore previous focus on deactivation', async
 	trapActive = false;
 	rerender(
 		<InputDispatcher>
-			<FocusableChild id='bg' />
+			<FocusableChild id="bg" />
 			<FocusTrap active={trapActive} restoreFocus={false}>
-				<FocusableChild id='A' />
+				<FocusableChild id="A" />
 			</FocusTrap>
 		</InputDispatcher>,
 	);
@@ -401,10 +399,10 @@ test('useFocusTrap isTrapped is false when active=false', async () => {
 test('<FocusTrap active={false}> does not interfere with normal focus', async () => {
 	const {stdin, lastFrame} = render(
 		<InputDispatcher>
-			<FocusableChild id='A' />
-			<FocusableChild id='B' />
+			<FocusableChild id="A" />
+			<FocusableChild id="B" />
 			<FocusTrap active={false}>
-				<FocusableChild id='C' />
+				<FocusableChild id="C" />
 			</FocusTrap>
 		</InputDispatcher>,
 	);
@@ -431,7 +429,7 @@ test('unmounting the trap restores focus management', async () => {
 		<InputDispatcher>
 			<BackgroundFocusable />
 			<FocusTrap active={true}>
-				<FocusableChild id='A' />
+				<FocusableChild id="A" />
 			</FocusTrap>
 		</InputDispatcher>,
 	);
@@ -450,7 +448,7 @@ test('unmounting the trap restores focus management', async () => {
 	// Re-render without the trap — focus management should be restored.
 	const result2 = render(
 		<InputDispatcher>
-			<FocusableChild id='bg' />
+			<FocusableChild id="bg" />
 		</InputDispatcher>,
 	);
 
@@ -480,9 +478,9 @@ test('nested traps: inner deactivation keeps focus disabled while outer is still
 			<>
 				<BackgroundFocusable />
 				<FocusTrap active={outerActive}>
-					<FocusableChild id='A' />
+					<FocusableChild id="A" />
 					<FocusTrap active={innerActive}>
-						<FocusableChild id='B' />
+						<FocusableChild id="B" />
 					</FocusTrap>
 				</FocusTrap>
 			</>

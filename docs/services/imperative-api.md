@@ -14,12 +14,12 @@ A thin imperative wrapper around `overlayStore` for opening, closing, and updati
 import {overlay} from '@harms-haus/ink-overlay';
 ```
 
-| Method | Signature | Description |
-|--------|-----------|-------------|
-| `open` | `(content: ReactNode, opts?: LayerOpts) => string` | Open a new overlay. Returns a generated unique id. |
-| `close` | `(id: string) => void` | Close an overlay by id. No-op (no notification) if not found. |
-| `closeAll` | `() => void` | Close every imperative overlay. |
-| `update` | `(id: string, patch: Partial<LayerOpts>, newContent?: ReactNode) => void` | Shallow-merge `patch` into the overlay's opts. If `newContent` is provided, it atomically **replaces** the content in the same update. No-op if the id is not present. |
+| Method     | Signature                                                                 | Description                                                                                                                                                            |
+| ---------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `open`     | `(content: ReactNode, opts?: LayerOpts) => string`                        | Open a new overlay. Returns a generated unique id.                                                                                                                     |
+| `close`    | `(id: string) => void`                                                    | Close an overlay by id. No-op (no notification) if not found.                                                                                                          |
+| `closeAll` | `() => void`                                                              | Close every imperative overlay.                                                                                                                                        |
+| `update`   | `(id: string, patch: Partial<LayerOpts>, newContent?: ReactNode) => void` | Shallow-merge `patch` into the overlay's opts. If `newContent` is provided, it atomically **replaces** the content in the same update. No-op if the id is not present. |
 
 The `opts` argument is a [`LayerOpts`](../components/layers.md) object — the same shape used by `<Layer>`, with `anchor`, `z`, `backdrop`, `capture`, `transition`, `onDismiss`, etc.
 
@@ -30,10 +30,10 @@ import {Box, Text} from 'ink';
 import {overlay} from '@harms-haus/ink-overlay';
 
 const id = overlay.open(
-  <Box borderStyle="round" borderColor="cyan" padding={1}>
-    <Text>Custom overlay content</Text>
-  </Box>,
-  {anchor: 'center', z: 200, backdrop: 'dim'},
+	<Box borderStyle="round" borderColor="cyan" padding={1}>
+		<Text>Custom overlay content</Text>
+	</Box>,
+	{anchor: 'center', z: 200, backdrop: 'dim'},
 );
 ```
 
@@ -45,11 +45,11 @@ overlay.update(id, {backdrop: 'opaque'});
 
 // Atomically swap both the content and a z bump
 overlay.update(
-  id,
-  {z: 300},
-  <Box borderStyle="round" borderColor="green" padding={1}>
-    <Text>Updated content</Text>
-  </Box>,
+	id,
+	{z: 300},
+	<Box borderStyle="round" borderColor="green" padding={1}>
+		<Text>Updated content</Text>
+	</Box>,
 );
 ```
 
@@ -58,8 +58,8 @@ The `update` call performs a single `notify()` — subscribers see one re-render
 ### Close a single overlay or all at once
 
 ```tsx
-overlay.close(id);   // remove by id (no-op if already gone)
-overlay.closeAll();  // remove every imperative overlay
+overlay.close(id); // remove by id (no-op if already gone)
+overlay.closeAll(); // remove every imperative overlay
 ```
 
 ---
@@ -72,23 +72,23 @@ A stacking, auto-dismiss toast service built on top of `overlayStore`. All activ
 import {toasts} from '@harms-haus/ink-overlay';
 ```
 
-| Method | Signature | Description |
-|--------|-----------|-------------|
-| `show` | `(message: ReactNode, opts?: ToastOptions) => string` | Show an info-kind toast. Returns its id. |
-| `success` | `(message: ReactNode, opts?: ToastOptions) => string` | Convenience wrapper — sets `kind: 'success'`. |
-| `error` | `(message: ReactNode, opts?: ToastOptions) => string` | Convenience wrapper — sets `kind: 'error'`. |
-| `info` | `(message: ReactNode, opts?: ToastOptions) => string` | Convenience wrapper — sets `kind: 'info'`. |
-| `warn` | `(message: ReactNode, opts?: ToastOptions) => string` | Convenience wrapper — sets `kind: 'warn'`. |
-| `dismiss` | `(id: string) => void` | Dismiss a single toast by id. |
-| `dismissAll` | `() => void` | Dismiss every active toast immediately. |
+| Method       | Signature                                             | Description                                   |
+| ------------ | ----------------------------------------------------- | --------------------------------------------- |
+| `show`       | `(message: ReactNode, opts?: ToastOptions) => string` | Show an info-kind toast. Returns its id.      |
+| `success`    | `(message: ReactNode, opts?: ToastOptions) => string` | Convenience wrapper — sets `kind: 'success'`. |
+| `error`      | `(message: ReactNode, opts?: ToastOptions) => string` | Convenience wrapper — sets `kind: 'error'`.   |
+| `info`       | `(message: ReactNode, opts?: ToastOptions) => string` | Convenience wrapper — sets `kind: 'info'`.    |
+| `warn`       | `(message: ReactNode, opts?: ToastOptions) => string` | Convenience wrapper — sets `kind: 'warn'`.    |
+| `dismiss`    | `(id: string) => void`                                | Dismiss a single toast by id.                 |
+| `dismissAll` | `() => void`                                          | Dismiss every active toast immediately.       |
 
 ### `ToastOptions`
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `duration` | `number` | `4000` | Auto-dismiss delay in milliseconds. |
-| `anchor` | `Anchor` | `'bottom-right'` | Anchor position for the toast container. |
-| `id` | `string` | generated (UUID) | Stable id. Calling any show method with an existing id **replaces** the previous toast (the old one is dismissed first, then the new one is added). |
+| Field      | Type     | Default          | Description                                                                                                                                         |
+| ---------- | -------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `duration` | `number` | `4000`           | Auto-dismiss delay in milliseconds.                                                                                                                 |
+| `anchor`   | `Anchor` | `'bottom-right'` | Anchor position for the toast container.                                                                                                            |
+| `id`       | `string` | generated (UUID) | Stable id. Calling any show method with an existing id **replaces** the previous toast (the old one is dismissed first, then the new one is added). |
 
 For details on stacking behavior (max 3 visible toasts with oldest-eviction) and anchor inheritance (the container anchor is pinned from the **first-added** toast), see [`components/toast.md`](../components/toast.md).
 
@@ -105,16 +105,16 @@ toasts.info('Syncing…');
 
 ```ts
 const id = toasts.show('Processing large batch…', {
-  duration: 10_000,
-  anchor: 'top-right',
+	duration: 10_000,
+	anchor: 'top-right',
 });
 ```
 
 ### Dismiss by id or all at once
 
 ```ts
-toasts.dismiss(id);     // cancel auto-dismiss timer + remove this toast
-toasts.dismissAll();    // clear every active toast
+toasts.dismiss(id); // cancel auto-dismiss timer + remove this toast
+toasts.dismissAll(); // clear every active toast
 ```
 
 ### Stable id for updatable toasts

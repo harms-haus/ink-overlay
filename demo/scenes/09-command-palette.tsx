@@ -175,8 +175,8 @@ export default function Scene09CommandPalette() {
 
 	return (
 		<SceneShell
-			title='Scene 09 — Command Palette'
-			description='Filterable keyboard list: default mode and multi-select mode.'
+			title="Scene 09 — Command Palette"
+			description="Filterable keyboard list: default mode and multi-select mode."
 			hints={[
 				{key: 'p', label: 'toggle palette'},
 				{key: 'm', label: 'toggle multi-select'},
@@ -184,17 +184,15 @@ export default function Scene09CommandPalette() {
 			]}
 		>
 			{/* ── Instructional copy ──────────────────────────────── */}
-			<Box flexDirection='column'>
+			<Box flexDirection="column">
 				<Text>
 					Press <Text bold>p</Text> to open the command palette.
 				</Text>
 				<Text>
-					Press <Text bold>m</Text> to toggle multi-select mode
-					(currently {multiSelect ? 'ON' : 'OFF'}).
+					Press <Text bold>m</Text> to toggle multi-select mode (currently{' '}
+					{multiSelect ? 'ON' : 'OFF'}).
 				</Text>
-				<Text dimColor>
-					Last selected: {lastSelected}
-				</Text>
+				<Text dimColor>Last selected: {lastSelected}</Text>
 			</Box>
 
 			{/*
@@ -291,15 +289,15 @@ export default function Scene09CommandPalette() {
 				renderItem={
 					multiSelect
 						? (item, isSelected) => (
-							<Text
-								color={isSelected ? 'black' : undefined}
-								backgroundColor={isSelected ? 'cyan' : undefined}
-							>
-								{isSelected ? '▸ ' : '  '}
-								{item.label}{' '}
-								<Text dimColor>{String(item['shortcut'] ?? '')}</Text>
-							</Text>
-						)
+								<Text
+									color={isSelected ? 'black' : undefined}
+									backgroundColor={isSelected ? 'cyan' : undefined}
+								>
+									{isSelected ? '▸ ' : '  '}
+									{item.label}{' '}
+									<Text dimColor>{String(item['shortcut'] ?? '')}</Text>
+								</Text>
+							)
 						: undefined
 				}
 				/* MaxVisible — default 10; here 5 so windowing indicators appear. */
@@ -307,7 +305,7 @@ export default function Scene09CommandPalette() {
 				/* Placeholder — default 'Type a command…'. */
 				/* EmptyMessage — default 'No matching commands'. */
 				/* Title — default 'Command Palette'. */
-				title='Demo Commands'
+				title="Demo Commands"
 				/* Width — default 60. */
 				width={50}
 				/* Z — default 200 (above modals at z=100). */

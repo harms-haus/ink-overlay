@@ -26,19 +26,18 @@ import {
 	useRef,
 	useState,
 } from 'react';
-import {
-	Box, useStdin, useFocusManager, useWindowSize,
-} from 'ink';
+import {Box, useStdin, useFocusManager, useWindowSize} from 'ink';
 import {InputDispatcher} from './input-dispatcher.js';
 import {LayerRenderer} from './layer.js';
-import {OverlayHostContext, type OverlayHostContextValue} from './host-context.js';
+import {
+	OverlayHostContext,
+	type OverlayHostContextValue,
+} from './host-context.js';
 import {overlayStore} from './store.js';
 import {sortLayers} from './primitives.js';
 import {warnBunInput} from './runtime.js';
 import {resolveTransition} from './animation.js';
-import type {
-	OverlayDescriptor, OverlayEntry,
-} from './types.js';
+import type {OverlayDescriptor, OverlayEntry} from './types.js';
 
 // ── Props ───────────────────────────────────────────────────────────
 
@@ -156,7 +155,10 @@ export function OverlayHost({children}: OverlayHostProps) {
 	// ── Memoised context value (stable across renders) ──────────────
 	const context: OverlayHostContextValue = useMemo(
 		() => ({
-			registerLayer, unregisterLayer, updateLayer, onLayerExited,
+			registerLayer,
+			unregisterLayer,
+			updateLayer,
+			onLayerExited,
 		}),
 		[registerLayer, unregisterLayer, updateLayer, onLayerExited],
 	);
@@ -181,10 +183,12 @@ export function OverlayHost({children}: OverlayHostProps) {
 
 	// ── Merge + sort layers (computed during render) ────────────────
 
-	const declarativeDescriptors = [...declarativeLayersReference.current.values()];
+	const declarativeDescriptors = [
+		...declarativeLayersReference.current.values(),
+	];
 
-	const imperativeDescriptors: OverlayDescriptor[]
-		= imperativeLayersReference.current.map(entry => {
+	const imperativeDescriptors: OverlayDescriptor[] =
+		imperativeLayersReference.current.map(entry => {
 			// Stable order assignment via cache.
 			let order = imperativeOrderCacheReference.current.get(entry.id);
 			if (order === undefined) {
@@ -225,8 +229,11 @@ export function OverlayHost({children}: OverlayHostProps) {
 			}
 
 			warnBunInput();
-		} else if (previous > 0 && capturingCount === 0 // Positive → 0: disable raw mode.
-			&& isRawModeSupported) {
+		} else if (
+			previous > 0 &&
+			capturingCount === 0 && // Positive → 0: disable raw mode.
+			isRawModeSupported
+		) {
 			try {
 				setRawMode(false);
 			} catch (error) {
@@ -254,19 +261,22 @@ export function OverlayHost({children}: OverlayHostProps) {
 	// Read prevCapturingCountRef INSIDE the cleanup so we always see the
 	// last-committed value — not the value at setup time (which would be
 	// 0 because the deps are stable and setup runs only once at mount).
-	useEffect(() => () => {
-		if (previousCapturingCountReference.current > 0) {
-			if (isRawModeSupported) {
-				try {
-					setRawMode(false);
-				} catch (error) {
-					console.warn('[@harms-haus/ink-overlay] setRawMode failed:', error);
+	useEffect(
+		() => () => {
+			if (previousCapturingCountReference.current > 0) {
+				if (isRawModeSupported) {
+					try {
+						setRawMode(false);
+					} catch (error) {
+						console.warn('[@harms-haus/ink-overlay] setRawMode failed:', error);
+					}
 				}
-			}
 
-			enableFocus();
-		}
-	}, [isRawModeSupported, setRawMode, enableFocus]);
+				enableFocus();
+			}
+		},
+		[isRawModeSupported, setRawMode, enableFocus],
+	);
 
 	// ── Render ──────────────────────────────────────────────────────
 
@@ -274,17 +284,14 @@ export function OverlayHost({children}: OverlayHostProps) {
 		<InputDispatcher>
 			<OverlayHostContext.Provider value={context}>
 				<Box
-					position='relative'
-					width='100%'
+					position="relative"
+					width="100%"
 					height={terminalRows}
-					flexDirection='column'
+					flexDirection="column"
 				>
 					{children}
 					{sortedLayers.map(desc => (
-						<LayerRenderer
-							key={desc.id}
-							descriptor={desc}
-						/>
+						<LayerRenderer key={desc.id} descriptor={desc} />
 					))}
 				</Box>
 			</OverlayHostContext.Provider>

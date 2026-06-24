@@ -84,17 +84,19 @@ export function SceneMenu({scenes, onSelect}: MenuProps) {
 	);
 
 	return (
-		<Box flexDirection='column' padding={1}>
-			<Text bold color='cyan'>
+		<Box flexDirection="column" padding={1}>
+			<Text bold color="cyan">
 				ink-overlay — Demo
 			</Text>
-			<Text dimColor>↑↓ navigate · Enter select · q quit · Esc back (in scenes)</Text>
+			<Text dimColor>
+				↑↓ navigate · Enter select · q quit · Esc back (in scenes)
+			</Text>
 
-			<Box flexDirection='column' marginTop={1}>
+			<Box flexDirection="column" marginTop={1}>
 				{scenes.map((scene, index) => {
 					const isSelected = index === selectedIndex;
 					return (
-						<Box key={scene.id} flexDirection='row'>
+						<Box key={scene.id} flexDirection="row">
 							<Text>{isSelected ? '❯ ' : '  '}</Text>
 							<Text bold color={isSelected ? 'cyan' : undefined}>
 								{scene.title}

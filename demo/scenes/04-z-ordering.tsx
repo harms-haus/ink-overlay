@@ -117,8 +117,8 @@ export default function Scene04ZOrdering() {
 
 	return (
 		<SceneShell
-			title='Scene 04 — Z-Ordering'
-			description='Higher z paints on top. Toggle layers to see paint order.'
+			title="Scene 04 — Z-Ordering"
+			description="Higher z paints on top. Toggle layers to see paint order."
 			hints={[
 				{key: '1', label: 'toggle A (z=10)'},
 				{key: '2', label: 'toggle B (z=20)'},
@@ -144,7 +144,7 @@ export default function Scene04ZOrdering() {
 			 */}
 			{visible.a && (
 				<Layer
-					anchor='center'
+					anchor="center"
 					// Layer A's z=10 is the LOWEST of the three, so it paints
 					// first and ends up on the BOTTOM of the visible stack.
 					z={10}
@@ -153,13 +153,13 @@ export default function Scene04ZOrdering() {
 					open
 				>
 					<Box
-						borderStyle='round'
-						borderColor='red'
+						borderStyle="round"
+						borderColor="red"
 						paddingX={2}
 						paddingY={1}
-						flexDirection='column'
+						flexDirection="column"
 					>
-						<Text bold color='red'>
+						<Text bold color="red">
 							z=10 (bottom)
 						</Text>
 					</Box>
@@ -184,7 +184,7 @@ export default function Scene04ZOrdering() {
 			 */}
 			{visible.b && (
 				<Layer
-					anchor='center'
+					anchor="center"
 					// Layer B's z=20 sits in the middle — paints on top of z=10.
 					z={20}
 					// Offset down 2 rows, right 4 columns — middle step.
@@ -192,13 +192,13 @@ export default function Scene04ZOrdering() {
 					open
 				>
 					<Box
-						borderStyle='round'
-						borderColor='green'
+						borderStyle="round"
+						borderColor="green"
 						paddingX={2}
 						paddingY={1}
-						flexDirection='column'
+						flexDirection="column"
 					>
-						<Text bold color='green'>
+						<Text bold color="green">
 							z=20 (middle)
 						</Text>
 					</Box>
@@ -221,24 +221,24 @@ export default function Scene04ZOrdering() {
 			 */}
 			{visible.c && (
 				<Layer
-					anchor='center'
+					anchor="center"
 					// Layer C's z=30 is the highest — paints on top of everything below.
 					z={30}
 					// Keep it simple: no backdrop so all three layers stay
 					// visible at once.
-					backdrop='none'
+					backdrop="none"
 					// Offset down 4 rows, right 8 columns — top step.
 					margin={{top: 4, left: 8}}
 					open
 				>
 					<Box
-						borderStyle='round'
-						borderColor='blue'
+						borderStyle="round"
+						borderColor="blue"
 						paddingX={2}
 						paddingY={1}
-						flexDirection='column'
+						flexDirection="column"
 					>
-						<Text bold color='blue'>
+						<Text bold color="blue">
 							z=30 (top)
 						</Text>
 					</Box>

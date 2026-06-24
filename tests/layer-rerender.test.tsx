@@ -29,7 +29,7 @@ test('parent re-renders without changing Layer props do not cause extra effect c
 		return (
 			<>
 				<Text>base</Text>
-				<Layer anchor='center' id='stable-layer'>
+				<Layer anchor="center" id="stable-layer">
 					<Text>static content</Text>
 				</Layer>
 			</>
@@ -72,7 +72,7 @@ test('changing a structural prop (z) on an open Layer still works', async () => 
 		return (
 			<>
 				<Text>base</Text>
-				<Layer anchor='center' id='z-change-layer' z={z}>
+				<Layer anchor="center" id="z-change-layer" z={z}>
 					<Text>z-content</Text>
 				</Layer>
 			</>
@@ -108,7 +108,7 @@ test('parent state updates alongside Layer are reflected in the frame', async ()
 		return (
 			<>
 				<Text>base</Text>
-				<Layer anchor='center' id='content-probe'>
+				<Layer anchor="center" id="content-probe">
 					<Text>overlay</Text>
 				</Layer>
 				<Text>tick:{tick}</Text>
@@ -156,7 +156,7 @@ test('Layer with dynamic content children re-renders correctly', async () => {
 		return (
 			<>
 				<Text>base</Text>
-				<Layer anchor='center' id='dynamic-content'>
+				<Layer anchor="center" id="dynamic-content">
 					<Text>count is {count}</Text>
 				</Layer>
 			</>

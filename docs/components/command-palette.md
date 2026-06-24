@@ -4,47 +4,47 @@
 
 ## Keyboard navigation
 
-| Key | Action |
-|-----|--------|
-| **Up / Down arrows** | Move the selection one row (clamped to `0…filtered.length - 1`). |
-| **Enter** | Invoke `onItemSelect(item)`. If `closeOnSelect` is `true` (default), the palette also closes. |
-| **Escape** | Close the palette and call `onDismiss`. |
-| **Backspace** | Delete the character to the left of the cursor. |
-| **Left / Right arrows** | Move the text-edit cursor within the query. |
-| **Printable char** | Insert at the cursor; the filtered list updates on every keystroke. |
-| **Unhandled keys** (Ctrl+C, Tab, etc.) | Not consumed — fall through to lower-priority handlers. |
+| Key                                    | Action                                                                                        |
+| -------------------------------------- | --------------------------------------------------------------------------------------------- |
+| **Up / Down arrows**                   | Move the selection one row (clamped to `0…filtered.length - 1`).                              |
+| **Enter**                              | Invoke `onItemSelect(item)`. If `closeOnSelect` is `true` (default), the palette also closes. |
+| **Escape**                             | Close the palette and call `onDismiss`.                                                       |
+| **Backspace**                          | Delete the character to the left of the cursor.                                               |
+| **Left / Right arrows**                | Move the text-edit cursor within the query.                                                   |
+| **Printable char**                     | Insert at the cursor; the filtered list updates on every keystroke.                           |
+| **Unhandled keys** (Ctrl+C, Tab, etc.) | Not consumed — fall through to lower-priority handlers.                                       |
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `items` | `CommandPaletteItem[]` | — | **Required.** Items to filter and display. Each item is `{id: string; label: string; [key: string]: unknown}` — arbitrary extra fields are allowed and visible to your `filter`/`renderItem`. |
-| `renderItem` | `(item, isSelected) => ReactNode` | — | Custom renderer for a single row. Receives the item and a `isSelected` boolean. Overrides the built-in `▸ label` row. |
-| `filter` | `(items, query) => CommandPaletteItem[]` | `match-sorter` on `label` | Custom filter function. Replaces `match-sorter` entirely. See [Custom filter](#custom-filter-function) below. |
-| `maxVisible` | `number` | `10` | Window size (rows shown before scroll indicators appear). |
-| `placeholder` | `string` | `'Type a command…'` | Dim text shown in the input row when the query is empty. |
-| `emptyMessage` | `string` | `'No matching commands'` | Shown when `filtered.length === 0`. |
-| `onItemSelect` | `(item) => void` | — | Called with the selected item when **Enter** is pressed. Not called if the list is empty. |
-| `closeOnSelect` | `boolean` | `true` | If `true`, Enter closes the palette after invoking `onItemSelect`. Set to `false` to keep the palette open and manage closing yourself via `onOpenChange`. |
-| `onDismiss` | `() => void` | — | Called on **Escape**, *in addition to* `onOpenChange(false)`. Reserve for side effects — see notes below. |
-| `open` | `boolean` | — | Controlled open state. Omit for uncontrolled mode. |
-| `defaultOpen` | `boolean` | `true` | Initial open state in uncontrolled mode. |
-| `onOpenChange` | `(open: boolean) => void` | — | Called whenever open state changes (both modes). |
-| `title` | `string` | `'Command Palette'` | Bold text rendered in the title row. |
-| `width` | `number \| string` | `60` | Width of the bordered box (passed to the inner `<Box>`). |
-| `z` | `number` | `200` | Z-level passed to `<Layer>` for sorting against other layers. |
+| Prop            | Type                                     | Default                   | Description                                                                                                                                                                                   |
+| --------------- | ---------------------------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `items`         | `CommandPaletteItem[]`                   | —                         | **Required.** Items to filter and display. Each item is `{id: string; label: string; [key: string]: unknown}` — arbitrary extra fields are allowed and visible to your `filter`/`renderItem`. |
+| `renderItem`    | `(item, isSelected) => ReactNode`        | —                         | Custom renderer for a single row. Receives the item and a `isSelected` boolean. Overrides the built-in `▸ label` row.                                                                         |
+| `filter`        | `(items, query) => CommandPaletteItem[]` | `match-sorter` on `label` | Custom filter function. Replaces `match-sorter` entirely. See [Custom filter](#custom-filter-function) below.                                                                                 |
+| `maxVisible`    | `number`                                 | `10`                      | Window size (rows shown before scroll indicators appear).                                                                                                                                     |
+| `placeholder`   | `string`                                 | `'Type a command…'`       | Dim text shown in the input row when the query is empty.                                                                                                                                      |
+| `emptyMessage`  | `string`                                 | `'No matching commands'`  | Shown when `filtered.length === 0`.                                                                                                                                                           |
+| `onItemSelect`  | `(item) => void`                         | —                         | Called with the selected item when **Enter** is pressed. Not called if the list is empty.                                                                                                     |
+| `closeOnSelect` | `boolean`                                | `true`                    | If `true`, Enter closes the palette after invoking `onItemSelect`. Set to `false` to keep the palette open and manage closing yourself via `onOpenChange`.                                    |
+| `onDismiss`     | `() => void`                             | —                         | Called on **Escape**, _in addition to_ `onOpenChange(false)`. Reserve for side effects — see notes below.                                                                                     |
+| `open`          | `boolean`                                | —                         | Controlled open state. Omit for uncontrolled mode.                                                                                                                                            |
+| `defaultOpen`   | `boolean`                                | `true`                    | Initial open state in uncontrolled mode.                                                                                                                                                      |
+| `onOpenChange`  | `(open: boolean) => void`                | —                         | Called whenever open state changes (both modes).                                                                                                                                              |
+| `title`         | `string`                                 | `'Command Palette'`       | Bold text rendered in the title row.                                                                                                                                                          |
+| `width`         | `number \| string`                       | `60`                      | Width of the bordered box (passed to the inner `<Box>`).                                                                                                                                      |
+| `z`             | `number`                                 | `200`                     | Z-level passed to `<Layer>` for sorting against other layers.                                                                                                                                 |
 
 ### Fixed `<Layer>` settings
 
 These `<Layer>` props are hardcoded and cannot be overridden through `<CommandPalette>`:
 
-| `<Layer>` prop | Value | Effect |
-|----------------|-------|--------|
-| `anchor` | `'center'` | Always centered. |
-| `capture` | `true` | Always owns raw mode + focus trap while open. |
-| `backdrop` | `'dim'` | Dim backdrop behind the box. |
-| `role` | `'menu'` | Affects backdrop-input scoping (non-Escape input does **not** auto-dismiss). |
-| `overflow` | `'hidden'` (inherited) | Inherits `<Layer>`'s default (`overflow='hidden'`); cannot be overridden through `<CommandPalette>`. |
+| `<Layer>` prop | Value                  | Effect                                                                                               |
+| -------------- | ---------------------- | ---------------------------------------------------------------------------------------------------- |
+| `anchor`       | `'center'`             | Always centered.                                                                                     |
+| `capture`      | `true`                 | Always owns raw mode + focus trap while open.                                                        |
+| `backdrop`     | `'dim'`                | Dim backdrop behind the box.                                                                         |
+| `role`         | `'menu'`               | Affects backdrop-input scoping (non-Escape input does **not** auto-dismiss).                         |
+| `overflow`     | `'hidden'` (inherited) | Inherits `<Layer>`'s default (`overflow='hidden'`); cannot be overridden through `<CommandPalette>`. |
 
 For control over these, use a bare [`<Layer>`](./layers.md) and compose your own list UI.
 
@@ -68,32 +68,32 @@ import {Box, Text} from 'ink';
 import {OverlayHost, CommandPalette} from '@harms-haus/ink-overlay';
 
 const items = [
-  {id: 'save', label: 'Save file'},
-  {id: 'open', label: 'Open file'},
-  {id: 'quit', label: 'Quit'},
+	{id: 'save', label: 'Save file'},
+	{id: 'open', label: 'Open file'},
+	{id: 'quit', label: 'Quit'},
 ];
 
 function App() {
-  const [open, setOpen] = useState(false);
+	const [open, setOpen] = useState(false);
 
-  return (
-    <OverlayHost>
-      <Box padding={1}>
-        <Text>Press p to open the palette</Text>
-      </Box>
+	return (
+		<OverlayHost>
+			<Box padding={1}>
+				<Text>Press p to open the palette</Text>
+			</Box>
 
-      <CommandPalette
-        open={open}
-        onOpenChange={setOpen}
-        items={items}
-        onItemSelect={item => {
-          console.log('Selected:', item.id);
-          // closeOnSelect defaults to true, so Enter already
-          // closes the palette — no manual setOpen(false) needed.
-        }}
-      />
-    </OverlayHost>
-  );
+			<CommandPalette
+				open={open}
+				onOpenChange={setOpen}
+				items={items}
+				onItemSelect={item => {
+					console.log('Selected:', item.id);
+					// closeOnSelect defaults to true, so Enter already
+					// closes the palette — no manual setOpen(false) needed.
+				}}
+			/>
+		</OverlayHost>
+	);
 }
 ```
 
@@ -108,34 +108,35 @@ import {OverlayHost, CommandPalette} from '@harms-haus/ink-overlay';
 import type {CommandPaletteItem} from '@harms-haus/ink-overlay';
 
 const items: CommandPaletteItem[] = [
-  {id: 'ts', label: 'TypeScript', tags: ['language', 'typed']},
-  {id: 'js', label: 'JavaScript', tags: ['language']},
-  {id: 'go', label: 'Go', tags: ['language', 'compiled']},
+	{id: 'ts', label: 'TypeScript', tags: ['language', 'typed']},
+	{id: 'js', label: 'JavaScript', tags: ['language']},
+	{id: 'go', label: 'Go', tags: ['language', 'compiled']},
 ];
 
 // Prefix match across label and tags instead of match-sorter fuzzy ranking.
 const prefixFilter = (
-  items: CommandPaletteItem[],
-  query: string,
+	items: CommandPaletteItem[],
+	query: string,
 ): CommandPaletteItem[] => {
-  const q = query.toLowerCase();
-  return items.filter(it =>
-    it.label.toLowerCase().includes(q) ||
-    (it.tags as string[]).some(t => t.toLowerCase().includes(q)),
-  );
+	const q = query.toLowerCase();
+	return items.filter(
+		it =>
+			it.label.toLowerCase().includes(q) ||
+			(it.tags as string[]).some(t => t.toLowerCase().includes(q)),
+	);
 };
 
 function App() {
-  return (
-    <OverlayHost>
-      <CommandPalette
-        items={items}
-        filter={prefixFilter}
-        placeholder="Filter languages…"
-        onItemSelect={item => console.log(item.id)}
-      />
-    </OverlayHost>
-  );
+	return (
+		<OverlayHost>
+			<CommandPalette
+				items={items}
+				filter={prefixFilter}
+				placeholder="Filter languages…"
+				onItemSelect={item => console.log(item.id)}
+			/>
+		</OverlayHost>
+	);
 }
 ```
 
@@ -145,10 +146,10 @@ Pass `renderItem` to render each row yourself. It receives the item and an `isSe
 
 ```tsx
 <Text
-  color={isSelected ? 'cyan' : undefined}
-  backgroundColor={isSelected ? 'gray' : undefined}
+	color={isSelected ? 'cyan' : undefined}
+	backgroundColor={isSelected ? 'gray' : undefined}
 >
-  {isSelected ? '▸' : ' '} {item.label}
+	{isSelected ? '▸' : ' '} {item.label}
 </Text>
 ```
 
@@ -159,32 +160,32 @@ import {Text} from 'ink';
 import {OverlayHost, CommandPalette} from '@harms-haus/ink-overlay';
 
 const items = [
-  {id: 'save', label: 'Save file', shortcut: '⌘S'},
-  {id: 'open', label: 'Open file', shortcut: '⌘O'},
-  {id: 'quit', label: 'Quit', shortcut: '⌘Q'},
+	{id: 'save', label: 'Save file', shortcut: '⌘S'},
+	{id: 'open', label: 'Open file', shortcut: '⌘O'},
+	{id: 'quit', label: 'Quit', shortcut: '⌘Q'},
 ];
 
 function App() {
-  return (
-    <OverlayHost>
-      <CommandPalette
-        items={items}
-        title="Commands"
-        renderItem={(item, isSelected) => (
-          <Text
-            color={isSelected ? 'black' : undefined}
-            backgroundColor={isSelected ? 'cyan' : undefined}
-          >
-            {isSelected ? '▸ ' : '  '}
-            {item.label}
-            {'  '}
-            <Text dimColor>{item.shortcut as string}</Text>
-          </Text>
-        )}
-        onItemSelect={item => console.log(item.id)}
-      />
-    </OverlayHost>
-  );
+	return (
+		<OverlayHost>
+			<CommandPalette
+				items={items}
+				title="Commands"
+				renderItem={(item, isSelected) => (
+					<Text
+						color={isSelected ? 'black' : undefined}
+						backgroundColor={isSelected ? 'cyan' : undefined}
+					>
+						{isSelected ? '▸ ' : '  '}
+						{item.label}
+						{'  '}
+						<Text dimColor>{item.shortcut as string}</Text>
+					</Text>
+				)}
+				onItemSelect={item => console.log(item.id)}
+			/>
+		</OverlayHost>
+	);
 }
 ```
 
@@ -198,36 +199,36 @@ import {Box, Text} from 'ink';
 import {OverlayHost, CommandPalette} from '@harms-haus/ink-overlay';
 
 const items = [
-  {id: 'bold', label: 'Bold'},
-  {id: 'italic', label: 'Italic'},
-  {id: 'underline', label: 'Underline'},
+	{id: 'bold', label: 'Bold'},
+	{id: 'italic', label: 'Italic'},
+	{id: 'underline', label: 'Underline'},
 ];
 
 function App() {
-  const [open, setOpen] = useState(true);
-  const [applied, setApplied] = useState<string[]>([]);
+	const [open, setOpen] = useState(true);
+	const [applied, setApplied] = useState<string[]>([]);
 
-  return (
-    <OverlayHost>
-      <Box padding={1}>
-        <Text>Applied: {applied.join(', ') || '(none)'}</Text>
-      </Box>
+	return (
+		<OverlayHost>
+			<Box padding={1}>
+				<Text>Applied: {applied.join(', ') || '(none)'}</Text>
+			</Box>
 
-      <CommandPalette
-        open={open}
-        onOpenChange={setOpen}
-        items={items}
-        closeOnSelect={false}
-        onItemSelect={item => {
-          setApplied(prev =>
-            prev.includes(item.id)
-              ? prev.filter(id => id !== item.id)
-              : [...prev, item.id],
-          );
-        }}
-      />
-    </OverlayHost>
-  );
+			<CommandPalette
+				open={open}
+				onOpenChange={setOpen}
+				items={items}
+				closeOnSelect={false}
+				onItemSelect={item => {
+					setApplied(prev =>
+						prev.includes(item.id)
+							? prev.filter(id => id !== item.id)
+							: [...prev, item.id],
+					);
+				}}
+			/>
+		</OverlayHost>
+	);
 }
 ```
 

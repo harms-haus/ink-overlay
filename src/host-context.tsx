@@ -8,8 +8,9 @@ export type OverlayHostContextValue = {
 	onLayerExited: (id: string) => void;
 };
 
-export const OverlayHostContext
-	= createContext<OverlayHostContextValue | null>(null);
+export const OverlayHostContext = createContext<OverlayHostContextValue | null>(
+	null,
+);
 
 /**
  * Read the overlay host context.
@@ -22,9 +23,7 @@ export function useOverlayHost(): OverlayHostContextValue {
 	const value = useContext(OverlayHostContext);
 
 	if (value === null) {
-		throw new Error(
-			'<Layer> must be rendered inside <OverlayHost>.',
-		);
+		throw new Error('<Layer> must be rendered inside <OverlayHost>.');
 	}
 
 	return value;

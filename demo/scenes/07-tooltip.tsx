@@ -45,12 +45,7 @@
  */
 
 import {useRef} from 'react';
-import {
-	Box,
-	Text,
-	useFocus,
-	type DOMElement,
-} from 'ink';
+import {Box, Text, useFocus, type DOMElement} from 'ink';
 import {Tooltip} from '../../src/index.js';
 import {SceneShell} from '../ui.js';
 
@@ -72,14 +67,14 @@ function FocusAnchor() {
 	const {isFocused} = useFocus();
 	return (
 		<>
-			<Box ref={anchorRef} borderStyle='round' paddingX={1}>
+			<Box ref={anchorRef} borderStyle="round" paddingX={1}>
 				<Text>Tab-focus me to show my tooltip</Text>
 			</Box>
 			<Tooltip
 				anchorRef={anchorRef}
-				content='I follow focus state (trigger=focus, anchorFocused=isFocused)'
-				placement='bottom'
-				trigger='focus'
+				content="I follow focus state (trigger=focus, anchorFocused=isFocused)"
+				placement="bottom"
+				trigger="focus"
 				anchorFocused={isFocused}
 				z={10}
 			/>
@@ -106,8 +101,8 @@ export function Scene07Tooltip() {
 
 	return (
 		<SceneShell
-			title='Scene 07 — Tooltip'
-			description='Key-trigger, custom-key, and focus-driven tooltips'
+			title="Scene 07 — Tooltip"
+			description="Key-trigger, custom-key, and focus-driven tooltips"
 			hints={[
 				{key: '?', label: 'toggle top tooltip'},
 				{key: 'h', label: 'toggle right tooltip'},
@@ -121,7 +116,7 @@ export function Scene07Tooltip() {
 				Tooltips return null when hidden, so they contribute
 				nothing to the flow layout until toggled/focused.
 			*/}
-			<Box flexDirection='column' gap={1}>
+			<Box flexDirection="column" gap={1}>
 				{/* ════════════════════════════════════════════════════════
 				    (1) Default key-trigger tooltip.
 
@@ -142,15 +137,15 @@ export function Scene07Tooltip() {
 				    unchanged.
 
 				    ══════════════════════════════════════════════════ */}
-				<Box ref={keyRef} borderStyle='round' paddingX={1}>
+				<Box ref={keyRef} borderStyle="round" paddingX={1}>
 					<Text>Press ? for a tooltip</Text>
 				</Box>
 				<Tooltip
 					anchorRef={keyRef}
-					content='I toggle when you press ? and auto-dismiss after 3s (the default dismissDelay)'
-					placement='top'
-					trigger='key'
-					triggerKey='?'
+					content="I toggle when you press ? and auto-dismiss after 3s (the default dismissDelay)"
+					placement="top"
+					trigger="key"
+					triggerKey="?"
 					z={10}
 				/>
 
@@ -170,15 +165,15 @@ export function Scene07Tooltip() {
 				    placement and offset forward through to <Popover>.
 
 				    ══════════════════════════════════════════════════ */}
-				<Box ref={customKeyRef} borderStyle='round' paddingX={1}>
+				<Box ref={customKeyRef} borderStyle="round" paddingX={1}>
 					<Text>Press h for a custom-key tooltip (10s delay)</Text>
 				</Box>
 				<Tooltip
 					anchorRef={customKeyRef}
 					content="Bound to 'h' with a 10,000ms dismissDelay"
-					placement='right'
-					trigger='key'
-					triggerKey='h'
+					placement="right"
+					trigger="key"
+					triggerKey="h"
 					dismissDelay={10_000}
 					offset={2}
 					z={10}

@@ -104,11 +104,7 @@ import {SceneShell} from '../ui.js';
  * object AFTER `overlay.open()` returns, and by the time a key is
  * pressed the holder is populated.
  */
-function CapturingOverlayDismiss({
-	getOverlayId,
-}: {
-	getOverlayId: () => string;
-}) {
+function CapturingOverlayDismiss({getOverlayId}: {getOverlayId: () => string}) {
 	useRegisterInput('capturing-overlay-dismiss', (input, key) => {
 		if (key.return || input === 'c' || key.escape) {
 			overlay.close(getOverlayId());
@@ -204,7 +200,7 @@ export default function Scene11ImperativeOverlay() {
 					}
 
 					const id = overlay.open(
-						<Box borderStyle='round' padding={1}>
+						<Box borderStyle="round" padding={1}>
 							<Text>{`Centered overlay #${variant1Ids.length + 1}`}</Text>
 						</Box>,
 						{anchor: 'center', backdrop: 'dim', z: 50},
@@ -223,7 +219,7 @@ export default function Scene11ImperativeOverlay() {
 					// display row stays honest about how many overlays are
 					// live across ALL variants.
 					const id2 = overlay.open(
-						<Box borderStyle='round' paddingX={1}>
+						<Box borderStyle="round" paddingX={1}>
 							<Text>Top-anchored overlay</Text>
 						</Box>,
 						{anchor: 'top', backdrop: 'none', z: 60},
@@ -253,20 +249,14 @@ export default function Scene11ImperativeOverlay() {
 					const holder: {id: string} = {id: ''};
 					const id3 = overlay.open(
 						<>
-							<Box
-								borderStyle='round'
-								padding={1}
-								flexDirection='column'
-							>
+							<Box borderStyle="round" padding={1} flexDirection="column">
 								<Text>Capturing overlay — input is trapped.</Text>
 								<Text dimColor>
-									Press Enter (or c) to close via an in-content
-									useRegisterInput handler.
+									Press Enter (or c) to close via an in-content useRegisterInput
+									handler.
 								</Text>
 							</Box>
-							<CapturingOverlayDismiss
-								getOverlayId={() => holder.id}
-							/>
+							<CapturingOverlayDismiss getOverlayId={() => holder.id} />
 						</>,
 						{
 							anchor: 'center',
@@ -294,7 +284,7 @@ export default function Scene11ImperativeOverlay() {
 						overlay.update(
 							first,
 							{backdrop: 'opaque'},
-							<Box borderStyle='round' padding={1}>
+							<Box borderStyle="round" padding={1}>
 								<Text>{`Updated content (update #${updateCount + 1})`}</Text>
 							</Box>,
 						);
@@ -331,8 +321,8 @@ export default function Scene11ImperativeOverlay() {
 
 	return (
 		<SceneShell
-			title='Scene 11 — Imperative Overlay Service'
-			description='overlay.open / close / closeAll / update — no hooks required.'
+			title="Scene 11 — Imperative Overlay Service"
+			description="overlay.open / close / closeAll / update — no hooks required."
 			hints={[
 				{key: '1', label: 'open centered'},
 				{key: '2', label: 'open top'},
@@ -343,7 +333,7 @@ export default function Scene11ImperativeOverlay() {
 			]}
 		>
 			{/* ── Instructional copy ──────────────────────────────── */}
-			<Box flexDirection='column'>
+			<Box flexDirection="column">
 				<Text>
 					Press <Text bold>1</Text> to open a centred, dimmed overlay.
 				</Text>
@@ -351,32 +341,32 @@ export default function Scene11ImperativeOverlay() {
 					Press <Text bold>2</Text> to open a top-anchored overlay.
 				</Text>
 				<Text>
-					Press <Text bold>3</Text> to open a capturing overlay (input
-					trapped — dismiss with Enter or c).
+					Press <Text bold>3</Text> to open a capturing overlay (input trapped —
+					dismiss with Enter or c).
 				</Text>
 				<Text>
-					Press <Text bold>u</Text> to update the first overlay (patch +
-					content swap).
+					Press <Text bold>u</Text> to update the first overlay (patch + content
+					swap).
 				</Text>
 				<Text>
 					Press <Text bold>c</Text> to close all imperative overlays.
 				</Text>
 
 				{/* Live status row — reflects the local mirror state. */}
-				<Box marginTop={1} flexDirection='column'>
+				<Box marginTop={1} flexDirection="column">
 					<Text dimColor>{`Open overlays: ${allIds.length}`}</Text>
 					<Text dimColor>{`Update count: ${updateCount}`}</Text>
 				</Box>
 
 				{/* Teaching-point callout about the capturing variant. */}
-				<Box marginTop={1} flexDirection='column'>
+				<Box marginTop={1} flexDirection="column">
 					<Text dimColor>
-						Once variant 3 (capture: true) is open, the scene's keys
-						are gated off — you cannot dismiss it with `c`.
+						Once variant 3 (capture: true) is open, the scene's keys are gated
+						off — you cannot dismiss it with `c`.
 					</Text>
 					<Text dimColor>
-						Press Enter (or `c`) INSIDE the capturing overlay to dismiss
-						it via the in-content useRegisterInput handler.
+						Press Enter (or `c`) INSIDE the capturing overlay to dismiss it via
+						the in-content useRegisterInput handler.
 					</Text>
 				</Box>
 			</Box>

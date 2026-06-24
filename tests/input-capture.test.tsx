@@ -37,10 +37,7 @@
 import {test, expect, afterEach} from 'vitest';
 import {useState} from 'react';
 import {Text, useInput} from 'ink';
-import {
-	Layer,
-	useInputCaptureState,
-} from '../src/index.js';
+import {Layer, useInputCaptureState} from '../src/index.js';
 import {renderWithHost} from './helpers/render-with-host.js';
 import {delay} from './helpers/delay.js';
 
@@ -119,7 +116,7 @@ function makeApp() {
 		return (
 			<>
 				<BackgroundList />
-				<Layer open={open} capture backdrop='opaque'>
+				<Layer open={open} capture backdrop="opaque">
 					<ModalList />
 				</Layer>
 			</>
@@ -233,7 +230,7 @@ function makeEscDismissableApp() {
 				<Layer
 					open={open}
 					capture
-					backdrop='opaque'
+					backdrop="opaque"
 					onDismiss={() => {
 						dismissals++;
 						setOpen(false);

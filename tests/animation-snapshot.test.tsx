@@ -9,13 +9,14 @@
  * frames[] accumulates every rendered frame; transitions step on a
  * ~80ms setInterval so we `await delay(500)` after each state change.
  */
-import {
-	describe, test, expect, afterEach,
-} from 'vitest';
+import {describe, test, expect, afterEach} from 'vitest';
 import React, {useState} from 'react';
 import {Text} from 'ink';
 import {Layer} from '../src/layer.js';
-import {renderWithHost, type RenderWithHostResult} from './helpers/render-with-host.js';
+import {
+	renderWithHost,
+	type RenderWithHostResult,
+} from './helpers/render-with-host.js';
 import {delay} from './helpers/delay.js';
 
 // ── Controlled wrapper for enter → exit toggling ───────────────────
@@ -29,7 +30,10 @@ type ToggleAppProperties = {
  * Wrapper whose `setOpen` is exposed via a ref so tests can flip
  * between enter and exit without re-creating the component tree.
  */
-function ToggleApp({anchor = 'center', transition = 'slide-up'}: ToggleAppProperties) {
+function ToggleApp({
+	anchor = 'center',
+	transition = 'slide-up',
+}: ToggleAppProperties) {
 	const [open, setOpen] = useState(true);
 	// Attach the setter to the component instance for the test to call.
 	React.useImperativeHandle(React.useRef({}), () => ({setOpen}));
@@ -76,7 +80,7 @@ afterEach(async () => {
 describe('enter animation: slide-up', () => {
 	test('produces multiple frames whose first/last positions differ', async () => {
 		const {lastFrame, frames}: RenderWithHostResult = renderWithHost(
-			<Layer anchor='center' transition='slide-up'>
+			<Layer anchor="center" transition="slide-up">
 				<Text>animated</Text>
 			</Layer>,
 		);
@@ -137,7 +141,7 @@ describe('exit animation: slide-up', () => {
 			const [open, setState] = useState(true);
 			setOpen = setState;
 			return (
-				<Layer open={open} anchor='center' transition='slide-up'>
+				<Layer open={open} anchor="center" transition="slide-up">
 					<Text>animated</Text>
 				</Layer>
 			);
@@ -170,7 +174,7 @@ describe('exit animation: slide-up', () => {
 describe('transition="none"', () => {
 	test('produces few frames with no position change', async () => {
 		const {lastFrame, frames}: RenderWithHostResult = renderWithHost(
-			<Layer anchor='center' transition='none'>
+			<Layer anchor="center" transition="none">
 				<Text>animated</Text>
 			</Layer>,
 		);
@@ -188,12 +192,12 @@ describe('transition="none"', () => {
 
 	test('produces fewer frames than slide-up', async () => {
 		const noneResult: RenderWithHostResult = renderWithHost(
-			<Layer anchor='center' transition='none'>
+			<Layer anchor="center" transition="none">
 				<Text>animated</Text>
 			</Layer>,
 		);
 		const slideResult: RenderWithHostResult = renderWithHost(
-			<Layer anchor='center' transition='slide-up'>
+			<Layer anchor="center" transition="slide-up">
 				<Text>animated</Text>
 			</Layer>,
 		);
@@ -215,7 +219,7 @@ describe('transition="none"', () => {
 describe('fade transition', () => {
 	test('produces multiple frames ending with content at full height', async () => {
 		const {lastFrame, frames}: RenderWithHostResult = renderWithHost(
-			<Layer anchor='center' transition='fade'>
+			<Layer anchor="center" transition="fade">
 				<Text>animated</Text>
 			</Layer>,
 		);

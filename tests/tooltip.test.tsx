@@ -38,7 +38,7 @@ function KeyTriggerApp({
 			<Tooltip
 				anchorRef={anchorReference}
 				content={<Text>{content}</Text>}
-				trigger='key'
+				trigger="key"
 				triggerKey={triggerKey}
 				dismissDelay={dismissDelay}
 				placement={placement as any}
@@ -69,7 +69,7 @@ function FocusTriggerApp({
 			<Tooltip
 				anchorRef={anchorReference}
 				content={<Text>{content}</Text>}
-				trigger='focus'
+				trigger="focus"
 				anchorFocused={focused}
 				placement={placement as any}
 			/>
@@ -193,17 +193,13 @@ describe('Tooltip key trigger', () => {
 
 describe('Tooltip focus trigger', () => {
 	test('content appears when anchorFocused is true', async () => {
-		const {lastFrame} = renderWithHost(
-			<FocusTriggerApp focused={true} />,
-		);
+		const {lastFrame} = renderWithHost(<FocusTriggerApp focused={true} />);
 		await delay(500);
 		expect(lastFrame()).toContain('help text');
 	});
 
 	test('content is hidden when anchorFocused is false', async () => {
-		const {lastFrame} = renderWithHost(
-			<FocusTriggerApp focused={false} />,
-		);
+		const {lastFrame} = renderWithHost(<FocusTriggerApp focused={false} />);
 		await delay(500);
 		expect(lastFrame()).not.toContain('help text');
 	});
@@ -220,9 +216,7 @@ describe('Tooltip focus trigger', () => {
 		await delay(100);
 
 		// Phase 2: not focused → hidden
-		const result = renderWithHost(
-			<FocusTriggerApp focused={false} />,
-		);
+		const result = renderWithHost(<FocusTriggerApp focused={false} />);
 		await delay(500);
 		expect(result.lastFrame()).not.toContain('help text');
 		result.unmount();
@@ -260,7 +254,7 @@ describe('Tooltip anchor', () => {
 describe('Tooltip custom trigger key', () => {
 	test('responds to custom triggerKey', async () => {
 		const {lastFrame, stdin} = renderWithHost(
-			<KeyTriggerApp triggerKey='h' dismissDelay={10_000} />,
+			<KeyTriggerApp triggerKey="h" dismissDelay={10_000} />,
 		);
 		await delay(500);
 
@@ -304,12 +298,12 @@ describe('Tooltip cooperative capture gating', () => {
 					<Tooltip
 						anchorRef={anchorReference}
 						content={<Text>help text</Text>}
-						trigger='key'
-						triggerKey='?'
+						trigger="key"
+						triggerKey="?"
 						dismissDelay={10_000}
 					/>
 					{/* Capturing layer — sets isCaptured=true while open */}
-					<Layer open={modalOpen} capture backdrop='none'>
+					<Layer open={modalOpen} capture backdrop="none">
 						<Text>modal content</Text>
 					</Layer>
 				</>

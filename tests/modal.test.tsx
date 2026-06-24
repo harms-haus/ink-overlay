@@ -17,7 +17,7 @@ import {delay} from './helpers/delay.js';
 
 test('Modal renders title, footer, and body content', async () => {
 	const {lastFrame} = renderWithHost(
-		<Modal title='Confirm' footer='[Y]es [N]o'>
+		<Modal title="Confirm" footer="[Y]es [N]o">
 			<Text>Are you sure?</Text>
 		</Modal>,
 	);
@@ -34,7 +34,7 @@ test('Modal renders title, footer, and body content', async () => {
 
 test('Modal renders with border characters', async () => {
 	const {lastFrame} = renderWithHost(
-		<Modal title='Dialog'>
+		<Modal title="Dialog">
 			<Text>content</Text>
 		</Modal>,
 	);
@@ -44,15 +44,15 @@ test('Modal renders with border characters', async () => {
 	const frame = lastFrame();
 	// Default borderStyle is 'round' which uses ╭╮╰╯ characters.
 	// Also accept other common border chars for flexibility.
-	const hasBorder
-		= frame.includes('╭')
-		|| frame.includes('╮')
-		|| frame.includes('╰')
-		|| frame.includes('╯')
-		|| frame.includes('═')
-		|| frame.includes('║')
-		|| frame.includes('╔')
-		|| frame.includes('╗');
+	const hasBorder =
+		frame.includes('╭') ||
+		frame.includes('╮') ||
+		frame.includes('╰') ||
+		frame.includes('╯') ||
+		frame.includes('═') ||
+		frame.includes('║') ||
+		frame.includes('╔') ||
+		frame.includes('╗');
 
 	expect(hasBorder).toBe(true);
 });
@@ -63,7 +63,7 @@ test('Modal calls onDismiss when Escape is pressed', async () => {
 	const onDismiss = vi.fn();
 
 	const {stdin} = renderWithHost(
-		<Modal title='Close me' onDismiss={onDismiss}>
+		<Modal title="Close me" onDismiss={onDismiss}>
 			<Text>body</Text>
 		</Modal>,
 	);
@@ -83,7 +83,7 @@ test('Modal with default backdrop renders a dim backdrop over base', async () =>
 	const {lastFrame} = renderWithHost(
 		<>
 			<Text>base content</Text>
-			<Modal title='Overlay'>
+			<Modal title="Overlay">
 				<Text>modal body</Text>
 			</Modal>
 		</>,
@@ -114,7 +114,7 @@ test('Modal with defaultOpen={false} renders nothing initially', async () => {
 		return (
 			<>
 				<Text>base</Text>
-				<Modal defaultOpen={false} open={open} title='Late'>
+				<Modal defaultOpen={false} open={open} title="Late">
 					<Text>late content</Text>
 				</Modal>
 			</>
@@ -141,7 +141,7 @@ test('Modal with defaultOpen={false} renders nothing initially', async () => {
 
 test('Modal with open={false} renders nothing', async () => {
 	const {lastFrame} = renderWithHost(
-		<Modal open={false} title='Hidden'>
+		<Modal open={false} title="Hidden">
 			<Text>secret</Text>
 		</Modal>,
 	);
@@ -159,11 +159,7 @@ test('Modal calls onOpenChange with open state', async () => {
 	const onDismiss = vi.fn();
 
 	const {stdin} = renderWithHost(
-		<Modal
-			title='Track'
-			onOpenChange={onOpenChange}
-			onDismiss={onDismiss}
-		>
+		<Modal title="Track" onOpenChange={onOpenChange} onDismiss={onDismiss}>
 			<Text>trackable</Text>
 		</Modal>,
 	);

@@ -19,22 +19,22 @@ test('Popover renders content near the anchor', async () => {
 		const anchorReference = useRef<DOMElement | undefined>(null);
 		return (
 			<OverlayHost>
-				<Box flexDirection='column' width={80}>
+				<Box flexDirection="column" width={80}>
 					<Box ref={anchorReference}>
 						<Text>anchor</Text>
 					</Box>
 				</Box>
-				<Popover anchorRef={anchorReference} placement='bottom'>
+				<Popover anchorRef={anchorReference} placement="bottom">
 					<Text>pop</Text>
 				</Popover>
 			</OverlayHost>
 		);
 	}
 
-	const {lastFrame, unmountAndCleanup} = renderResizable(
-		<App />,
-		{columns: 80, rows: 24},
-	);
+	const {lastFrame, unmountAndCleanup} = renderResizable(<App />, {
+		columns: 80,
+		rows: 24,
+	});
 
 	await delay(500);
 
@@ -53,22 +53,22 @@ test('Popover with placement="bottom" renders below the anchor', async () => {
 		const anchorReference = useRef<DOMElement | undefined>(null);
 		return (
 			<OverlayHost>
-				<Box flexDirection='column' width={80}>
+				<Box flexDirection="column" width={80}>
 					<Box ref={anchorReference}>
 						<Text>anchor</Text>
 					</Box>
 				</Box>
-				<Popover anchorRef={anchorReference} placement='bottom'>
+				<Popover anchorRef={anchorReference} placement="bottom">
 					<Text>pop</Text>
 				</Popover>
 			</OverlayHost>
 		);
 	}
 
-	const {lastFrame, unmountAndCleanup} = renderResizable(
-		<App />,
-		{columns: 80, rows: 24},
-	);
+	const {lastFrame, unmountAndCleanup} = renderResizable(<App />, {
+		columns: 80,
+		rows: 24,
+	});
 
 	await delay(500);
 
@@ -99,7 +99,7 @@ test('Popover flips to top when bottom placement overflows the viewport', async 
 		const anchorReference = useRef<DOMElement | undefined>(null);
 		return (
 			<OverlayHost>
-				<Box flexDirection='column' width={80}>
+				<Box flexDirection="column" width={80}>
 					<Box height={26}>
 						<Text>space</Text>
 					</Box>
@@ -107,17 +107,17 @@ test('Popover flips to top when bottom placement overflows the viewport', async 
 						<Text>anchor</Text>
 					</Box>
 				</Box>
-				<Popover anchorRef={anchorReference} placement='bottom'>
+				<Popover anchorRef={anchorReference} placement="bottom">
 					<Text>pop</Text>
 				</Popover>
 			</OverlayHost>
 		);
 	}
 
-	const {lastFrame, resize, unmountAndCleanup} = renderResizable(
-		<App />,
-		{columns: 80, rows: 30},
-	);
+	const {lastFrame, resize, unmountAndCleanup} = renderResizable(<App />, {
+		columns: 80,
+		rows: 30,
+	});
 
 	// ── Phase 1: large viewport — pop fits below anchor ──────────────
 
@@ -167,9 +167,7 @@ test('Popover respects controlled open prop', async () => {
 		);
 	}
 
-	const {lastFrame, unmount} = renderResizable(
-		<App open={true} />,
-	);
+	const {lastFrame, unmount} = renderResizable(<App open={true} />);
 
 	await delay(400);
 
@@ -177,21 +175,16 @@ test('Popover respects controlled open prop', async () => {
 	expect(lastFrame()).toContain('pop');
 
 	// Close: re-render the entire tree with open={false}.
-	const closeResult = renderResizable(
-		<App open={false} />,
-	);
+	const closeResult = renderResizable(<App open={false} />);
 	await delay(400);
 	expect(closeResult.lastFrame()).not.toContain('pop');
 	closeResult.unmountAndCleanup();
 
 	// Re-open: re-render the entire tree with open={true}.
-	const reopenResult = renderResizable(
-		<App open={true} />,
-	);
+	const reopenResult = renderResizable(<App open={true} />);
 	await delay(400);
 	expect(reopenResult.lastFrame()).toContain('pop');
 	reopenResult.unmountAndCleanup();
 
 	unmount();
 });
-

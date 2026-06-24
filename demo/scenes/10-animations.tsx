@@ -161,9 +161,7 @@ export default function Scene10Animations() {
 		(input: string) => {
 			// `a` → cycle transitionIndex with wrap-around.
 			if (input === 'a') {
-				setTransitionIndex(
-					previous => (previous + 1) % transitions.length,
-				);
+				setTransitionIndex(previous => (previous + 1) % transitions.length);
 				return;
 			}
 
@@ -198,16 +196,14 @@ export default function Scene10Animations() {
 	 * Label for the layer's content box. Reflects whether the custom
 	 * config is active or which preset name is selected.
 	 */
-	const label = useCustom
-		? 'custom (slide-up, 200ms/frame)'
-		: transitionName;
+	const label = useCustom ? 'custom (slide-up, 200ms/frame)' : transitionName;
 
 	// ── Render ─────────────────────────────────────────────────────
 
 	return (
 		<SceneShell
-			title='Scene 10 — Animations'
-			description='Stepped style transitions: presets, custom config & exit.'
+			title="Scene 10 — Animations"
+			description="Stepped style transitions: presets, custom config & exit."
 			hints={[
 				{key: 'a', label: 'cycle transition'},
 				{key: 'o', label: 'open/close'},
@@ -215,12 +211,10 @@ export default function Scene10Animations() {
 				{key: 'Esc', label: 'menu'},
 			]}
 		>
-			<Box flexDirection='column' gap={1}>
+			<Box flexDirection="column" gap={1}>
 				<Text dimColor>
-					current: {label} {' '}
-					{!useCustom && transitionName !== undefined
-						? '(preset)'
-						: ''}
+					current: {label}{' '}
+					{!useCustom && transitionName !== undefined ? '(preset)' : ''}
 				</Text>
 				{/*
 				 * ════════════════════════════════════════════════════════
@@ -265,13 +259,13 @@ export default function Scene10Animations() {
 				 */}
 				{transitionName !== undefined && (
 					<Layer
-						anchor='center'
+						anchor="center"
 						z={10}
 						transition={transition}
 						open={open}
 						onOpenChange={setOpen}
 					>
-						<Box borderStyle='round' padding={1}>
+						<Box borderStyle="round" padding={1}>
 							<Text>{label}</Text>
 						</Box>
 					</Layer>

@@ -4,31 +4,31 @@
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `open` | `boolean` | — | Controlled open state. Omit for uncontrolled mode. |
-| `defaultOpen` | `boolean` | `true` | Initial open state in uncontrolled mode. |
-| `onOpenChange` | `(open: boolean) => void` | — | Called whenever open state changes (both modes). |
-| `onDismiss` | `() => void` | — | Called on Escape or click-away dismiss. Use for side effects, not state (see below). |
-| `title` | `ReactNode` | — | Rendered bold in the header row. |
-| `footer` | `ReactNode` | — | Rendered dimmed in the footer row. |
-| `children` | `ReactNode` | — | Modal body content. |
-| `width` | `number \| string` | `50` | Width of the bordered modal box. |
-| `borderStyle` | `BoxProps['borderStyle']` | `'round'` | Ink border style for the modal box. |
-| `borderColor` | `string` | `'cyan'` | Border color. |
-| `backdrop` | `'none' \| 'opaque' \| 'dim'` | `'dim'` | Backdrop style passed to `<Layer>`. See [`<Layer>` › Backdrop](./layers.md#backdrop). |
-| `z` | `number` | `100` | Z-level for sorting against other layers. |
-| `role` | `Role` | `'dialog'` | ARIA role passed to `<Layer>`. Affects Escape and backdrop-input behavior. |
+| Prop           | Type                          | Default    | Description                                                                           |
+| -------------- | ----------------------------- | ---------- | ------------------------------------------------------------------------------------- |
+| `open`         | `boolean`                     | —          | Controlled open state. Omit for uncontrolled mode.                                    |
+| `defaultOpen`  | `boolean`                     | `true`     | Initial open state in uncontrolled mode.                                              |
+| `onOpenChange` | `(open: boolean) => void`     | —          | Called whenever open state changes (both modes).                                      |
+| `onDismiss`    | `() => void`                  | —          | Called on Escape or click-away dismiss. Use for side effects, not state (see below).  |
+| `title`        | `ReactNode`                   | —          | Rendered bold in the header row.                                                      |
+| `footer`       | `ReactNode`                   | —          | Rendered dimmed in the footer row.                                                    |
+| `children`     | `ReactNode`                   | —          | Modal body content.                                                                   |
+| `width`        | `number \| string`            | `50`       | Width of the bordered modal box.                                                      |
+| `borderStyle`  | `BoxProps['borderStyle']`     | `'round'`  | Ink border style for the modal box.                                                   |
+| `borderColor`  | `string`                      | `'cyan'`   | Border color.                                                                         |
+| `backdrop`     | `'none' \| 'opaque' \| 'dim'` | `'dim'`    | Backdrop style passed to `<Layer>`. See [`<Layer>` › Backdrop](./layers.md#backdrop). |
+| `z`            | `number`                      | `100`      | Z-level for sorting against other layers.                                             |
+| `role`         | `Role`                        | `'dialog'` | ARIA role passed to `<Layer>`. Affects Escape and backdrop-input behavior.            |
 
 ### Fixed `<Layer>` settings
 
 These `<Layer>` props are hardcoded and cannot be overridden through `<Modal>`:
 
-| `<Layer>` prop | Value | Effect |
-|----------------|-------|--------|
-| `anchor` | `'center'` | Always centered. |
-| `capture` | `true` | Always enables raw mode + focus trap while open. |
-| `overflow` | `'hidden'` | Content is clipped to the modal box. |
+| `<Layer>` prop | Value      | Effect                                           |
+| -------------- | ---------- | ------------------------------------------------ |
+| `anchor`       | `'center'` | Always centered.                                 |
+| `capture`      | `true`     | Always enables raw mode + focus trap while open. |
+| `overflow`     | `'hidden'` | Content is clipped to the modal box.             |
 
 For control over these (non-centered placement, non-capturing modal, custom transitions), use a bare [`<Layer>`](./layers.md).
 
@@ -48,19 +48,24 @@ import {Box, Text} from 'ink';
 import {OverlayHost, Modal} from '@harms-haus/ink-overlay';
 
 function App() {
-  const [open, setOpen] = useState(true);
+	const [open, setOpen] = useState(true);
 
-  return (
-    <OverlayHost>
-      <Box padding={1}>
-        <Text>A confirm dialog is open — Esc to cancel</Text>
-      </Box>
+	return (
+		<OverlayHost>
+			<Box padding={1}>
+				<Text>A confirm dialog is open — Esc to cancel</Text>
+			</Box>
 
-      <Modal open={open} onOpenChange={setOpen} title="Delete file" footer="Esc to cancel">
-        <Text>Are you sure you want to delete this file?</Text>
-      </Modal>
-    </OverlayHost>
-  );
+			<Modal
+				open={open}
+				onOpenChange={setOpen}
+				title="Delete file"
+				footer="Esc to cancel"
+			>
+				<Text>Are you sure you want to delete this file?</Text>
+			</Modal>
+		</OverlayHost>
+	);
 }
 ```
 
@@ -71,30 +76,34 @@ function App() {
 ```tsx
 import React, {useState} from 'react';
 import {Box, Text, useInput} from 'ink';
-import {OverlayHost, Modal, useInputCaptureState} from '@harms-haus/ink-overlay';
+import {
+	OverlayHost,
+	Modal,
+	useInputCaptureState,
+} from '@harms-haus/ink-overlay';
 
 function App() {
-  const [open, setOpen] = useState(false);
-  const isCaptured = useInputCaptureState();
+	const [open, setOpen] = useState(false);
+	const isCaptured = useInputCaptureState();
 
-  useInput(
-    (input) => {
-      if (input === 'm') setOpen(true);
-    },
-    {isActive: !isCaptured},
-  );
+	useInput(
+		input => {
+			if (input === 'm') setOpen(true);
+		},
+		{isActive: !isCaptured},
+	);
 
-  return (
-    <OverlayHost>
-      <Box padding={1}>
-        <Text>Press m to open the modal</Text>
-      </Box>
+	return (
+		<OverlayHost>
+			<Box padding={1}>
+				<Text>Press m to open the modal</Text>
+			</Box>
 
-      <Modal open={open} onOpenChange={setOpen} title="My Modal">
-        <Text>Press any key to dismiss (click-away), or Escape.</Text>
-      </Modal>
-    </OverlayHost>
-  );
+			<Modal open={open} onOpenChange={setOpen} title="My Modal">
+				<Text>Press any key to dismiss (click-away), or Escape.</Text>
+			</Modal>
+		</OverlayHost>
+	);
 }
 ```
 
@@ -102,19 +111,19 @@ function App() {
 
 ```tsx
 <Modal
-  open={open}
-  onOpenChange={setOpen}
-  title="Results"
-  width={70}
-  borderStyle="double"
-  borderColor="magenta"
-  footer="Press Esc to close"
+	open={open}
+	onOpenChange={setOpen}
+	title="Results"
+	width={70}
+	borderStyle="double"
+	borderColor="magenta"
+	footer="Press Esc to close"
 >
-  <Box flexDirection="column">
-    <Text>Line one</Text>
-    <Text>Line two</Text>
-    <Text>Line three</Text>
-  </Box>
+	<Box flexDirection="column">
+		<Text>Line one</Text>
+		<Text>Line two</Text>
+		<Text>Line three</Text>
+	</Box>
 </Modal>
 ```
 
@@ -123,9 +132,14 @@ function App() {
 Override `role` to `'alertdialog'` to block both Escape and click-away — the modal then closes only when you explicitly set `open` to `false`:
 
 ```tsx
-<Modal open={open} onOpenChange={setOpen} role="alertdialog" title="Critical error"
-  footer="Press r to acknowledge">
-  <Text>You must acknowledge before continuing.</Text>
+<Modal
+	open={open}
+	onOpenChange={setOpen}
+	role="alertdialog"
+	title="Critical error"
+	footer="Press r to acknowledge"
+>
+	<Text>You must acknowledge before continuing.</Text>
 </Modal>
 // Close by setting open=false from a gated input handler (see useInputCaptureState).
 ```

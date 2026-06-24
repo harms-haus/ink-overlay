@@ -15,9 +15,7 @@ import {Box} from 'ink';
 import {overlayStore} from './store.js';
 import {Toast} from './toast.js';
 import {generateId} from './id.js';
-import type {
-	LayerOpts, ToastKind, ToastOptions, Anchor,
-} from './types.js';
+import type {LayerOpts, ToastKind, ToastOptions, Anchor} from './types.js';
 
 // ═══════════════════════════════════════════════════════════════════
 // (a) OverlayManager — thin wrapper around overlayStore
@@ -134,17 +132,18 @@ function publishToasts(): void {
 	// so adding a toast with a different anchor doesn't relocate
 	// the existing stack.
 	const firstKey = toastMap.keys().next().value;
-	const anchor: Anchor = firstKey === undefined
-		? DEFAULT_ANCHOR
-		: (toastMap.get(firstKey)!.anchor);
+	const anchor: Anchor =
+		firstKey === undefined ? DEFAULT_ANCHOR : toastMap.get(firstKey)!.anchor;
 
 	// Build the combined content — column so the NEWEST toast is at the
 	// bottom (nearest the anchor corner) and older toasts stack above it.
 	const entries = [...toastMap.entries()];
 	const content = (
-		<Box flexDirection='column'>
+		<Box flexDirection="column">
 			{entries.map(([id, t]) => (
-				<Toast key={id} kind={t.kind}>{t.message}</Toast>
+				<Toast key={id} kind={t.kind}>
+					{t.message}
+				</Toast>
 			))}
 		</Box>
 	);
@@ -214,7 +213,10 @@ function addToast(
 	}
 
 	toastMap.set(id, {
-		kind, message, duration, anchor,
+		kind,
+		message,
+		duration,
+		anchor,
 	});
 
 	publishToasts();

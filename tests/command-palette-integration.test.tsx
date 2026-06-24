@@ -15,9 +15,7 @@
  *
  *   for (const c of 'save') { stdin.write(c); await delay(80); }
  */
-import {
-	describe, test, expect, vi, afterEach,
-} from 'vitest';
+import {describe, test, expect, vi, afterEach} from 'vitest';
 import {useState} from 'react';
 import {Text} from 'ink';
 import {CommandPalette} from '../src/command-palette.js';
@@ -70,10 +68,7 @@ async function typeString(
 /**
  * Press a key (arrow / enter / esc) and wait for re-render.
  */
-async function pressKey(
-	stdin: {write: (input: string) => void},
-	key: string,
-) {
+async function pressKey(stdin: {write: (input: string) => void}, key: string) {
 	stdin.write(key);
 	await delay(150);
 }
@@ -164,11 +159,7 @@ describe('command palette — render, filter, select, dismiss', () => {
 		const {stdin} = renderWithHost(
 			<OverlayHost>
 				<Text>base</Text>
-				<CommandPalette
-					items={basicItems}
-					defaultOpen
-					onDismiss={onDismiss}
-				/>
+				<CommandPalette items={basicItems} defaultOpen onDismiss={onDismiss} />
 			</OverlayHost>,
 		);
 
@@ -297,16 +288,13 @@ describe('command palette — custom filter', () => {
 	test('custom filter returns a custom subset regardless of query', async () => {
 		// Custom filter: return only items whose id starts with 'item-0'
 		// (i.e. Item 00–09), reversed so order differs from match-sorter.
-		const customFilter: FilterFunction = vi.fn(
-			(items, _query) =>
-				items
-					.filter(item => item.id.startsWith('item-0'))
-					.reverse(),
+		const customFilter: FilterFunction = vi.fn((items, _query) =>
+			items.filter(item => item.id.startsWith('item-0')).reverse(),
 		);
 
-		const subset = manyItems.filter(item =>
-			item.id.startsWith('item-0'),
-		).reverse();
+		const subset = manyItems
+			.filter(item => item.id.startsWith('item-0'))
+			.reverse();
 
 		const {lastFrame, stdin} = renderWithHost(
 			<OverlayHost>

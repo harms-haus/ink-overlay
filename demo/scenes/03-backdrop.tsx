@@ -69,7 +69,11 @@
 
 import {useState} from 'react';
 import {Box, Text, useInput} from 'ink';
-import {Layer, useInputCaptureState, type BackdropKind} from '../../src/index.js';
+import {
+	Layer,
+	useInputCaptureState,
+	type BackdropKind,
+} from '../../src/index.js';
 import {SceneShell} from '../ui.js';
 
 // The three backdrop kinds, cycled by the `b` key.
@@ -138,8 +142,8 @@ export function Scene03Backdrop() {
 
 	return (
 		<SceneShell
-			title='Scene 03 — Backdrop'
-			description='Overpaint backdrops: none / dim / opaque + custom color.'
+			title="Scene 03 — Backdrop"
+			description="Overpaint backdrops: none / dim / opaque + custom color."
 			hints={[
 				{key: 'b', label: 'cycle backdrop (via onBackdropInput)'},
 				{key: 'c', label: 'toggle color'},
@@ -152,8 +156,8 @@ export function Scene03Backdrop() {
 				the scene chrome.
 			*/}
 			<Layer
-				anchor='center'
-				role='dialog'
+				anchor="center"
+				role="dialog"
 				capture
 				backdrop={kind}
 				backdropColor={customColor ? '#2d1b4e' : undefined}
@@ -168,11 +172,9 @@ export function Scene03Backdrop() {
 					}
 				}}
 			>
-				<Box borderStyle='round' padding={1} flexDirection='column'>
+				<Box borderStyle="round" padding={1} flexDirection="column">
 					<Text>Backdrop kind: {kind}</Text>
-					<Text>
-						customColor: {customColor ? '#2d1b4e' : '(default)'}
-					</Text>
+					<Text>customColor: {customColor ? '#2d1b4e' : '(default)'}</Text>
 					<Text dimColor>backdrop input: {lastBackdropKey}</Text>
 				</Box>
 			</Layer>

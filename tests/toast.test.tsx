@@ -96,19 +96,19 @@ describe('Toast colors per kind', () => {
 
 describe('Toast content rendering', () => {
 	test('renders children text', () => {
-		const {lastFrame} = render(<Toast kind='success'>Saved!</Toast>);
+		const {lastFrame} = render(<Toast kind="success">Saved!</Toast>);
 		expect(lastFrame()).toContain('Saved!');
 	});
 
 	test('renders border with round style', () => {
-		const {lastFrame} = render(<Toast kind='info'>test</Toast>);
+		const {lastFrame} = render(<Toast kind="info">test</Toast>);
 		const output = lastFrame();
 		// Round border uses ╭╮╰╯ characters
 		expect(output).toMatch(/[╭╮╰╯]/);
 	});
 
 	test('renders icon and children together', () => {
-		const {lastFrame} = render(<Toast kind='success'>File uploaded</Toast>);
+		const {lastFrame} = render(<Toast kind="success">File uploaded</Toast>);
 		const output = lastFrame();
 		expect(output).toContain('✓');
 		expect(output).toContain('File uploaded');
@@ -122,7 +122,7 @@ describe('Toast content rendering', () => {
 describe('Toast custom icon', () => {
 	test('icon prop overrides default icon', () => {
 		const {lastFrame} = render(
-			<Toast kind='success' icon='★'>
+			<Toast kind="success" icon="★">
 				Premium
 			</Toast>,
 		);
@@ -133,7 +133,7 @@ describe('Toast custom icon', () => {
 
 	test('icon prop overrides default icon for error kind', () => {
 		const {lastFrame} = render(
-			<Toast kind='error' icon='💥'>
+			<Toast kind="error" icon="💥">
 				Crash
 			</Toast>,
 		);

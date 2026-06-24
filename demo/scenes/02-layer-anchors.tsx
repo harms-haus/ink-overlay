@@ -9,11 +9,7 @@
 
 import {useState} from 'react';
 import {Box, Text, useInput} from 'ink';
-import {
-	Layer,
-	useInputCaptureState,
-	type Anchor,
-} from '../../src/index.js';
+import {Layer, useInputCaptureState, type Anchor} from '../../src/index.js';
 import {SceneShell} from '../ui.js';
 
 // ── All 9 anchor positions ──────────────────────────────────────────
@@ -162,18 +158,16 @@ export default function Scene02LayerAnchors() {
 	// children, all styling lives here in the content.
 	function renderContent() {
 		if (useExplicit) {
-			const offsets = usePercent
-				? 'top=\'20%\' left=\'40%\''
-				: 'top=5 left=10';
+			const offsets = usePercent ? "top='20%' left='40%'" : 'top=5 left=10';
 			return (
 				<Box
-					borderStyle='round'
-					borderColor='cyan'
+					borderStyle="round"
+					borderColor="cyan"
 					paddingX={2}
 					paddingY={1}
-					flexDirection='column'
+					flexDirection="column"
 				>
-					<Text bold color='cyan'>
+					<Text bold color="cyan">
 						Explicit Offsets
 					</Text>
 					<Text>offsets: {offsets}</Text>
@@ -185,13 +179,13 @@ export default function Scene02LayerAnchors() {
 
 		return (
 			<Box
-				borderStyle='round'
-				borderColor='yellow'
+				borderStyle="round"
+				borderColor="yellow"
 				paddingX={2}
 				paddingY={1}
-				flexDirection='column'
+				flexDirection="column"
 			>
-				<Text bold color='yellow'>
+				<Text bold color="yellow">
 					Flexbox Anchor
 				</Text>
 				<Text>anchor: {currentAnchor}</Text>
@@ -226,8 +220,8 @@ export default function Scene02LayerAnchors() {
 
 	return (
 		<SceneShell
-			title='Scene 02 — Layer Anchors'
-			description='Cycle all 9 anchors, toggle explicit offsets, overflow, and margin.'
+			title="Scene 02 — Layer Anchors"
+			description="Cycle all 9 anchors, toggle explicit offsets, overflow, and margin."
 			hints={hints}
 		>
 			{/* ── Mode indicator ── */}
@@ -267,8 +261,8 @@ export default function Scene02LayerAnchors() {
 					<Layer
 						// Percentage-string offsets — resolved relative to
 						// the host viewport by Ink's absolute positioning.
-						top='20%'
-						left='40%'
+						top="20%"
+						left="40%"
 						z={10}
 						overflow={overflow}
 						margin={margin}

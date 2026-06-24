@@ -1,7 +1,10 @@
 import {test, expect, afterEach} from 'vitest';
 import {Text} from 'ink';
 import {delay} from './delay.js';
-import {createResizableStdout, renderResizable} from './create-resizable-stdout.js';
+import {
+	createResizableStdout,
+	renderResizable,
+} from './create-resizable-stdout.js';
 
 // ── createResizableStdout ───────────────────────────────────────────
 
@@ -60,9 +63,7 @@ test('createResizableStdout — write captures frames', async () => {
 
 // ── renderResizable ─────────────────────────────────────────────────
 
-let active:
-| {unmountAndCleanup: () => void}
-| undefined;
+let active: {unmountAndCleanup: () => void} | undefined;
 
 afterEach(() => {
 	active?.unmountAndCleanup();

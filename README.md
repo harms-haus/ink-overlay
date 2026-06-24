@@ -26,20 +26,24 @@ import {useState} from 'react';
 import {OverlayHost, Modal, toasts} from '@harms-haus/ink-overlay';
 
 function App() {
-  const [open, setOpen] = useState(false);
+	const [open, setOpen] = useState(false);
 
-  return (
-    <OverlayHost>
-      <Box flexDirection="column" padding={1}>
-        <Text>Press m to open a modal</Text>
-      </Box>
+	return (
+		<OverlayHost>
+			<Box flexDirection="column" padding={1}>
+				<Text>Press m to open a modal</Text>
+			</Box>
 
-      <Modal open={open} onOpenChange={setOpen} title="Hello"
-        onDismiss={() => setOpen(false)}>
-        <Text>Modal content</Text>
-      </Modal>
-    </OverlayHost>
-  );
+			<Modal
+				open={open}
+				onOpenChange={setOpen}
+				title="Hello"
+				onDismiss={() => setOpen(false)}
+			>
+				<Text>Modal content</Text>
+			</Modal>
+		</OverlayHost>
+	);
 }
 
 render(<App />);

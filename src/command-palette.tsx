@@ -9,7 +9,12 @@
  */
 
 import {
-	useEffect, useId, useMemo, useRef, useState, type ReactNode,
+	useEffect,
+	useId,
+	useMemo,
+	useRef,
+	useState,
+	type ReactNode,
 } from 'react';
 import {Box, Text, type Key} from 'ink';
 import chalk from 'chalk';
@@ -119,9 +124,7 @@ export function CommandPalette({
 
 	useEffect(() => {
 		setSelectedIndex(previous =>
-			filtered.length === 0
-				? 0
-				: Math.min(previous, filtered.length - 1),
+			filtered.length === 0 ? 0 : Math.min(previous, filtered.length - 1),
 		);
 	}, [filtered.length]);
 
@@ -191,9 +194,7 @@ export function CommandPalette({
 
 		if (key.downArrow) {
 			setSelectedIndex(previous =>
-				filtered.length === 0
-					? 0
-					: Math.min(filtered.length - 1, previous + 1),
+				filtered.length === 0 ? 0 : Math.min(filtered.length - 1, previous + 1),
 			);
 			return true;
 		}
@@ -254,18 +255,18 @@ export function CommandPalette({
 	return (
 		<Layer
 			capture
-			anchor='center'
+			anchor="center"
 			z={z}
-			backdrop='dim'
-			role='menu'
+			backdrop="dim"
+			role="menu"
 			open={isOpen}
 			onOpenChange={handleOpenChange}
 			onDismiss={onDismiss}
 		>
 			<Box
-				flexDirection='column'
-				borderStyle='round'
-				borderColor='cyan'
+				flexDirection="column"
+				borderStyle="round"
+				borderColor="cyan"
 				width={width}
 				padding={1}
 			>
@@ -274,21 +275,27 @@ export function CommandPalette({
 
 				{/* Filter input */}
 				<Text>
-					<Text color='gray'>{'\u276F'} </Text>
-					{query.length > 0
-						? filterInputWithCursor
-						: <><Text dimColor>{placeholder}</Text><Text>{chalk.inverse(' ')}</Text></>}
+					<Text color="gray">{'\u276F'} </Text>
+					{query.length > 0 ? (
+						filterInputWithCursor
+					) : (
+						<>
+							<Text dimColor>{placeholder}</Text>
+							<Text>{chalk.inverse(' ')}</Text>
+						</>
+					)}
 				</Text>
 
 				{/* Separator */}
 				<Box borderTop />
 
 				{/* List */}
-				<Box flexDirection='column'>
+				<Box flexDirection="column">
 					{/* Top indicator */}
 					{offset > 0 && (
 						<Text dimColor>
-							{'  '}{'\u25B2'} {offset} more
+							{'  '}
+							{'\u25B2'} {offset} more
 						</Text>
 					)}
 
@@ -296,11 +303,7 @@ export function CommandPalette({
 					{visibleItems.map((item, i) => {
 						const isSelected = i === selectedIndex - offset;
 						if (renderItem) {
-							return (
-								<Box key={item.id}>
-									{renderItem(item, isSelected)}
-								</Box>
-							);
+							return <Box key={item.id}>{renderItem(item, isSelected)}</Box>;
 						}
 
 						return (
@@ -317,14 +320,13 @@ export function CommandPalette({
 					{/* Bottom indicator */}
 					{offset + visibleCount < filtered.length && (
 						<Text dimColor>
-							{'  '}{'\u25BC'} {filtered.length - offset - visibleCount} more
+							{'  '}
+							{'\u25BC'} {filtered.length - offset - visibleCount} more
 						</Text>
 					)}
 
 					{/* Empty state */}
-					{filtered.length === 0 && (
-						<Text dimColor>{emptyMessage}</Text>
-					)}
+					{filtered.length === 0 && <Text dimColor>{emptyMessage}</Text>}
 				</Box>
 			</Box>
 		</Layer>

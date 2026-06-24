@@ -9,9 +9,7 @@
  * Uses REAL timers — ink breaks with fake timers.
  * Uses renderWithHost so <OverlayHost> is present.
  */
-import {
-	describe, test, expect, afterEach, vi,
-} from 'vitest';
+import {describe, test, expect, afterEach, vi} from 'vitest';
 import {useState} from 'react';
 import {Text, useInput} from 'ink';
 import {OverlayHost} from '../src/index.js';

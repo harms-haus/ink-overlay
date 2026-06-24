@@ -101,8 +101,7 @@ const scenes: SceneDefinition[] = [
 	{
 		id: '01',
 		title: '01 · Getting Started',
-		description:
-			'OverlayHost, declarative Modal, imperative toasts',
+		description: 'OverlayHost, declarative Modal, imperative toasts',
 		tags: ['Modal', 'toasts'],
 		component: Scene01OverlayHost,
 	},
@@ -144,8 +143,7 @@ const scenes: SceneDefinition[] = [
 	{
 		id: '07',
 		title: '07 · Tooltip',
-		description:
-			'key/focus triggers, custom triggerKey & dismissDelay',
+		description: 'key/focus triggers, custom triggerKey & dismissDelay',
 		tags: ['Tooltip'],
 		component: Scene07Tooltip,
 	},
@@ -273,9 +271,7 @@ function DemoShell({activeScene, setActiveScene, exitDemo}: DemoShellProps) {
  */
 function App() {
 	// The currently active scene, or `null` when the menu is showing.
-	const [activeScene, setActiveScene] = useState<SceneDefinition | null>(
-		null,
-	);
+	const [activeScene, setActiveScene] = useState<SceneDefinition | null>(null);
 
 	// `useApp()` is Ink's own context — available everywhere Ink renders.
 	const {exit} = useApp();

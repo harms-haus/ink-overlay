@@ -68,7 +68,6 @@ import type {
  *   compile-time-only reference to suppress "unused type" lints.
  */
 const _types = {
-
 	OverlayHostProps: null as unknown as OverlayHostProps,
 
 	LayerProps: null as unknown as LayerProps,

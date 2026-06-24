@@ -4,9 +4,7 @@
  * LIFO stack + captureDepth + cooperative gating.
  * Uses REAL timers (ink breaks with fake timers).
  */
-import {
-	test, expect, vi, afterEach,
-} from 'vitest';
+import {test, expect, vi, afterEach} from 'vitest';
 import React, {type ReactNode} from 'react';
 import {render} from 'ink-testing-library';
 import {Text} from 'ink';
@@ -327,9 +325,7 @@ test('useInputDispatcher throws when used outside <InputDispatcher>', () => {
 		return <Text>should-not-appear</Text>;
 	}
 
-	const {lastFrame} = render(
-		<BadComponent />,
-	);
+	const {lastFrame} = render(<BadComponent />);
 
 	// Ink's ErrorBoundary catches the error and renders ErrorOverview,
 	// so the component's content should never appear.

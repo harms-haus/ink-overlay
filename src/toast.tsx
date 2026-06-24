@@ -44,17 +44,14 @@ export function Toast({kind = 'info', children, icon}: ToastProps) {
 
 	return (
 		<Box
-			borderStyle='round'
+			borderStyle="round"
 			borderColor={color}
 			paddingX={1}
-			flexDirection='row'
+			flexDirection="row"
 			flexShrink={0}
 		>
 			<Text color={color}>{displayIcon}</Text>
-			<Text>
-				{' '}
-				{children}
-			</Text>
+			<Text> {children}</Text>
 		</Box>
 	);
 }

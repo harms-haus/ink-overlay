@@ -25,9 +25,5 @@ export function renderWithHost(
 	tree: ReactElement,
 	hostProperties?: Parameters<typeof OverlayHost>[0],
 ): RenderWithHostResult {
-	return render(
-		<OverlayHost {...hostProperties}>
-			{tree}
-		</OverlayHost>,
-	);
+	return render(<OverlayHost {...hostProperties}>{tree}</OverlayHost>);
 }

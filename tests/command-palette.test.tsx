@@ -6,9 +6,7 @@
  *       The handler only processes input.length === 1. Write chars one at
  *       a time with delays between them.
  */
-import {
-	test, expect, vi, afterEach,
-} from 'vitest';
+import {test, expect, vi, afterEach} from 'vitest';
 import {Text} from 'ink';
 import {CommandPalette} from '../src/command-palette.js';
 import type {CommandPaletteItem} from '../src/types.js';
@@ -55,11 +53,7 @@ test('windowed list shows maxVisible items and overflow indicator', async () => 
 	const {lastFrame} = renderWithHost(
 		<>
 			<Text>base</Text>
-			<CommandPalette
-				items={allItems}
-				maxVisible={3}
-				defaultOpen
-			/>
+			<CommandPalette items={allItems} maxVisible={3} defaultOpen />
 		</>,
 	);
 
@@ -84,11 +78,7 @@ test('typing filters items by label using match-sorter', async () => {
 	const {lastFrame, stdin} = renderWithHost(
 		<>
 			<Text>base</Text>
-			<CommandPalette
-				items={allItems}
-				maxVisible={10}
-				defaultOpen
-			/>
+			<CommandPalette items={allItems} maxVisible={10} defaultOpen />
 		</>,
 	);
 
@@ -116,11 +106,7 @@ test('down-arrow moves selection marker to next item', async () => {
 	const {lastFrame, stdin} = renderWithHost(
 		<>
 			<Text>base</Text>
-			<CommandPalette
-				items={allItems}
-				maxVisible={5}
-				defaultOpen
-			/>
+			<CommandPalette items={allItems} maxVisible={5} defaultOpen />
 		</>,
 	);
 
@@ -209,7 +195,7 @@ test('shows empty message when no items match', async () => {
 				items={allItems}
 				maxVisible={10}
 				defaultOpen
-				emptyMessage='No matching commands'
+				emptyMessage="No matching commands"
 			/>
 		</>,
 	);
@@ -300,11 +286,7 @@ test('up-arrow clamps selection at first item', async () => {
 	const {lastFrame, stdin} = renderWithHost(
 		<>
 			<Text>base</Text>
-			<CommandPalette
-				items={allItems}
-				maxVisible={5}
-				defaultOpen
-			/>
+			<CommandPalette items={allItems} maxVisible={5} defaultOpen />
 		</>,
 	);
 
@@ -335,11 +317,7 @@ test('backspace deletes the character before the cursor', async () => {
 	const {lastFrame, stdin} = renderWithHost(
 		<>
 			<Text>base</Text>
-			<CommandPalette
-				items={allItems}
-				maxVisible={10}
-				defaultOpen
-			/>
+			<CommandPalette items={allItems} maxVisible={10} defaultOpen />
 		</>,
 	);
 
@@ -368,11 +346,7 @@ test('left and right arrow move the cursor within the filter text', async () => 
 	const {lastFrame, stdin} = renderWithHost(
 		<>
 			<Text>base</Text>
-			<CommandPalette
-				items={allItems}
-				maxVisible={10}
-				defaultOpen
-			/>
+			<CommandPalette items={allItems} maxVisible={10} defaultOpen />
 		</>,
 	);
 
@@ -410,11 +384,7 @@ test('typing inserts characters at the cursor position', async () => {
 	const {lastFrame, stdin} = renderWithHost(
 		<>
 			<Text>base</Text>
-			<CommandPalette
-				items={allItems}
-				maxVisible={10}
-				defaultOpen
-			/>
+			<CommandPalette items={allItems} maxVisible={10} defaultOpen />
 		</>,
 	);
 
@@ -447,11 +417,7 @@ test('down-arrow clamps selection at last item', async () => {
 	const {lastFrame, stdin} = renderWithHost(
 		<>
 			<Text>base</Text>
-			<CommandPalette
-				items={allItems}
-				maxVisible={5}
-				defaultOpen
-			/>
+			<CommandPalette items={allItems} maxVisible={5} defaultOpen />
 		</>,
 	);
 
@@ -483,11 +449,7 @@ test('selectedIndex clamps when filtered results shrink', async () => {
 	const {lastFrame, stdin} = renderWithHost(
 		<>
 			<Text>base</Text>
-			<CommandPalette
-				items={allItems}
-				maxVisible={5}
-				defaultOpen
-			/>
+			<CommandPalette items={allItems} maxVisible={5} defaultOpen />
 		</>,
 	);
 
@@ -511,4 +473,3 @@ test('selectedIndex clamps when filtered results shrink', async () => {
 	expect(frame).toMatch(/\u25B8\s+Cherry/);
 	expect(frame).not.toMatch(/\u25B8\s+Avocado/);
 });
-

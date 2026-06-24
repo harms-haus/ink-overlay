@@ -4,9 +4,7 @@
  * Uses REAL timers — ink breaks with fake timers.
  * Uses renderWithHost to ensure <OverlayHost> is present.
  */
-import {
-	describe, test, expect, afterEach,
-} from 'vitest';
+import {describe, test, expect, afterEach} from 'vitest';
 import {useCallback, useState} from 'react';
 import {Text, useInput, Box} from 'ink';
 import {toasts, overlay} from '../src/manager.js';

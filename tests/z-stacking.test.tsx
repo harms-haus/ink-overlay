@@ -30,13 +30,13 @@ test('z-stacking: all three layers render; topmost (z5) overpaints z3 at shared 
 	const {lastFrame} = render(
 		<OverlayHost>
 			<Text>base</Text>
-			<Layer z={1} anchor='top-left'>
+			<Layer z={1} anchor="top-left">
 				<Text>z1</Text>
 			</Layer>
-			<Layer z={3} anchor='center'>
+			<Layer z={3} anchor="center">
 				<Text>z3</Text>
 			</Layer>
-			<Layer z={5} anchor='center'>
+			<Layer z={5} anchor="center">
 				<Text>z5</Text>
 			</Layer>
 		</OverlayHost>,

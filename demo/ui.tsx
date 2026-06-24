@@ -84,7 +84,7 @@ export function SceneShell({
 		hintElements.push(
 			<Box key={hint.key} marginRight={first ? 0 : 1}>
 				<Text>
-					<Text bold color='yellow'>
+					<Text bold color="yellow">
 						{hint.key}
 					</Text>{' '}
 					{hint.label}
@@ -95,23 +95,23 @@ export function SceneShell({
 	}
 
 	return (
-		<Box flexDirection='column'>
+		<Box flexDirection="column">
 			{/* Header: title + description */}
-			<Box flexDirection='column'>
+			<Box flexDirection="column">
 				<Text bold>{title}</Text>
 				<Text dimColor>{description}</Text>
 			</Box>
 
 			{/* Content area: the scene body */}
-			<Box flexDirection='column' flexGrow={1} marginTop={1}>
+			<Box flexDirection="column" flexGrow={1} marginTop={1}>
 				{children}
 			</Box>
 
 			{/* Footer: keybinding hints, separated by a horizontal rule. */}
 			{hints.length > 0 && (
-				<Box flexDirection='column' marginTop={1}>
+				<Box flexDirection="column" marginTop={1}>
 					<Text dimColor>{'─'.repeat(48)}</Text>
-					<Box flexWrap='wrap'>{hintElements}</Box>
+					<Box flexWrap="wrap">{hintElements}</Box>
 				</Box>
 			)}
 		</Box>
@@ -139,7 +139,7 @@ type KeyHintProps = {
  */
 export function KeyHint({children}: KeyHintProps) {
 	return (
-		<Text bold color='yellow'>
+		<Text bold color="yellow">
 			{children}
 		</Text>
 	);

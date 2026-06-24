@@ -19,11 +19,11 @@ yarn add @harms-haus/ink-overlay
 
 The package declares the following peer dependencies (see `package.json`); install them if your project does not already include them:
 
-| Package | Version | Notes |
-|---------|---------|-------|
-| `ink` | `>=7.0.0` | Required — Ink is not bundled. |
-| `react` | `>=19.0.0` | Required — React 19 is the minimum supported. |
-| `@types/react` | `>=19.0.0` | Optional — only needed for TypeScript users. |
+| Package        | Version    | Notes                                         |
+| -------------- | ---------- | --------------------------------------------- |
+| `ink`          | `>=7.0.0`  | Required — Ink is not bundled.                |
+| `react`        | `>=19.0.0` | Required — React 19 is the minimum supported. |
+| `@types/react` | `>=19.0.0` | Optional — only needed for TypeScript users.  |
 
 ### Runtime dependencies
 
@@ -45,38 +45,34 @@ import {useState} from 'react';
 import {OverlayHost, Modal, toasts} from '@harms-haus/ink-overlay';
 
 function App() {
-  const [showModal, setShowModal] = useState(false);
+	const [showModal, setShowModal] = useState(false);
 
-  useInput((input) => {
-    if (input === 'm') {
-      setShowModal(prev => !prev);
-    } else if (input === 't') {
-      // Imperative — works from anywhere, no hook required.
-      toasts.success('Toast fired!');
-    } else if (input === 'q') {
-      process.exit(0);
-    }
-  });
+	useInput(input => {
+		if (input === 'm') {
+			setShowModal(prev => !prev);
+		} else if (input === 't') {
+			// Imperative — works from anywhere, no hook required.
+			toasts.success('Toast fired!');
+		} else if (input === 'q') {
+			process.exit(0);
+		}
+	});
 
-  return (
-    <OverlayHost>
-      <Box flexDirection="column" padding={1}>
-        <Text>Press m to open the modal.</Text>
-        <Text>Press t to fire a toast.</Text>
-        <Text>Press q or Ctrl+C to quit.</Text>
-      </Box>
+	return (
+		<OverlayHost>
+			<Box flexDirection="column" padding={1}>
+				<Text>Press m to open the modal.</Text>
+				<Text>Press t to fire a toast.</Text>
+				<Text>Press q or Ctrl+C to quit.</Text>
+			</Box>
 
-      {/* Declarative overlay — open state lives in React. */}
-      <Modal
-        open={showModal}
-        onOpenChange={setShowModal}
-        title="Hello"
-      >
-        <Text>Modal content goes here.</Text>
-        <Text dimColor>Press Esc to close.</Text>
-      </Modal>
-    </OverlayHost>
-  );
+			{/* Declarative overlay — open state lives in React. */}
+			<Modal open={showModal} onOpenChange={setShowModal} title="Hello">
+				<Text>Modal content goes here.</Text>
+				<Text dimColor>Press Esc to close.</Text>
+			</Modal>
+		</OverlayHost>
+	);
 }
 
 render(<App />);

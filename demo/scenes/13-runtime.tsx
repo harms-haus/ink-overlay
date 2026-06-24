@@ -119,14 +119,14 @@ export default function Scene13Runtime() {
 
 	return (
 		<SceneShell
-			title='13 · Runtime & Environments'
-			description='Detection & graceful degradation'
+			title="13 · Runtime & Environments"
+			description="Detection & graceful degradation"
 			hints={[{key: 'Esc', label: 'back to menu'}]}
 		>
 			{/* ════════════════════════════════════════════════════════ */}
 			{/* Runtime Detection & Graceful Degradation               */}
 			{/* ════════════════════════════════════════════════════════ */}
-			<Box flexDirection='column'>
+			<Box flexDirection="column">
 				{/* ── Detection results table ──────────────────────── */}
 				{/*
 				 * Each row is a two-column Box: a dim label on the left
@@ -134,38 +134,32 @@ export default function Scene13Runtime() {
 				 * We use fixed-width label padding so the results align
 				 * vertically into a readable column.
 				 */}
-				<Box flexDirection='column'>
+				<Box flexDirection="column">
 					{/* Runtime: Bun? — isBun() returns true when          */}
 					{/* globalThis.Bun is defined (the Bun JS runtime).     */}
-					<Box flexDirection='row'>
+					<Box flexDirection="row">
 						<Text dimColor>{'Runtime:    Bun?'}</Text>
-						<Text>
-							{info.bun ? ' ✓ Yes' : ' ✗ No (Node)'}
-						</Text>
+						<Text>{info.bun ? ' ✓ Yes' : ' ✗ No (Node)'}</Text>
 					</Box>
 
 					{/* Interactive: — info.interactive is the inverse of  */}
 					{/* isNonInteractive(), which returns true when         */}
 					{/* process.stdout lacks isTTY OR process.env.CI is    */}
 					{/* truthy.                                            */}
-					<Box flexDirection='row'>
+					<Box flexDirection="row">
 						<Text dimColor>{'Interactive:'}</Text>
 						<Text>
-							{info.interactive
-								? ' ✓ Yes (TTY)'
-								: ' ✗ No (CI / non-TTY)'}
+							{info.interactive ? ' ✓ Yes (TTY)' : ' ✗ No (CI / non-TTY)'}
 						</Text>
 					</Box>
 
 					{/* Raw mode: — isRawModeSupported() returns true      */}
 					{/* when process.stdin is a TTY. Without a TTY on       */}
 					{/* stdin, raw-mode key capture cannot be engaged.      */}
-					<Box flexDirection='row'>
+					<Box flexDirection="row">
 						<Text dimColor>{'Raw mode:   '}</Text>
 						<Text>
-							{info.rawModeSupported
-								? ' ✓ Supported'
-								: ' ✗ Not supported'}
+							{info.rawModeSupported ? ' ✓ Supported' : ' ✗ Not supported'}
 						</Text>
 					</Box>
 				</Box>
@@ -176,7 +170,7 @@ export default function Scene13Runtime() {
 				 * getRuntimeInfo() snapshot. Showing both proves the
 				 * aggregate and scalar APIs are consistent.
 				 */}
-				<Box marginTop={1} flexDirection='column'>
+				<Box marginTop={1} flexDirection="column">
 					<Text dimColor>
 						{`isBun()             → ${bunScalar ? 'true' : 'false'} (matches info.bun)`}
 					</Text>
@@ -196,21 +190,18 @@ export default function Scene13Runtime() {
 				 * but do not respond to the keyboard — use Node for
 				 * interactive features.
 				 */}
-				<Box marginTop={1} flexDirection='column'>
-					<Text bold>
-						Limitations &amp; graceful degradation
-					</Text>
+				<Box marginTop={1} flexDirection="column">
+					<Text bold>Limitations &amp; graceful degradation</Text>
 
-					<Box marginTop={1} flexDirection='column'>
+					<Box marginTop={1} flexDirection="column">
 						<Text>
-							<Text bold color='yellow'>
+							<Text bold color="yellow">
 								Bun:
 							</Text>{' '}
-							rendering works, but interactive input is
-							non-functional (oven-sh/bun#6862 — Bun does
-							not call process.stdin.resume()). Overlays
-							render but do not respond to keyboard. Use
-							Node for interactive features.
+							rendering works, but interactive input is non-functional
+							(oven-sh/bun#6862 — Bun does not call process.stdin.resume()).
+							Overlays render but do not respond to keyboard. Use Node for
+							interactive features.
 						</Text>
 
 						{/*
@@ -222,14 +213,13 @@ export default function Scene13Runtime() {
 						 */}
 						<Box marginTop={1}>
 							<Text>
-								<Text bold color='yellow'>
+								<Text bold color="yellow">
 									Non-TTY / CI:
 								</Text>{' '}
-								layers render their backdrops and content, but
-								input is inert (InputDispatcher&apos;s useInput
-								has isActive:false; setRawMode is never
-								called). Overlays are visible but keyboard
-								interaction is unavailable.
+								layers render their backdrops and content, but input is inert
+								(InputDispatcher&apos;s useInput has isActive:false; setRawMode
+								is never called). Overlays are visible but keyboard interaction
+								is unavailable.
 							</Text>
 						</Box>
 
@@ -244,12 +234,12 @@ export default function Scene13Runtime() {
 						 */}
 						<Box marginTop={1}>
 							<Text>
-								<Text bold color='yellow'>
+								<Text bold color="yellow">
 									Design:
 								</Text>{' '}
-								all detection functions have no side effects on
-								import — detection is lazy / function-call-based
-								and safe to call from any context.
+								all detection functions have no side effects on import —
+								detection is lazy / function-call-based and safe to call from
+								any context.
 							</Text>
 						</Box>
 					</Box>

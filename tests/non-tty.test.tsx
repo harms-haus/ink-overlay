@@ -52,7 +52,7 @@ test('non-tty: capturing layer with opaque backdrop does not throw and still ren
 	expect(() => {
 		instance = render(
 			<OverlayHost>
-				<Layer capture backdrop='opaque' anchor='center'>
+				<Layer capture backdrop="opaque" anchor="center">
 					<Text>NON-TTY-LAYER</Text>
 				</Layer>
 			</OverlayHost>,

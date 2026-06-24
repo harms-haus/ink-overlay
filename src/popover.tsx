@@ -37,13 +37,14 @@ import {
 	useState,
 	useEffect,
 } from 'react';
-import {
-	Box, useBoxMetrics, useWindowSize, type DOMElement,
-} from 'ink';
+import {Box, useBoxMetrics, useWindowSize, type DOMElement} from 'ink';
 import {computePopoverPosition} from './primitives.js';
 import {Layer} from './layer.js';
 import type {
-	Placement, OffsetEdges, BackdropKind, AnchorRect,
+	Placement,
+	OffsetEdges,
+	BackdropKind,
+	AnchorRect,
 } from './types.js';
 
 // ── Props ───────────────────────────────────────────────────────────
@@ -94,7 +95,10 @@ export type PopoverProps = {
 function getRootRelativeRect(node: DOMElement): AnchorRect {
 	const {yogaNode} = node;
 	const layout = yogaNode?.getComputedLayout() ?? {
-		left: 0, top: 0, width: 0, height: 0,
+		left: 0,
+		top: 0,
+		width: 0,
+		height: 0,
 	};
 
 	let offsetX = 0;
@@ -161,10 +165,11 @@ export function Popover({
 		placement: Placement;
 	}>({top: -9999, left: -9999, placement: 'bottom'});
 
-	const isMeasured = anchorMetrics.hasMeasured
-		&& popoverMetrics.hasMeasured
-		&& popoverMetrics.width > 0
-		&& popoverMetrics.height > 0;
+	const isMeasured =
+		anchorMetrics.hasMeasured &&
+		popoverMetrics.hasMeasured &&
+		popoverMetrics.width > 0 &&
+		popoverMetrics.height > 0;
 
 	// Compute final position once both anchor and popover are measured.
 	//
@@ -197,15 +202,19 @@ export function Popover({
 			viewport,
 			placement,
 			{
-				offset, crossOffset, flip, shift, collisionPadding,
+				offset,
+				crossOffset,
+				flip,
+				shift,
+				collisionPadding,
 			},
 		);
 
 		setPosition(previous => {
 			if (
-				previous.top === result.top
-				&& previous.left === result.left
-				&& previous.placement === result.placement
+				previous.top === result.top &&
+				previous.left === result.left &&
+				previous.placement === result.placement
 			) {
 				return previous;
 			}
@@ -243,9 +252,7 @@ export function Popover({
 			onOpenChange={onOpenChange}
 			onDismiss={onDismiss}
 		>
-			<Box ref={popoverReference}>
-				{children}
-			</Box>
+			<Box ref={popoverReference}>{children}</Box>
 		</Layer>
 	);
 }

@@ -163,7 +163,10 @@ export function useFocusTrap(
 	// ── Input handler ──────────────────────────────────────────────
 
 	const handleInput = useCallback(
-		(_input: string, key: {tab?: boolean; shift?: boolean; escape?: boolean}) => {
+		(
+			_input: string,
+			key: {tab?: boolean; shift?: boolean; escape?: boolean},
+		) => {
 			// Ink's useInput clears `input` to '' for non-alphanumeric keys
 			// (Tab, Shift+Tab, Escape) and puts identity in the key object.
 			if (key.tab && !key.shift) {
@@ -206,10 +209,7 @@ export function useFocusTrap(
 		return () => {};
 	}, [active, captureEnter, captureExit]);
 
-	return useMemo(
-		() => ({trapId, isTrapped: active}),
-		[trapId, active],
-	);
+	return useMemo(() => ({trapId, isTrapped: active}), [trapId, active]);
 }
 
 // ── Component ────────────────────────────────────────────────────────

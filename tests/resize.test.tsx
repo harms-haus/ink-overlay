@@ -67,7 +67,7 @@ afterEach(() => {
 test('resize: centered layer recenters after terminal resize', async () => {
 	const result = renderResizable(
 		<OverlayHost>
-			<Layer anchor='center'>
+			<Layer anchor="center">
 				<Text>RESIZE-ME</Text>
 			</Layer>
 		</OverlayHost>,
@@ -110,7 +110,7 @@ test('resize: centered layer recenters after terminal resize', async () => {
 test('resize: bottom-anchored layer moves to new bottom edge after resize', async () => {
 	const result = renderResizable(
 		<OverlayHost>
-			<Layer anchor='bottom'>
+			<Layer anchor="bottom">
 				<Text>BOTTOM</Text>
 			</Layer>
 		</OverlayHost>,

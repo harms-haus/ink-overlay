@@ -40,28 +40,28 @@ The internal `handleDismiss` callback always invokes `onDismiss` (if provided), 
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `open` | `boolean` | — | Controlled open state. Omit for uncontrolled mode. |
-| `defaultOpen` | `boolean` | `true` | Initial open state in uncontrolled mode. |
-| `onOpenChange` | `(open: boolean) => void` | — | Called whenever open state changes (both modes). |
-| `onDismiss` | `() => void` | — | Called on Escape, or on backdrop input when `role='dialog'`. See [Backdrop input scoping](#backdrop-input-scoping) below. |
-| `onBackdropInput` | `() => void` | — | Called on non-Escape, non-Tab input that reaches the layer's input handler. Defaults to `onDismiss` **only** for `role='dialog'`. See [Backdrop input scoping](#backdrop-input-scoping). |
-| `id` | `string` | random id | Stable unique identifier. If omitted, a random id is generated once and cached in a ref. |
-| `anchor` | `Anchor` | `'center'` (when no explicit position) | One of `'center'`, `'top'`, `'bottom'`, `'left'`, `'right'`, `'top-left'`, `'top-right'`, `'bottom-left'`, `'bottom-right'`. Mutually exclusive with `top`/`left`/`right`/`bottom`. |
-| `top` | `number \| string` | — | Explicit top offset. Activates explicit positioning mode; ignored if `anchor` is set. |
-| `left` | `number \| string` | — | Explicit left offset. |
-| `right` | `number \| string` | — | Explicit right offset. |
-| `bottom` | `number \| string` | — | Explicit bottom offset. |
-| `z` | `number` | `0` | Z-level for sorting. Higher values render on top of lower ones. |
-| `capture` | `boolean` | `false` | When `true`, enables raw mode and wraps content in a `<FocusTrap>`, confining Tab/Shift+Tab to the layer's region. |
-| `backdrop` | `'none' \| 'opaque' \| 'dim'` | `'none'` | Backdrop style. See [Backdrop](#backdrop). |
-| `backdropColor` | `string` | `'black'` (opaque) / `'#1a1a2e'` (dim) | Custom backdrop background color. Only takes effect when `backdrop !== 'none'`. |
-| `role` | `Role` | — | One of `'dialog'`, `'alertdialog'`, `'menu'`, `'tooltip'`, `'toast'`. Affects Escape and backdrop-input behavior. |
-| `overflow` | `'visible' \| 'hidden'` | `'hidden'` | Whether content is clipped to the layer's bounding box. |
-| `margin` | `OffsetEdges` | — | `{top?, left?, right?, bottom?}` margin offsets applied to the inner content box. |
-| `transition` | `TransitionName \| TransitionConfig` | — | Named transition (`'none'`, `'fade'`, `'slide-up'`, `'slide-down'`, `'slide-left'`, `'slide-right'`) or a custom step config. See [Concepts › Animation](../concepts/animation.md) and [Services › Animations](../services/animations.md). |
-| `children` | `ReactNode` | — | Layer content. Pushed to the host on every change via a dedicated sync effect. |
+| Prop              | Type                                 | Default                                | Description                                                                                                                                                                                                                                |
+| ----------------- | ------------------------------------ | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `open`            | `boolean`                            | —                                      | Controlled open state. Omit for uncontrolled mode.                                                                                                                                                                                         |
+| `defaultOpen`     | `boolean`                            | `true`                                 | Initial open state in uncontrolled mode.                                                                                                                                                                                                   |
+| `onOpenChange`    | `(open: boolean) => void`            | —                                      | Called whenever open state changes (both modes).                                                                                                                                                                                           |
+| `onDismiss`       | `() => void`                         | —                                      | Called on Escape, or on backdrop input when `role='dialog'`. See [Backdrop input scoping](#backdrop-input-scoping) below.                                                                                                                  |
+| `onBackdropInput` | `() => void`                         | —                                      | Called on non-Escape, non-Tab input that reaches the layer's input handler. Defaults to `onDismiss` **only** for `role='dialog'`. See [Backdrop input scoping](#backdrop-input-scoping).                                                   |
+| `id`              | `string`                             | random id                              | Stable unique identifier. If omitted, a random id is generated once and cached in a ref.                                                                                                                                                   |
+| `anchor`          | `Anchor`                             | `'center'` (when no explicit position) | One of `'center'`, `'top'`, `'bottom'`, `'left'`, `'right'`, `'top-left'`, `'top-right'`, `'bottom-left'`, `'bottom-right'`. Mutually exclusive with `top`/`left`/`right`/`bottom`.                                                        |
+| `top`             | `number \| string`                   | —                                      | Explicit top offset. Activates explicit positioning mode; ignored if `anchor` is set.                                                                                                                                                      |
+| `left`            | `number \| string`                   | —                                      | Explicit left offset.                                                                                                                                                                                                                      |
+| `right`           | `number \| string`                   | —                                      | Explicit right offset.                                                                                                                                                                                                                     |
+| `bottom`          | `number \| string`                   | —                                      | Explicit bottom offset.                                                                                                                                                                                                                    |
+| `z`               | `number`                             | `0`                                    | Z-level for sorting. Higher values render on top of lower ones.                                                                                                                                                                            |
+| `capture`         | `boolean`                            | `false`                                | When `true`, enables raw mode and wraps content in a `<FocusTrap>`, confining Tab/Shift+Tab to the layer's region.                                                                                                                         |
+| `backdrop`        | `'none' \| 'opaque' \| 'dim'`        | `'none'`                               | Backdrop style. See [Backdrop](#backdrop).                                                                                                                                                                                                 |
+| `backdropColor`   | `string`                             | `'black'` (opaque) / `'#1a1a2e'` (dim) | Custom backdrop background color. Only takes effect when `backdrop !== 'none'`.                                                                                                                                                            |
+| `role`            | `Role`                               | —                                      | One of `'dialog'`, `'alertdialog'`, `'menu'`, `'tooltip'`, `'toast'`. Affects Escape and backdrop-input behavior.                                                                                                                          |
+| `overflow`        | `'visible' \| 'hidden'`              | `'hidden'`                             | Whether content is clipped to the layer's bounding box.                                                                                                                                                                                    |
+| `margin`          | `OffsetEdges`                        | —                                      | `{top?, left?, right?, bottom?}` margin offsets applied to the inner content box.                                                                                                                                                          |
+| `transition`      | `TransitionName \| TransitionConfig` | —                                      | Named transition (`'none'`, `'fade'`, `'slide-up'`, `'slide-down'`, `'slide-left'`, `'slide-right'`) or a custom step config. See [Concepts › Animation](../concepts/animation.md) and [Services › Animations](../services/animations.md). |
+| `children`        | `ReactNode`                          | —                                      | Layer content. Pushed to the host on every change via a dedicated sync effect.                                                                                                                                                             |
 
 ### Anchor vs explicit positioning
 
@@ -77,7 +77,7 @@ If `anchor` is provided, explicit offsets are ignored — the `explicitPosition`
 Terminals have no alpha channel, so backdrops are **overpaint** — a solid-color block rendered beneath the content, not a true dimming layer. See [Concepts › Architecture](../concepts/architecture.md).
 
 | `backdrop` | Resolved color (if `backdropColor` omitted) |
-|------------|---------------------------------------------|
+| ---------- | ------------------------------------------- |
 | `'none'`   | No backdrop painted.                        |
 | `'opaque'` | `'black'`                                   |
 | `'dim'`    | `'#1a1a2e'`                                 |
@@ -88,8 +88,8 @@ The `LayerRenderer`'s input handler always dismisses on Escape (unless `role='al
 
 ```ts
 const effectiveBackdropInput =
-  descriptor.onBackdropInput
-  ?? (descriptor.role === 'dialog' ? descriptor.onDismiss : undefined);
+	descriptor.onBackdropInput ??
+	(descriptor.role === 'dialog' ? descriptor.onDismiss : undefined);
 ```
 
 In other words:
@@ -108,21 +108,21 @@ import {Box, Text} from 'ink';
 import {OverlayHost, Layer} from '@harms-haus/ink-overlay';
 
 function App() {
-  const [open, setOpen] = useState(false);
+	const [open, setOpen] = useState(false);
 
-  return (
-    <OverlayHost>
-      <Box padding={1}>
-        <Text>Press o to toggle</Text>
-      </Box>
+	return (
+		<OverlayHost>
+			<Box padding={1}>
+				<Text>Press o to toggle</Text>
+			</Box>
 
-      <Layer open={open} onOpenChange={setOpen} anchor="center">
-        <Box borderStyle="round" paddingX={2} paddingY={1}>
-          <Text>Floating in the middle</Text>
-        </Box>
-      </Layer>
-    </OverlayHost>
-  );
+			<Layer open={open} onOpenChange={setOpen} anchor="center">
+				<Box borderStyle="round" paddingX={2} paddingY={1}>
+					<Text>Floating in the middle</Text>
+				</Box>
+			</Layer>
+		</OverlayHost>
+	);
 }
 ```
 
@@ -149,17 +149,17 @@ Setting `capture={true}` enables raw mode and wraps the content in a [`<FocusTra
 
 ```tsx
 <Layer
-  open={open}
-  onOpenChange={setOpen}
-  anchor="center"
-  capture
-  backdrop="dim"
-  role="dialog"
-  onDismiss={() => setOpen(false)}
+	open={open}
+	onOpenChange={setOpen}
+	anchor="center"
+	capture
+	backdrop="dim"
+	role="dialog"
+	onDismiss={() => setOpen(false)}
 >
-  <Box borderStyle="round" padding={2}>
-    <Text>Press any non-Tab key to dismiss (role="dialog" backdrop rule)</Text>
-  </Box>
+	<Box borderStyle="round" padding={2}>
+		<Text>Press any non-Tab key to dismiss (role="dialog" backdrop rule)</Text>
+	</Box>
 </Layer>
 ```
 

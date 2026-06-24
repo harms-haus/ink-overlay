@@ -120,19 +120,19 @@ function makeApp() {
 
 		return (
 			<>
-				<BackgroundFocusable id='bg1' />
-				<BackgroundFocusable id='bg2' />
+				<BackgroundFocusable id="bg1" />
+				<BackgroundFocusable id="bg2" />
 				<Layer
 					open={open}
 					capture
-					backdrop='none'
+					backdrop="none"
 					onDismiss={() => {
 						setOpen(false);
 					}}
 				>
-					<Box flexDirection='column'>
-						<ModalFocusable id='A' />
-						<ModalFocusable id='B' />
+					<Box flexDirection="column">
+						<ModalFocusable id="A" />
+						<ModalFocusable id="B" />
 					</Box>
 				</Layer>
 			</>

@@ -31,7 +31,11 @@ import {anchorToFlexbox} from './primitives.js';
 import {generateId} from './id.js';
 import {useRegisterInput} from './input-dispatcher.js';
 import {FocusTrap} from './focus-trap.js';
-import {useEnterExit, mergeTransitionStyle, resolveTransition} from './animation.js';
+import {
+	useEnterExit,
+	mergeTransitionStyle,
+	resolveTransition,
+} from './animation.js';
 import type {LayerOpts, OverlayDescriptor, TransitionConfig} from './types.js';
 
 // ── Layer Props ─────────────────────────────────────────────────────
@@ -94,9 +98,7 @@ export function Layer({
 
 	// ── Stable unique id ────────────────────────────────────────────
 
-	const idReference = useRef<string>(
-		propertyId ?? generateId(),
-	);
+	const idReference = useRef<string>(propertyId ?? generateId());
 	const id = idReference.current;
 
 	// ── Controlled vs uncontrolled ──────────────────────────────────
@@ -116,11 +118,17 @@ export function Layer({
 
 	const explicitPosition = useMemo(
 		() =>
-			!anchor
-			&& (top !== undefined || left !== undefined || right !== undefined || bottom !== undefined)
+			!anchor &&
+			(top !== undefined ||
+				left !== undefined ||
+				right !== undefined ||
+				bottom !== undefined)
 				? {
-					top, left, right, bottom,
-				}
+						top,
+						left,
+						right,
+						bottom,
+					}
 				: undefined,
 		[top, left, right, bottom, anchor],
 	);
@@ -140,7 +148,11 @@ export function Layer({
 	propertiesReference.current = {onDismiss, onOpenChange, isControlled};
 
 	const handleDismiss = useCallback(() => {
-		const {onDismiss: od, onOpenChange: ooc, isControlled: ic} = propertiesReference.current;
+		const {
+			onDismiss: od,
+			onOpenChange: ooc,
+			isControlled: ic,
+		} = propertiesReference.current;
 		od?.();
 		if (ic) {
 			ooc?.(false);
@@ -204,10 +216,7 @@ export function Layer({
 			}
 		} else if (wasOpen && registeredReference.current) {
 			// Closing: check for exit transition
-			if (
-				resolvedTransition?.exit
-				&& resolvedTransition.exit.length > 1
-			) {
+			if (resolvedTransition?.exit && resolvedTransition.exit.length > 1) {
 				host.updateLayer(id, {exiting: true});
 				registeredReference.current = false;
 			} else {
@@ -244,8 +253,8 @@ export function Layer({
 	const previousContentSyncReference = useRef<ReactNode>(contentRef.current);
 	useEffect(() => {
 		if (
-			registeredReference.current
-			&& previousContentSyncReference.current !== contentRef.current
+			registeredReference.current &&
+			previousContentSyncReference.current !== contentRef.current
 		) {
 			previousContentSyncReference.current = contentRef.current;
 			host.updateLayer(id, {content: contentRef.current});
@@ -280,11 +289,7 @@ export function Layer({
  * @internal Exported as `LayerRenderer` for the host's import, but not
  * part of the public API.
  */
-export function LayerRenderer({
-	descriptor,
-}: {
-	descriptor: OverlayDescriptor;
-}) {
+export function LayerRenderer({descriptor}: {descriptor: OverlayDescriptor}) {
 	const host = useOverlayHost();
 
 	// ── Resize awareness (triggers re-render on terminal resize) ────
@@ -300,10 +305,10 @@ export function LayerRenderer({
 		transitionConfig,
 		descriptor.exiting
 			? {
-				onExited() {
-					host.onLayerExited(descriptor.id);
-				},
-			}
+					onExited() {
+						host.onLayerExited(descriptor.id);
+					},
+				}
 			: undefined,
 	);
 
@@ -316,8 +321,9 @@ export function LayerRenderer({
 	// 'tooltip', 'toast', and untyped layers must NOT auto-dismiss on
 	// backdrop input, otherwise non-escape/non-tab keys are consumed
 	// before the component's own input handler can process them.
-	const effectiveBackdropInput = descriptor.onBackdropInput
-		?? (descriptor.role === 'dialog' ? descriptor.onDismiss : undefined);
+	const effectiveBackdropInput =
+		descriptor.onBackdropInput ??
+		(descriptor.role === 'dialog' ? descriptor.onDismiss : undefined);
 
 	useRegisterInput(
 		descriptor.id,
@@ -349,8 +355,9 @@ export function LayerRenderer({
 
 	// ── Backdrop color ──────────────────────────────────────────────
 
-	const backdropColor = descriptor.backdropColor
-		?? (descriptor.backdrop === 'opaque' ? 'black' : '#1a1a2e');
+	const backdropColor =
+		descriptor.backdropColor ??
+		(descriptor.backdrop === 'opaque' ? 'black' : '#1a1a2e');
 
 	// ── Transition style overrides ──────────────────────────────────
 
@@ -386,16 +393,9 @@ export function LayerRenderer({
 	let contentWrapper: ReactNode;
 
 	if (descriptor.explicitPosition) {
-		const {top: t, left: l, right: r, bottom: b}
-			= descriptor.explicitPosition;
+		const {top: t, left: l, right: r, bottom: b} = descriptor.explicitPosition;
 		contentWrapper = (
-			<Box
-				position='absolute'
-				top={t}
-				left={l}
-				right={r}
-				bottom={b}
-			>
+			<Box position="absolute" top={t} left={l} right={r} bottom={b}>
 				{wrappedContent}
 			</Box>
 		);
@@ -405,12 +405,12 @@ export function LayerRenderer({
 		);
 		contentWrapper = (
 			<Box
-				position='absolute'
+				position="absolute"
 				top={0}
 				left={0}
-				width='100%'
-				height='100%'
-				flexDirection='row'
+				width="100%"
+				height="100%"
+				flexDirection="row"
 				alignItems={alignItems}
 				justifyContent={justifyContent}
 			>
@@ -430,11 +430,11 @@ export function LayerRenderer({
 				 * not a true alpha dimming layer.
 				 */
 				<Box
-					position='absolute'
+					position="absolute"
 					top={0}
 					left={0}
-					width='100%'
-					height='100%'
+					width="100%"
+					height="100%"
 					backgroundColor={backdropColor}
 				/>
 			)}

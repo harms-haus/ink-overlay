@@ -16,9 +16,7 @@ import {
 	useCallback,
 	useRef,
 } from 'react';
-import {
-	Box, Text, useInput, type DOMElement,
-} from 'ink';
+import {Box, Text, useInput, type DOMElement} from 'ink';
 import {Popover} from './popover.js';
 import {useInputCaptureState} from './input-dispatcher.js';
 import type {Placement} from './types.js';
@@ -73,7 +71,9 @@ export function Tooltip({
 	z = 10,
 }: TooltipProps) {
 	const [visible, setVisible] = useState(false);
-	const timerReference = useRef<ReturnType<typeof setTimeout> | undefined>(null);
+	const timerReference = useRef<ReturnType<typeof setTimeout> | undefined>(
+		null,
+	);
 
 	// ── Timer management ──────────────────────────────────────────
 
@@ -144,9 +144,12 @@ export function Tooltip({
 
 	// ── Cleanup on unmount ────────────────────────────────────────
 
-	useEffect(() => () => {
-		clearTimer();
-	}, [clearTimer]);
+	useEffect(
+		() => () => {
+			clearTimer();
+		},
+		[clearTimer],
+	);
 
 	// ── Render ────────────────────────────────────────────────────
 	// Mount/unmount the Popover rather than toggling its `open` prop.
@@ -162,15 +165,15 @@ export function Tooltip({
 			anchorRef={anchorRef}
 			placement={placement}
 			z={z}
-			backdrop='none'
+			backdrop="none"
 			open={true}
 			offset={offset}
 			crossOffset={crossOffset}
 			flip={flip}
 			shift={shift}
 		>
-			<Box borderStyle='round' borderColor='gray' paddingX={1}>
-				<Text color='gray' italic>
+			<Box borderStyle="round" borderColor="gray" paddingX={1}>
+				<Text color="gray" italic>
 					{content}
 				</Text>
 			</Box>

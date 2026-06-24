@@ -19,7 +19,7 @@ test('Layer renders overlay content over base content', async () => {
 	const {lastFrame} = renderWithHost(
 		<>
 			<Text>base</Text>
-			<Layer anchor='center'>
+			<Layer anchor="center">
 				<Text>overlay</Text>
 			</Layer>
 		</>,
@@ -82,8 +82,8 @@ test('Layer with overflow="hidden" clips content exceeding box width', async () 
 	const {lastFrame} = renderWithHost(
 		<>
 			<Text>base</Text>
-			<Layer anchor='top-left' overflow='hidden' id='clip-test'>
-				<Box width={5} height={1} flexDirection='row'>
+			<Layer anchor="top-left" overflow="hidden" id="clip-test">
+				<Box width={5} height={1} flexDirection="row">
 					<Text>ABCDEFGHIJKLMNOPQRSTUVWXYZ</Text>
 				</Box>
 			</Layer>
@@ -136,7 +136,7 @@ test('Layer with marginLeft shifts content right vs. no margin', async () => {
 	const {lastFrame} = renderWithHost(
 		<>
 			<Text>base</Text>
-			<Layer anchor='top-left' id='with-margin' margin={{left: 5}}>
+			<Layer anchor="top-left" id="with-margin" margin={{left: 5}}>
 				<Text>MARGINED</Text>
 			</Layer>
 		</>,
@@ -178,7 +178,7 @@ test('Layer re-registers after React StrictMode unmount-remount cycle', async ()
 	const {lastFrame} = renderWithHost(
 		<React.StrictMode>
 			<Text>base</Text>
-			<Layer anchor='center' open={true} id='strict-test'>
+			<Layer anchor="center" open={true} id="strict-test">
 				<Text>strict-content</Text>
 			</Layer>
 		</React.StrictMode>,
@@ -203,7 +203,7 @@ test('Layer with exit transition remains visible during exit phase', async () =>
 		return (
 			<>
 				<Text>base</Text>
-				<Layer open={open} anchor='center' transition='slide-up'>
+				<Layer open={open} anchor="center" transition="slide-up">
 					<Text>fading</Text>
 				</Layer>
 			</>
@@ -233,7 +233,7 @@ test('Layer with backdrop="opaque" renders a background block', async () => {
 	const {lastFrame} = renderWithHost(
 		<>
 			<Text>base</Text>
-			<Layer anchor='center' backdrop='opaque'>
+			<Layer anchor="center" backdrop="opaque">
 				<Text>overlay</Text>
 			</Layer>
 		</>,

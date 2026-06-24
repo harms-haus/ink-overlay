@@ -105,8 +105,8 @@ export function Scene01OverlayHost() {
 
 	return (
 		<SceneShell
-			title='01 · Getting Started'
-			description='OverlayHost, declarative Modal, imperative toasts'
+			title="01 · Getting Started"
+			description="OverlayHost, declarative Modal, imperative toasts"
 			hints={[
 				{key: 'm', label: 'Modal'},
 				{key: 's', label: 'success toast'},
@@ -115,17 +115,17 @@ export function Scene01OverlayHost() {
 			]}
 		>
 			{/* ── Informational copy explaining the scene ───────────── */}
-			<Box flexDirection='column'>
+			<Box flexDirection="column">
 				<Text>
 					Press <Text bold>m</Text> to toggle the declarative modal.
 				</Text>
 				<Text>
-					Press <Text bold>s</Text> or <Text bold>e</Text> to fire an
-					imperative toast from anywhere.
+					Press <Text bold>s</Text> or <Text bold>e</Text> to fire an imperative
+					toast from anywhere.
 				</Text>
 				<Text dimColor>
-					{'<'}OverlayHost{'>'} is mounted once in the app root; every
-					overlay component must live inside it.
+					{'<'}OverlayHost{'>'} is mounted once in the app root; every overlay
+					component must live inside it.
 				</Text>
 			</Box>
 
@@ -169,10 +169,10 @@ export function Scene01OverlayHost() {
 				}}
 				// The `title` prop — bold header rendered inside the top
 				// border. Default: undefined (no header row).
-				title='Hello, Modal'
+				title="Hello, Modal"
 				// The `footer` prop — dim text rendered inside the bottom
 				// border. Default: undefined (no footer row).
-				footer='Esc to close'
+				footer="Esc to close"
 				// The `width` prop — box width of the modal. Default: 50.
 				// width={50}
 				// The `backdrop` prop — backdrop kind behind the modal.

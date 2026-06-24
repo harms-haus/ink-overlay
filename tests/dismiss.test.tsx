@@ -19,15 +19,10 @@
  * opener, or through the imperative `overlay` service — never via
  * `rerender`.
  */
-import {
-	test, expect, afterEach, vi,
-} from 'vitest';
+import {test, expect, afterEach, vi} from 'vitest';
 import {useState} from 'react';
 import {Text} from 'ink';
-import {
-	Layer,
-	overlay,
-} from '../src/index.js';
+import {Layer, overlay} from '../src/index.js';
 import {renderWithHost} from './helpers/render-with-host.js';
 import {delay} from './helpers/delay.js';
 
@@ -47,7 +42,7 @@ test('(a) Esc closes a dismissible capturing layer and fires onDismiss', async (
 	const onDismiss = vi.fn();
 
 	const {stdin, lastFrame} = renderWithHost(
-		<Layer capture backdrop='opaque' onDismiss={onDismiss}>
+		<Layer capture backdrop="opaque" onDismiss={onDismiss}>
 			<Text>esc-me</Text>
 		</Layer>,
 	);
@@ -76,7 +71,7 @@ test('(b) onBackdropInput fires for a normal key and can close the layer', async
 			<Layer
 				open={open}
 				capture
-				backdrop='opaque'
+				backdrop="opaque"
 				onBackdropInput={() => {
 					onBackdropInput();
 					setOpen(false);
@@ -132,7 +127,7 @@ test('(d) role="alertdialog" blocks Esc — onDismiss NOT called, layer stays', 
 	const onDismiss = vi.fn();
 
 	const {stdin, lastFrame} = renderWithHost(
-		<Layer capture backdrop='opaque' role='alertdialog' onDismiss={onDismiss}>
+		<Layer capture backdrop="opaque" role="alertdialog" onDismiss={onDismiss}>
 			<Text>blocked</Text>
 		</Layer>,
 	);
@@ -162,10 +157,10 @@ test('(e) nested capturing layers — Esc closes only the topmost layer', async 
 	// input handler sits on top of the LIFO stack and receives Esc first.
 	const {stdin, lastFrame} = renderWithHost(
 		<>
-			<Layer capture backdrop='opaque' onDismiss={onDismissBottom}>
+			<Layer capture backdrop="opaque" onDismiss={onDismissBottom}>
 				<Text>bottom-layer</Text>
 			</Layer>
-			<Layer capture backdrop='opaque' onDismiss={onDismissTop}>
+			<Layer capture backdrop="opaque" onDismiss={onDismissTop}>
 				<Text>top-layer</Text>
 			</Layer>
 		</>,
@@ -201,7 +196,7 @@ test('(f) role="dialog" with NO onBackdropInput: pressing a key dismisses via on
 	const onDismiss = vi.fn();
 
 	const {stdin, lastFrame} = renderWithHost(
-		<Layer capture backdrop='opaque' role='dialog' onDismiss={onDismiss}>
+		<Layer capture backdrop="opaque" role="dialog" onDismiss={onDismiss}>
 			<Text>dialog-body</Text>
 		</Layer>,
 	);
@@ -228,7 +223,7 @@ test('(g) role="alertdialog" with NO onBackdropInput: pressing a key does NOT di
 	const onDismiss = vi.fn();
 
 	const {stdin, lastFrame} = renderWithHost(
-		<Layer capture backdrop='opaque' role='alertdialog' onDismiss={onDismiss}>
+		<Layer capture backdrop="opaque" role="alertdialog" onDismiss={onDismiss}>
 			<Text>alert-body</Text>
 		</Layer>,
 	);

@@ -118,13 +118,12 @@
  */
 
 import {useState, useRef} from 'react';
+import {Box, Text, useInput, type DOMElement} from 'ink';
 import {
-	Box,
-	Text,
-	useInput,
-	type DOMElement,
-} from 'ink';
-import {Popover, useInputCaptureState, type Placement} from '../../src/index.js';
+	Popover,
+	useInputCaptureState,
+	type Placement,
+} from '../../src/index.js';
 import {SceneShell} from '../ui.js';
 
 // The placements cycled by the `p` key. Covers the four main sides plus a
@@ -213,9 +212,7 @@ export default function Scene06Popover() {
 
 			// `x` → cycle crossOffset among [0, 2, 4] with wrap-around.
 			if (input === 'x') {
-				setCrossOffsetIndex(
-					previous => (previous + 1) % crossOffsets.length,
-				);
+				setCrossOffsetIndex(previous => (previous + 1) % crossOffsets.length);
 			}
 		},
 		{isActive: !isCaptured},
@@ -229,8 +226,8 @@ export default function Scene06Popover() {
 
 	return (
 		<SceneShell
-			title='Scene 06 — Popover'
-			description='Element-anchored layer: flip, shift, offset & crossOffset.'
+			title="Scene 06 — Popover"
+			description="Element-anchored layer: flip, shift, offset & crossOffset."
 			hints={[
 				{key: 'p', label: 'cycle placement'},
 				{key: 'o', label: 'open/close'},
@@ -245,7 +242,7 @@ export default function Scene06Popover() {
 			 * this Box by reading `anchorRef`. Centered so that placement
 			 * changes (top/bottom/left/right) are clearly visible.
 			 */}
-			<Box justifyContent='center' marginTop={4}>
+			<Box justifyContent="center" marginTop={4}>
 				{/*
 				 * `anchorRef` attaches here. The Popover measures this
 				 * Box's yoga layout (via the ref) every time it
@@ -307,7 +304,7 @@ export default function Scene06Popover() {
 					collisionPadding={usePadding ? {top: 2, left: 2} : 0}
 					z={50}
 				>
-					<Box borderStyle='round' paddingX={1}>
+					<Box borderStyle="round" paddingX={1}>
 						<Text>placement: {placement}</Text>
 					</Box>
 				</Popover>

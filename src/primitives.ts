@@ -14,8 +14,11 @@ import {
 // ---------------------------------------------------------------------------
 
 const anchorFlexMap: Record<
-Anchor,
-{alignItems: 'flex-start' | 'center' | 'flex-end'; justifyContent: 'flex-start' | 'center' | 'flex-end'}
+	Anchor,
+	{
+		alignItems: 'flex-start' | 'center' | 'flex-end';
+		justifyContent: 'flex-start' | 'center' | 'flex-end';
+	}
 > = {
 	center: {alignItems: 'center', justifyContent: 'center'},
 	top: {alignItems: 'flex-start', justifyContent: 'center'},
@@ -28,9 +31,10 @@ Anchor,
 	'bottom-right': {alignItems: 'flex-end', justifyContent: 'flex-end'},
 };
 
-export function anchorToFlexbox(
-	anchor: Anchor,
-): {alignItems: 'flex-start' | 'center' | 'flex-end'; justifyContent: 'flex-start' | 'center' | 'flex-end'} {
+export function anchorToFlexbox(anchor: Anchor): {
+	alignItems: 'flex-start' | 'center' | 'flex-end';
+	justifyContent: 'flex-start' | 'center' | 'flex-end';
+} {
 	return anchorFlexMap[anchor];
 }
 
@@ -146,7 +150,10 @@ export function computeAnchorCoords(
 type PlacementAxis = 'top' | 'bottom' | 'left' | 'right';
 type PlacementSide = 'start' | 'center' | 'end';
 
-function parsePlacement(placement: Placement): {axis: PlacementAxis; side: PlacementSide} {
+function parsePlacement(placement: Placement): {
+	axis: PlacementAxis;
+	side: PlacementSide;
+} {
 	const parts = placement.split('-');
 	const axis = parts[0] as PlacementAxis;
 	const side = (parts[1] ?? 'center') as PlacementSide;
@@ -174,7 +181,7 @@ function flipAxis(axis: PlacementAxis): PlacementAxis {
 }
 
 function placementKey(axis: PlacementAxis, side: PlacementSide): Placement {
-	return side === 'center' ? axis : `${axis}-${side}` as Placement;
+	return side === 'center' ? axis : (`${axis}-${side}` as Placement);
 }
 
 function resolveCollisionPadding(
@@ -182,13 +189,19 @@ function resolveCollisionPadding(
 ): {top: number; right: number; bottom: number; left: number} {
 	if (padding === undefined || padding === 0) {
 		return {
-			top: 0, right: 0, bottom: 0, left: 0,
+			top: 0,
+			right: 0,
+			bottom: 0,
+			left: 0,
 		};
 	}
 
 	if (typeof padding === 'number') {
 		return {
-			top: padding, right: padding, bottom: padding, left: padding,
+			top: padding,
+			right: padding,
+			bottom: padding,
+			left: padding,
 		};
 	}
 
@@ -272,12 +285,19 @@ export function computePopoverPosition(
 					}
 
 					case 'center': {
-						left = anchorRect.left + (anchorRect.width - popoverSize.width) / 2 + crossOffset;
+						left =
+							anchorRect.left +
+							(anchorRect.width - popoverSize.width) / 2 +
+							crossOffset;
 						break;
 					}
 
 					case 'end': {
-						left = anchorRect.left + anchorRect.width - popoverSize.width + crossOffset;
+						left =
+							anchorRect.left +
+							anchorRect.width -
+							popoverSize.width +
+							crossOffset;
 						break;
 					}
 				}
@@ -295,12 +315,19 @@ export function computePopoverPosition(
 					}
 
 					case 'center': {
-						top = anchorRect.top + (anchorRect.height - popoverSize.height) / 2 + crossOffset;
+						top =
+							anchorRect.top +
+							(anchorRect.height - popoverSize.height) / 2 +
+							crossOffset;
 						break;
 					}
 
 					case 'end': {
-						top = anchorRect.top + anchorRect.height - popoverSize.height + crossOffset;
+						top =
+							anchorRect.top +
+							anchorRect.height -
+							popoverSize.height +
+							crossOffset;
 						break;
 					}
 				}
@@ -313,7 +340,10 @@ export function computePopoverPosition(
 	}
 
 	// Check main-axis overflow for flip.
-	function overflowsMainAxis(ax: PlacementAxis, pos: {top: number; left: number}): boolean {
+	function overflowsMainAxis(
+		ax: PlacementAxis,
+		pos: {top: number; left: number},
+	): boolean {
 		switch (ax) {
 			case 'bottom': {
 				return pos.top + popoverSize.height > viewport.rows;
@@ -365,7 +395,10 @@ export function computePopoverPosition(
 // Returns negative if a before b, positive if a after b, 0 if equal.
 // ---------------------------------------------------------------------------
 
-export function compareLayers(a: {z: number; order: number}, b: {z: number; order: number}): number {
+export function compareLayers(
+	a: {z: number; order: number},
+	b: {z: number; order: number},
+): number {
 	if (a.z !== b.z) {
 		return a.z - b.z;
 	}
@@ -378,6 +411,8 @@ export function compareLayers(a: {z: number; order: number}, b: {z: number; orde
 // Returns a NEW sorted array (does not mutate input).
 // ---------------------------------------------------------------------------
 
-export function sortLayers<T extends {z: number; order: number}>(layers: T[]): T[] {
+export function sortLayers<T extends {z: number; order: number}>(
+	layers: T[],
+): T[] {
 	return [...layers].sort(compareLayers);
 }
