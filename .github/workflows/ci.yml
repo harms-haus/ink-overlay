@@ -39,8 +39,8 @@ jobs:
         run: npm run build
 
       - name: Test
-        run: npm run test
-        env:
-          # The library degrades rendering when CI is set. The dedicated
-          # non-tty test simulates non-interactive conditions itself.
-          CI: ''
+        # GitHub Actions always sets CI=true, which makes the library
+        # render in non-interactive mode (empty/blank frames). The dedicated
+        # non-tty test simulates non-interactive conditions itself, so unset
+        # CI here to exercise the normal rendering path.
+        run: unset CI; npm run test
