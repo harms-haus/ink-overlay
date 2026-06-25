@@ -118,13 +118,10 @@
  */
 
 import {useState, useRef} from 'react';
-import {Box, Text, useInput, type DOMElement} from 'ink';
-import {
-	Popover,
-	useInputCaptureState,
-	type Placement,
-} from '../../src/index.js';
+import {Box, Text, type DOMElement} from 'ink';
+import {Popover, type Placement} from '../../src/index.js';
 import {SceneShell} from '../ui.js';
+import {useGatedInput} from '../hooks.js';
 
 // The placements cycled by the `p` key. Covers the four main sides plus a
 // couple of cross-axis-aligned variants so start/end behavior is visible.
@@ -144,13 +141,6 @@ const crossOffsets = [0, 2, 4] as const;
  * Scene 06 — element-anchored `<Popover>` with collision detection.
  */
 export default function Scene06Popover() {
-	// ── Cooperative input gating ────────────────────────────────────
-	//
-	// `useInputCaptureState()` returns true when an overlay with `capture`
-	// is active. We gate this scene's own key handling on `!isCaptured` so
-	// that a capturing overlay gets first crack at keypresses.
-	const isCaptured = useInputCaptureState();
-
 	// ── State ───────────────────────────────────────────────────────
 
 	/** Index into `placements` — cycles via the `p` key. */
@@ -184,39 +174,36 @@ export default function Scene06Popover() {
 	//   f — toggle flip
 	//   d — toggle usePadding
 	//   x — cycle crossOffset among [0, 2, 4] (wraps)
-	useInput(
-		(input: string) => {
-			// `p` → cycle placementIndex with wrap-around.
-			if (input === 'p') {
-				setPlacementIndex(previous => (previous + 1) % placements.length);
-				return;
-			}
+	useGatedInput((input: string) => {
+		// `p` → cycle placementIndex with wrap-around.
+		if (input === 'p') {
+			setPlacementIndex(previous => (previous + 1) % placements.length);
+			return;
+		}
 
-			// `o` → toggle popoverOpen.
-			if (input === 'o') {
-				setPopoverOpen(value => !value);
-				return;
-			}
+		// `o` → toggle popoverOpen.
+		if (input === 'o') {
+			setPopoverOpen(value => !value);
+			return;
+		}
 
-			// `f` → toggle flip.
-			if (input === 'f') {
-				setFlip(value => !value);
-				return;
-			}
+		// `f` → toggle flip.
+		if (input === 'f') {
+			setFlip(value => !value);
+			return;
+		}
 
-			// `d` → toggle usePadding.
-			if (input === 'd') {
-				setUsePadding(value => !value);
-				return;
-			}
+		// `d` → toggle usePadding.
+		if (input === 'd') {
+			setUsePadding(value => !value);
+			return;
+		}
 
-			// `x` → cycle crossOffset among [0, 2, 4] with wrap-around.
-			if (input === 'x') {
-				setCrossOffsetIndex(previous => (previous + 1) % crossOffsets.length);
-			}
-		},
-		{isActive: !isCaptured},
-	);
+		// `x` → cycle crossOffset among [0, 2, 4] with wrap-around.
+		if (input === 'x') {
+			setCrossOffsetIndex(previous => (previous + 1) % crossOffsets.length);
+		}
+	});
 
 	// ── Derived values ─────────────────────────────────────────────
 
@@ -288,27 +275,25 @@ export default function Scene06Popover() {
 			 * `capture` defaults to false (popovers don't trap input by
 			 * default); set `capture={true}` for menu-like popovers.
 			 */}
-			{placement !== undefined && (
-				<Popover
-					anchorRef={anchorRef}
-					placement={placement}
-					open={popoverOpen}
-					onOpenChange={() => {
-						// Controlled: we own the open state via the `o` key,
-						// so we ignore external open-change requests here.
-					}}
-					flip={flip}
-					shift
-					offset={1}
-					crossOffset={crossOffset}
-					collisionPadding={usePadding ? {top: 2, left: 2} : 0}
-					z={50}
-				>
-					<Box borderStyle="round" paddingX={1}>
-						<Text>placement: {placement}</Text>
-					</Box>
-				</Popover>
-			)}
+			<Popover
+				anchorRef={anchorRef}
+				placement={placement}
+				open={popoverOpen}
+				onOpenChange={() => {
+					// Controlled: we own the open state via the `o` key,
+					// so we ignore external open-change requests here.
+				}}
+				flip={flip}
+				shift
+				offset={1}
+				crossOffset={crossOffset}
+				collisionPadding={usePadding ? {top: 2, left: 2} : 0}
+				z={50}
+			>
+				<Box borderStyle="round" paddingX={1}>
+					<Text>placement: {placement}</Text>
+				</Box>
+			</Popover>
 		</SceneShell>
 	);
 }

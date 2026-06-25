@@ -142,12 +142,18 @@ export function InputDispatcher({children}: {children: ReactNode}) {
 	// ── Context API ───────────────────────────────────────────────────
 	const registerInput = useCallback((id: string, handler: InputHandler) => {
 		// Dedupe: remove any existing entry with the same id first.
-		stackReference.current = stackReference.current.filter(e => e.id !== id);
+		const existingIndex = stackReference.current.findIndex(e => e.id === id);
+		if (existingIndex !== -1) {
+			stackReference.current.splice(existingIndex, 1);
+		}
 		stackReference.current.push({id, handler});
 	}, []);
 
 	const unregisterInput = useCallback((id: string) => {
-		stackReference.current = stackReference.current.filter(e => e.id !== id);
+		const existingIndex = stackReference.current.findIndex(e => e.id === id);
+		if (existingIndex !== -1) {
+			stackReference.current.splice(existingIndex, 1);
+		}
 	}, []);
 
 	const captureEnter = useCallback(() => {

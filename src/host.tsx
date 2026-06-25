@@ -36,7 +36,7 @@ import {
 import {overlayStore} from './store.js';
 import {sortLayers} from './primitives.js';
 import {resolveTransition} from './animation.js';
-import type {OverlayDescriptor, OverlayEntry} from './types.js';
+import type {OverlayDescriptor, OverlayEntry, LayerPatch} from './types.js';
 
 // ── Props ───────────────────────────────────────────────────────────
 
@@ -134,7 +134,7 @@ export function OverlayHost({children}: OverlayHostProps) {
 	);
 
 	const updateLayer = useCallback(
-		(id: string, patch: Partial<OverlayDescriptor>) => {
+		(id: string, patch: LayerPatch) => {
 			const existing = declarativeLayersReference.current.get(id);
 			if (existing) {
 				declarativeLayersReference.current.set(id, {...existing, ...patch});
@@ -144,22 +144,14 @@ export function OverlayHost({children}: OverlayHostProps) {
 		[bumpVersion],
 	);
 
-	const removeLayerAfterExit = useCallback(
-		(id: string) => {
-			unregisterLayer(id);
-		},
-		[unregisterLayer],
-	);
-
 	// ── Memoised context value (stable across renders) ──────────────
 	const context: OverlayHostContextValue = useMemo(
 		() => ({
 			registerLayer,
 			unregisterLayer,
 			updateLayer,
-			removeLayerAfterExit,
 		}),
-		[registerLayer, unregisterLayer, updateLayer, removeLayerAfterExit],
+		[registerLayer, unregisterLayer, updateLayer],
 	);
 
 	// ── Subscribe to imperative store ────────────────────────────────
@@ -209,7 +201,10 @@ export function OverlayHost({children}: OverlayHostProps) {
 		l => l.capture && !l.exiting,
 	).length;
 
-	// ── Raw-mode management ─────────────────────────────────────────
+	// ── Capturing transitions (raw-mode + focus management) ────────
+	// Both concerns react to the same capturingCount transitions
+	// (0 → positive and positive → 0), so they share a single previous-value
+	// ref and are handled in one effect.
 
 	const previousCapturingCountReference = useRef(0);
 
@@ -218,7 +213,7 @@ export function OverlayHost({children}: OverlayHostProps) {
 		previousCapturingCountReference.current = capturingCount;
 
 		if (previous === 0 && capturingCount > 0) {
-			// 0 → positive: enable raw mode.
+			// 0 → positive: enable raw mode and disable focus traversal.
 			if (isRawModeSupported) {
 				try {
 					setRawMode(true);
@@ -226,33 +221,21 @@ export function OverlayHost({children}: OverlayHostProps) {
 					console.warn('[@harms-haus/ink-overlay] setRawMode failed:', error);
 				}
 			}
-		} else if (
-			previous > 0 &&
-			capturingCount === 0 && // Positive → 0: disable raw mode.
-			isRawModeSupported
-		) {
-			try {
-				setRawMode(false);
-			} catch (error) {
-				console.warn('[@harms-haus/ink-overlay] setRawMode failed:', error);
-			}
-		}
-	}, [capturingCount, isRawModeSupported, setRawMode]);
 
-	// ── Focus management ────────────────────────────────────────────
-
-	const previousFocusCountReference = useRef(0);
-
-	useEffect(() => {
-		const previous = previousFocusCountReference.current;
-		previousFocusCountReference.current = capturingCount;
-
-		if (previous === 0 && capturingCount > 0) {
 			disableFocus();
 		} else if (previous > 0 && capturingCount === 0) {
+			// Positive → 0: disable raw mode and re-enable focus traversal.
+			if (isRawModeSupported) {
+				try {
+					setRawMode(false);
+				} catch (error) {
+					console.warn('[@harms-haus/ink-overlay] setRawMode failed:', error);
+				}
+			}
+
 			enableFocus();
 		}
-	}, [capturingCount, disableFocus, enableFocus]);
+	}, [capturingCount, isRawModeSupported, setRawMode, disableFocus, enableFocus]);
 
 	// ── Unmount cleanup (raw-mode + focus) ─────────────────────────
 	// Read prevCapturingCountRef INSIDE the cleanup so we always see the

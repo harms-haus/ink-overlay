@@ -24,7 +24,7 @@ let activeInstance: ReturnType<typeof baseRender> | undefined;
 type HookSnapshot = {
 	stage: string;
 	currentStyle: Record<string, number | string>;
-	key: string;
+	transitionKey: string;
 };
 
 /**
@@ -390,9 +390,9 @@ describe('useEnterExit', () => {
 		unmount();
 	});
 
-	// ── key changes on each transition restart ───────────────────────
+	// ── transitionKey changes on each transition restart ─────────────
 
-	test('key changes when transition restarts', async () => {
+	test('transitionKey changes when transition restarts', async () => {
 		const config: TransitionConfig = {
 			enter: [
 				{style: {marginTop: 4}},
@@ -416,7 +416,13 @@ describe('useEnterExit', () => {
 		);
 
 		await delay(300);
-		const key1 = snapshot!.key;
+
+		// The transitionKey is a string (the internal counter stringified).
+		expect(typeof snapshot!.transitionKey).toBe('string');
+		// Initial value is '0' before any restart.
+		expect(snapshot!.transitionKey).toBe('0');
+
+		const key1 = snapshot!.transitionKey;
 
 		// Toggle false → true to restart
 		rerender(
@@ -441,13 +447,94 @@ describe('useEnterExit', () => {
 		);
 		await delay(50);
 
-		const key2 = snapshot!.key;
+		const key2 = snapshot!.transitionKey;
 		expect(key2).not.toBe(key1);
 
 		unmount();
 	});
 
-	// ── Missing enter/exit arrays handled gracefully ─────────────────
+	// ── transitionKey increments monotonically across cycles ───────
+
+	test('transitionKey increments by one on each enter/exit restart and stays a string', async () => {
+		const config: TransitionConfig = {
+			enter: [
+				{style: {marginTop: 4}},
+				{style: {marginTop: 2}},
+				{style: {marginTop: 0}},
+			],
+			exit: [{style: {}}],
+			duration: 30,
+		};
+
+		let snapshot: HookSnapshot | undefined;
+
+		const renderAt = (visible: boolean) =>
+			rerender(
+				<Harness
+					visible={visible}
+					config={config}
+					onState={s => {
+						snapshot = s;
+					}}
+				/>,
+			);
+
+		const {rerender, unmount} = render(
+			<Harness
+				visible={true}
+				config={config}
+				onState={s => {
+					snapshot = s;
+				}}
+			/>,
+		);
+
+		await delay(300);
+		// After initial mount, the counter is still '0' (no restart yet).
+		expect(snapshot!.transitionKey).toBe('0');
+
+		// Restart 1: false → true (increments on exit AND enter).
+		renderAt(false);
+		await delay(50);
+		renderAt(true);
+		await delay(50);
+		expect(snapshot!.transitionKey).toBe('2');
+
+		// Restart 2: false → true.
+		renderAt(false);
+		await delay(50);
+		renderAt(true);
+		await delay(50);
+		expect(snapshot!.transitionKey).toBe('4');
+
+		// Every observed value must be a string.
+		expect(typeof snapshot!.transitionKey).toBe('string');
+
+		unmount();
+	});
+
+	// ── transitionKey property name (not React's reserved `key`) ─────
+
+	test('useEnterExit result exposes transitionKey (not the reserved key)', async () => {
+		const config = getTransitionSteps('none');
+		let result: ReturnType<typeof useEnterExit> | undefined;
+
+		function Capture() {
+			const r = useEnterExit(true, config);
+			result = r;
+			return <Text>x</Text>;
+		}
+
+		const {unmount} = render(<Capture />);
+		await delay(50);
+
+		expect(result).toBeDefined();
+		expect(result!).toHaveProperty('transitionKey');
+		// The old reserved `key` name must NOT be present on the result.
+		expect(result!).not.toHaveProperty('key');
+
+		unmount();
+	});
 
 	test('handles missing enter/exit arrays (treats as single-frame)', async () => {
 		const config: TransitionConfig = {

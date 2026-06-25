@@ -4,8 +4,9 @@
  * When a `<Layer>` with a multi-frame exit transition is closed, the
  * exit animation plays first and ONLY THEN is the layer unregistered
  * from the host. That final unregistration is driven by the host-context
- * method `removeLayerAfterExit` (provided by <OverlayHost> and invoked
- * by <LayerRenderer>).
+ * method `unregisterLayer` (provided by <OverlayHost> and invoked by
+ * <LayerRenderer>'s `onExited` callback after the exit animation
+ * completes).
  *
  * These tests pin down that observable behaviour end-to-end without
  * referencing the internal method name, and will FAIL if the wiring is
@@ -17,7 +18,7 @@
  *
  * Uses REAL timers — ink breaks with fake timers.
  */
-import {test, expect} from 'vitest';
+import {test, expect, afterEach} from 'vitest';
 import React, {useState} from 'react';
 import {Text} from 'ink';
 import {Layer} from '../src/layer.js';
@@ -25,6 +26,14 @@ import {renderWithHost} from './helpers/render-with-host.js';
 import {delay} from './helpers/delay.js';
 
 // ── Helpers ────────────────────────────────────────────────────────
+
+// Tracks the rendered instance so it is always torn down between tests.
+let unmountInstance: (() => void) | undefined;
+
+afterEach(() => {
+	unmountInstance?.();
+	unmountInstance = undefined;
+});
 
 function stripAnsi(input: string): string {
 	// eslint-disable-next-line no-control-regex
@@ -67,7 +76,8 @@ function makeToggleApp({
 test('layer with exit transition is fully removed after the exit animation completes', async () => {
 	const {App, getSetOpen} = makeToggleApp({content: 'removable', transition: 'slide-up'});
 
-	const {lastFrame} = renderWithHost(<App />);
+	const {lastFrame, unmount} = renderWithHost(<App />);
+	unmountInstance = unmount;
 
 	// Allow enter animation to settle.
 	await delay(500);
@@ -89,7 +99,8 @@ test('layer with exit transition is fully removed after the exit animation compl
 test('layer stays removed after exit (no lingering zombie frame)', async () => {
 	const {App, getSetOpen} = makeToggleApp({content: 'zombie', transition: 'slide-up'});
 
-	const {lastFrame} = renderWithHost(<App />);
+	const {lastFrame, unmount} = renderWithHost(<App />);
+	unmountInstance = unmount;
 
 	await delay(500);
 	expect(stripAnsi(lastFrame())).toContain('zombie');
@@ -128,7 +139,8 @@ test('closing one layer with exit transition does not remove a sibling layer', a
 		);
 	}
 
-	const {lastFrame} = renderWithHost(<App />);
+	const {lastFrame, unmount} = renderWithHost(<App />);
+	unmountInstance = unmount;
 	await delay(500);
 
 	expect(stripAnsi(lastFrame())).toContain('ALPHA');
@@ -154,7 +166,8 @@ test('closing one layer with exit transition does not remove a sibling layer', a
 test('layer without exit transition is removed immediately on close', async () => {
 	const {App, getSetOpen} = makeToggleApp({content: 'instant', transition: 'none'});
 
-	const {lastFrame} = renderWithHost(<App />);
+	const {lastFrame, unmount} = renderWithHost(<App />);
+	unmountInstance = unmount;
 	await delay(500);
 	expect(stripAnsi(lastFrame())).toContain('instant');
 

@@ -3,16 +3,8 @@
  * Scene 11 (Imperative Overlay Service).
  *
  * These tests pin down the *observable render + input behavior* of the
- * two demo scenes whose file-level doc comments are about to be
- * refactored to fix doc/code mismatches (e.g. the Scene 05 doc claims
- * "OVERRIDABLE props (every one is demonstrated below)" while
- * `defaultOpen`, `backdrop`, and `z` are never explicitly passed on any
- * `<Modal>` in the scene; Scene 11 docs make claims about `overlay.open`
- * id generation and store buffering).
- *
- * The refactor only edits COMMENTS — it must NOT change any code. These
- * tests exercise every keypath and verify the rendered output, so an
- * accidental code change during the doc edit is caught immediately.
+ * two demo scenes, exercising every interactive code path and verifying
+ * the rendered output.
  *
  * Uses REAL timers — Ink breaks with fake timers.
  */

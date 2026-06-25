@@ -71,13 +71,10 @@
  */
 
 import {useState} from 'react';
-import {Box, Text, useInput} from 'ink';
-import {
-	CommandPalette,
-	useInputCaptureState,
-	type CommandPaletteItem,
-} from '../../src/index.js';
+import {Box, Text} from 'ink';
+import {CommandPalette, type CommandPaletteItem} from '../../src/index.js';
 import {SceneShell} from '../ui.js';
+import {useGatedInput} from '../hooks.js';
 
 // ── Command items ────────────────────────────────────────────────────
 //
@@ -139,37 +136,27 @@ export default function Scene09CommandPalette() {
 	/** Label of the last selected item, shown in the scene body. */
 	const [lastSelected, setLastSelected] = useState('—');
 
-	// ── Cooperative input gating ────────────────────────────────────
-	//
-	// While the palette is open it captures input (capture=true is baked
-	// into <CommandPalette>), so isCaptured returns true and we
-	// deactivate the scene's own key handler to avoid double-handling.
-	const isCaptured = useInputCaptureState();
-
 	// ── Scene input handler ─────────────────────────────────────────
 	//
 	// A single switch (per the `unicorn/prefer-switch` rule) dispatches
 	// the two toggle keys. Each arm flips one boolean state.
-	useInput(
-		input => {
-			switch (input) {
-				case 'p': {
-					setShowPalette(previous => !previous);
-					break;
-				}
-
-				case 'm': {
-					setMultiSelect(previous => !previous);
-					break;
-				}
-
-				default: {
-					break;
-				}
+	useGatedInput(input => {
+		switch (input) {
+			case 'p': {
+				setShowPalette(previous => !previous);
+				break;
 			}
-		},
-		{isActive: !isCaptured},
-	);
+
+			case 'm': {
+				setMultiSelect(previous => !previous);
+				break;
+			}
+
+			default: {
+				break;
+			}
+		}
+	});
 
 	// ── Render ──────────────────────────────────────────────────────
 

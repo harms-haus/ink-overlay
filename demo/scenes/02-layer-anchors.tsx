@@ -8,9 +8,10 @@
  */
 
 import {useState} from 'react';
-import {Box, Text, useInput} from 'ink';
-import {Layer, useInputCaptureState, type Anchor} from '../../src/index.js';
+import {Box, Text} from 'ink';
+import {Layer, type Anchor} from '../../src/index.js';
 import {SceneShell} from '../ui.js';
+import {useGatedInput} from '../hooks.js';
 
 // ── All 9 anchor positions ──────────────────────────────────────────
 //
@@ -89,13 +90,6 @@ const anchors: Anchor[] = [
  * `<Layer>` itself.
  */
 export default function Scene02LayerAnchors() {
-	// ── Cooperative input gating ────────────────────────────────────
-	//
-	// `useInputCaptureState()` returns true when an overlay with
-	// `capture` is active. We gate our own `useInput` on `!isCaptured`
-	// so that a capturing overlay gets first crack at keypresses.
-	const isCaptured = useInputCaptureState();
-
 	// ── State ───────────────────────────────────────────────────────
 
 	// Cycle index into `anchors` (0..8).
@@ -121,30 +115,35 @@ export default function Scene02LayerAnchors() {
 	//   p — toggle numeric vs percentage offsets (explicit mode only)
 	//   o — toggle overflow hidden / visible
 	//   g — toggle margin on / off
-	useInput(
-		(input: string) => {
-			if (input === 'a') {
+	useGatedInput((input: string) => {
+		switch (input) {
+			case 'a': {
 				setAnchorIndex(i => (i + 1) % anchors.length);
+				break;
 			}
 
-			if (input === 'x') {
+			case 'x': {
 				setUseExplicit(v => !v);
+				break;
 			}
 
-			if (input === 'p') {
+			case 'p': {
 				setUsePercent(v => !v);
+				break;
 			}
 
-			if (input === 'o') {
+			case 'o': {
 				setOverflowHidden(v => !v);
+				break;
 			}
 
-			if (input === 'g') {
+			case 'g': {
 				setUseMargin(v => !v);
+				break;
 			}
-		},
-		{isActive: !isCaptured},
-	);
+			// No default — only the mapped keys are handled.
+		}
+	});
 
 	// ── Derived values ──────────────────────────────────────────────
 

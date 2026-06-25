@@ -69,16 +69,17 @@
  */
 
 import {useState} from 'react';
-import {render, useApp, useInput} from 'ink';
-import {OverlayHost, useInputCaptureState} from '../src/index.js';
+import {render, useApp} from 'ink';
+import {OverlayHost} from '../src/index.js';
 import {type SceneDefinition} from './types.js';
 import {SceneMenu} from './menu.js';
+import {useGatedInput} from './hooks.js';
 
 // ── Scene imports ───────────────────────────────────────────────────
 //
 // Each scene is imported individually. Note the mixed export styles:
 // scenes 01 and 03 use named exports; all others use default exports.
-import {Scene01OverlayHost} from './scenes/01-overlay-host.js';
+import {Scene01GettingStarted} from './scenes/01-getting-started.js';
 import Scene02LayerAnchors from './scenes/02-layer-anchors.js';
 import {Scene03Backdrop} from './scenes/03-backdrop.js';
 import Scene04ZOrdering from './scenes/04-z-ordering.js';
@@ -102,8 +103,8 @@ const scenes: SceneDefinition[] = [
 		id: '01',
 		title: '01 · Getting Started',
 		description: 'OverlayHost, declarative Modal, imperative toasts',
-		tags: ['Modal', 'toasts'],
-		component: Scene01OverlayHost,
+		tags: ['Modal', 'Toasts'],
+		component: Scene01GettingStarted,
 	},
 	{
 		id: '02',
@@ -151,7 +152,7 @@ const scenes: SceneDefinition[] = [
 		id: '08',
 		title: '08 · Toasts',
 		description: 'imperative service + presentational Toast',
-		tags: ['toasts', 'Toast'],
+		tags: ['Toasts'],
 		component: Scene08Toasts,
 	},
 	{
@@ -223,30 +224,23 @@ type DemoShellProps = {
  * and can safely read the capture state.
  */
 function DemoShell({activeScene, setActiveScene, exitDemo}: DemoShellProps) {
-	// Cooperative capture flag — `true` while a capturing overlay
-	// (modal/command-palette) is open.
-	const isCaptured = useInputCaptureState();
+	// Global hotkeys. Gated via useGatedInput so they yield to any
+	// capturing overlay (modal/command-palette): you cannot accidentally
+	// quit or leave while a modal is open.
+	useGatedInput((input, key) => {
+		// `q` quits the entire app.
+		if (input === 'q') {
+			exitDemo();
+			return;
+		}
 
-	// Global hotkeys. Gated on `!isCaptured` so they yield to any
-	// capturing overlay: you cannot accidentally quit or leave while a
-	// modal is open.
-	useInput(
-		(input, key) => {
-			// `q` quits the entire app.
-			if (input === 'q') {
-				exitDemo();
-				return;
-			}
-
-			// Esc returns to the menu — but only when a scene is
-			// active. While the menu itself is showing, Esc is a
-			// no-op here.
-			if (key.escape && activeScene !== null) {
-				setActiveScene(null);
-			}
-		},
-		{isActive: !isCaptured},
-	);
+		// Esc returns to the menu — but only when a scene is
+		// active. While the menu itself is showing, Esc is a
+		// no-op here.
+		if (key.escape && activeScene !== null) {
+			setActiveScene(null);
+		}
+	});
 
 	// JSX requires a capitalized identifier for a component reference.
 	// Extract the component from the (non-null) active scene so we can

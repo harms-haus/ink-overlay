@@ -180,6 +180,14 @@ export type OverlayDescriptor = {
 
 Note that `transition` is always stored as a resolved [`TransitionConfig`](#transitionconfig) (never a bare `TransitionName`) and that the loose `top`/`left`/`right`/`bottom` from `LayerOpts` are normalized into `explicitPosition`. `order` is the monotonically increasing insertion sequence used as a tie-breaker by [`sortLayers`](#sortlayers); `exiting` marks a layer that is animating out before removal.
 
+### `LayerPatch`
+
+A partial update for a registered overlay layer, used as the patch argument to `OverlayHostContext.updateLayer`. It is `Omit<Partial<OverlayDescriptor>, 'order'>` — every field of [`OverlayDescriptor`](#overlaydescriptor) is optional except `order`, which the host assigns and manages internally and must never be mutated via an update.
+
+```ts
+export type LayerPatch = Omit<Partial<OverlayDescriptor>, 'order'>;
+```
+
 ### `TransitionName`
 
 The six built-in named transitions. See [Animation](../concepts/animation.md) and [Animations service](../services/animations.md) for visual descriptions.

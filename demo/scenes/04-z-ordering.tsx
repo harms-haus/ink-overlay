@@ -42,9 +42,10 @@
  */
 
 import {useState} from 'react';
-import {Box, Text, useInput} from 'ink';
-import {Layer, useInputCaptureState} from '../../src/index.js';
+import {Box, Text} from 'ink';
+import {Layer} from '../../src/index.js';
 import {SceneShell} from '../ui.js';
+import {useGatedInput} from '../hooks.js';
 
 // ── Visibility keys for the three demo layers ───────────────────────
 //
@@ -69,43 +70,33 @@ export default function Scene04ZOrdering() {
 		c: true,
 	});
 
-	// ── Input gating ─────────────────────────────────────────────────
-	//
-	// `useInputCaptureState()` returns true when an overlay with `capture`
-	// is active. We gate this scene's own key handling so that a captured
-	// layer's input is never stolen by the background scene.
-	const isCaptured = useInputCaptureState();
-
 	// ── Scene input handler ──────────────────────────────────────────
 	//
 	// `1` → toggle layer A (z=10), `2` → toggle layer B (z=20),
 	// `3` → toggle layer C (z=30). The `unicorn/prefer-switch` rule
 	// requires a switch on the input character here.
-	useInput(
-		(input: string) => {
-			switch (input) {
-				case '1': {
-					setVisible(previous => ({...previous, a: !previous.a}));
-					break;
-				}
-
-				case '2': {
-					setVisible(previous => ({...previous, b: !previous.b}));
-					break;
-				}
-
-				case '3': {
-					setVisible(previous => ({...previous, c: !previous.c}));
-					break;
-				}
-
-				default: {
-					break;
-				}
+	useGatedInput((input: string) => {
+		switch (input) {
+			case '1': {
+				setVisible(previous => ({...previous, a: !previous.a}));
+				break;
 			}
-		},
-		{isActive: !isCaptured},
-	);
+
+			case '2': {
+				setVisible(previous => ({...previous, b: !previous.b}));
+				break;
+			}
+
+			case '3': {
+				setVisible(previous => ({...previous, c: !previous.c}));
+				break;
+			}
+
+			default: {
+				break;
+			}
+		}
+	});
 
 	// ── Render ───────────────────────────────────────────────────────
 	//

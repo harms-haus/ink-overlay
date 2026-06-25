@@ -8,13 +8,21 @@
  * render) does not trigger host.updateLayer() + bumpVersion().
  */
 import {useState} from 'react';
-import {test, expect} from 'vitest';
+import {test, expect, afterEach} from 'vitest';
 import {Text} from 'ink';
 import {Layer} from '../src/layer.js';
 import {renderWithHost} from './helpers/render-with-host.js';
 import {delay} from './helpers/delay.js';
 
-// ── Test 1: N parent re-renders do not cause extra effect work ─────
+// Tracks the rendered instance so it is always torn down between tests.
+let unmountInstance: (() => void) | undefined;
+
+afterEach(() => {
+	unmountInstance?.();
+	unmountInstance = undefined;
+});
+
+// ── Test 1: N parent re-renders do not cause extra effect work ──────
 
 test('parent re-renders without changing Layer props do not cause extra effect cycles', async () => {
 	let triggerRerender: () => void;
@@ -36,7 +44,8 @@ test('parent re-renders without changing Layer props do not cause extra effect c
 		);
 	}
 
-	const {lastFrame} = renderWithHost(<Parent />);
+	const {lastFrame, unmount} = renderWithHost(<Parent />);
+	unmountInstance = unmount;
 
 	await delay(200);
 
@@ -79,7 +88,8 @@ test('changing a structural prop (z) on an open Layer still works', async () => 
 		);
 	}
 
-	const {lastFrame} = renderWithHost(<Parent />);
+	const {lastFrame, unmount} = renderWithHost(<Parent />);
+	unmountInstance = unmount;
 
 	await delay(200);
 
@@ -116,7 +126,8 @@ test('parent state updates alongside Layer are reflected in the frame', async ()
 		);
 	}
 
-	const {lastFrame} = renderWithHost(<Parent />);
+	const {lastFrame, unmount} = renderWithHost(<Parent />);
+	unmountInstance = unmount;
 
 	await delay(200);
 
@@ -140,9 +151,9 @@ test('parent state updates alongside Layer are reflected in the frame', async ()
 	expect(finalFrame).toContain('overlay');
 });
 
-// ── Test 4: backslash escape in id doesn't break (regression guard) ─
+// ── Test 4: dynamic Layer children re-render after parent state change ─
 
-test('Layer with dynamic content children re-renders correctly', async () => {
+test('Layer children update when parent state changes the children identity', async () => {
 	let triggerRerender: () => void;
 	let setCount: (n: number) => void;
 
@@ -163,19 +174,19 @@ test('Layer with dynamic content children re-renders correctly', async () => {
 		);
 	}
 
-	const {lastFrame} = renderWithHost(<Parent />);
+	const {lastFrame, unmount} = renderWithHost(<Parent />);
+	unmountInstance = unmount;
 
 	await delay(200);
 
 	expect(lastFrame()).toContain('count is 0');
 
-	// Change the count — this changes children identity but not structural props.
+	// Change the count — this changes children identity but not structural
+	// props.  The layer content must reflect the new value.
 	setCount(42);
 	await delay(200);
 
-	// Content should reflect the new count.  Note: with the children-dep
-	// removal the host may render stale content until the next structural
-	// update — this test documents the CURRENT behaviour.
 	const frame = lastFrame();
 	expect(frame).toContain('base');
+	expect(frame).toContain('count is 42');
 });

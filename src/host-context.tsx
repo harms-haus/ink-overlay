@@ -1,11 +1,10 @@
 import {createContext, useContext} from 'react';
-import type {OverlayDescriptor} from './types.js';
+import type {OverlayDescriptor, LayerPatch} from './types.js';
 
 export type OverlayHostContextValue = {
 	registerLayer: (descriptor: Omit<OverlayDescriptor, 'order'>) => void;
 	unregisterLayer: (id: string) => void;
-	updateLayer: (id: string, patch: Partial<OverlayDescriptor>) => void;
-	removeLayerAfterExit: (id: string) => void;
+	updateLayer: (id: string, patch: LayerPatch) => void;
 };
 
 export const OverlayHostContext = createContext<OverlayHostContextValue | null>(

@@ -79,13 +79,10 @@
  */
 
 import {useEffect, useState} from 'react';
-import {Box, Text, useInput} from 'ink';
-import {
-	overlay,
-	useInputCaptureState,
-	useRegisterInput,
-} from '../../src/index.js';
+import {Box, Text} from 'ink';
+import {overlay, useRegisterInput} from '../../src/index.js';
 import {SceneShell} from '../ui.js';
+import {useGatedInput} from '../hooks.js';
 
 // ── Capturing-overlay dismiss helper ────────────────────────────────
 
@@ -162,160 +159,148 @@ export default function Scene11ImperativeOverlay() {
 		[],
 	);
 
-	// ── Cooperative input gating ─────────────────────────────────────
-	//
-	// `useInputCaptureState()` returns true whenever at least one
-	// capturing overlay is active. While variant 3 (`capture: true`) is
-	// open this is true, so this scene's own `useInput` is deactivated
-	// via `{isActive: !isCaptured}` — the scene cannot react to keys
-	// until the capturing overlay is closed programmatically.
-	const isCaptured = useInputCaptureState();
-
 	// ── Scene input handler ──────────────────────────────────────────
 	//
 	// A single switch (per the `unicorn/prefer-switch` rule) dispatches
 	// the five keys. Each arm is wrapped in braces because several of
 	// the `overlay.*` methods return void and the project's xo config
 	// enforces `no-confusing-void-expression`.
-	useInput(
-		(input: string) => {
-			switch (input) {
-				case '1': {
-					// ── variant 1: centred, dimmed overlay ───────────────
-					//
-					// overlay.open(content, options?) returns a STRING id.
-					// `content` is a ReactNode; `options` is LayerOpts —
-					// the SAME props <Layer> accepts. We capture the id so
-					// the `u` key can target the FIRST variant-1 overlay
-					// for the update demo below.
-					//
-					// Cap at 3 concurrent variant-1 overlays: when at the
-					// limit, evict the OLDEST before opening a new one so
-					// they don't accumulate indefinitely.
-					if (variant1Ids.length >= 3) {
-						const oldest = variant1Ids[0]!;
-						overlay.close(oldest);
-						setVariant1Ids(previous => previous.slice(1));
-						setAllIds(previous => previous.filter(i => i !== oldest));
-					}
-
-					const id = overlay.open(
-						<Box borderStyle="round" padding={1}>
-							<Text>{`Centered overlay #${variant1Ids.length + 1}`}</Text>
-						</Box>,
-						{anchor: 'center', backdrop: 'dim', z: 50},
-					);
-					setVariant1Ids(previous => [...previous, id]);
-					setAllIds(previous => [...previous, id]);
-					break;
+	useGatedInput((input: string) => {
+		switch (input) {
+			case '1': {
+				// ── variant 1: centred, dimmed overlay ───────────────
+				//
+				// overlay.open(content, options?) returns a STRING id.
+				// `content` is a ReactNode; `options` is LayerOpts —
+				// the SAME props <Layer> accepts. We capture the id so
+				// the `u` key can target the FIRST variant-1 overlay
+				// for the update demo below.
+				//
+				// Cap at 3 concurrent variant-1 overlays: when at the
+				// limit, evict the OLDEST before opening a new one so
+				// they don't accumulate indefinitely.
+				if (variant1Ids.length >= 3) {
+					const oldest = variant1Ids[0]!;
+					overlay.close(oldest);
+					setVariant1Ids(previous => previous.slice(1));
+					setAllIds(previous => previous.filter(i => i !== oldest));
 				}
 
-				case '2': {
-					// ── variant 2: top-anchored, backdrop-less overlay ──
-					//
-					// Same open() call, different LayerOpts: anchor='top'
-					// pins it to the top edge, backdrop='none' means no
-					// dim/opaque wash behind it. We capture the id so the
-					// display row stays honest about how many overlays are
-					// live across ALL variants.
-					const id2 = overlay.open(
-						<Box borderStyle="round" paddingX={1}>
-							<Text>Top-anchored overlay</Text>
-						</Box>,
-						{anchor: 'top', backdrop: 'none', z: 60},
-					);
-					setAllIds(previous => [...previous, id2]);
-					break;
-				}
-
-				case '3': {
-					// ── variant 3: CAPTURING overlay (input is trapped!) ─
-					//
-					// capture: true enables input trapping + raw mode. The
-					// overlay's content can hook into the LIFO dispatcher
-					// via useRegisterInput — exactly like any capturing
-					// <Layer>. Once this is open the scene's keys are
-					// gated off (isCaptured becomes true), so you CANNOT
-					// close it with the scene's `c` key. The overlay is
-					// dismissible from WITHIN: a <CapturingOverlayDismiss>
-					// child registers a LIFO handler that closes the
-					// overlay when Enter or `c` is pressed.
-					//
-					// overlay.open() generates its own id and does NOT
-					// accept a custom one, so we use a mutable holder: the
-					// dismiss component reads `holder.id` lazily (only when
-					// a key is pressed, by which point the assignment below
-					// has already run).
-					const holder: {id: string} = {id: ''};
-					const id3 = overlay.open(
-						<>
-							<Box borderStyle="round" padding={1} flexDirection="column">
-								<Text>Capturing overlay — input is trapped.</Text>
-								<Text dimColor>
-									Press Enter (or c) to close via an in-content useRegisterInput
-									handler.
-								</Text>
-							</Box>
-							<CapturingOverlayDismiss getOverlayId={() => holder.id} />
-						</>,
-						{
-							anchor: 'center',
-							capture: true,
-							backdrop: 'opaque',
-							z: 70,
-						},
-					);
-					holder.id = id3;
-					setAllIds(previous => [...previous, id3]);
-					break;
-				}
-
-				case 'u': {
-					// ── update: atomic patch + content replace ──────────
-					//
-					// overlay.update(id, patch, newContent?) shallow-merges
-					// the patch (Partial<LayerOpts>) into the existing
-					// entry AND optionally replaces the content — both in
-					// a SINGLE store notify. Here we patch backdrop to
-					// 'opaque' AND swap the text in one shot. We target the
-					// FIRST variant-1 overlay (variant1Ids[0]).
-					const first = variant1Ids[0];
-					if (first) {
-						overlay.update(
-							first,
-							{backdrop: 'opaque'},
-							<Box borderStyle="round" padding={1}>
-								<Text>{`Updated content (update #${updateCount + 1})`}</Text>
-							</Box>,
-						);
-						setUpdateCount(count => count + 1);
-					}
-
-					break;
-				}
-
-				case 'c': {
-					// ── closeAll + reset local tracking ─────────────────
-					//
-					// overlay.closeAll() closes every imperative overlay
-					// tracked by the store. We also reset the local
-					// mirror state so the display row and update counter
-					// start fresh. NOTE: this key will NOT fire while
-					// variant 3 (capture: true) is open — see that arm.
-					overlay.closeAll();
-					setVariant1Ids([]);
-					setAllIds([]);
-					setUpdateCount(0);
-					break;
-				}
-
-				default: {
-					break;
-				}
+				const id = overlay.open(
+					<Box borderStyle="round" padding={1}>
+						<Text>{`Centered overlay #${variant1Ids.length + 1}`}</Text>
+					</Box>,
+					{anchor: 'center', backdrop: 'dim', z: 50},
+				);
+				setVariant1Ids(previous => [...previous, id]);
+				setAllIds(previous => [...previous, id]);
+				break;
 			}
-		},
-		{isActive: !isCaptured},
-	);
+
+			case '2': {
+				// ── variant 2: top-anchored, backdrop-less overlay ──
+				//
+				// Same open() call, different LayerOpts: anchor='top'
+				// pins it to the top edge, backdrop='none' means no
+				// dim/opaque wash behind it. We capture the id so the
+				// display row stays honest about how many overlays are
+				// live across ALL variants.
+				const id2 = overlay.open(
+					<Box borderStyle="round" paddingX={1}>
+						<Text>Top-anchored overlay</Text>
+					</Box>,
+					{anchor: 'top', backdrop: 'none', z: 60},
+				);
+				setAllIds(previous => [...previous, id2]);
+				break;
+			}
+
+			case '3': {
+				// ── variant 3: CAPTURING overlay (input is trapped!) ─
+				//
+				// capture: true enables input trapping + raw mode. The
+				// overlay's content can hook into the LIFO dispatcher
+				// via useRegisterInput — exactly like any capturing
+				// <Layer>. Once this is open the scene's keys are
+				// gated off (isCaptured becomes true), so you CANNOT
+				// close it with the scene's `c` key. The overlay is
+				// dismissible from WITHIN: a <CapturingOverlayDismiss>
+				// child registers a LIFO handler that closes the
+				// overlay when Enter or `c` is pressed.
+				//
+				// overlay.open() generates its own id and does NOT
+				// accept a custom one, so we use a mutable holder: the
+				// dismiss component reads `holder.id` lazily (only when
+				// a key is pressed, by which point the assignment below
+				// has already run).
+				const holder: {id: string} = {id: ''};
+				const id3 = overlay.open(
+					<>
+						<Box borderStyle="round" padding={1} flexDirection="column">
+							<Text>Capturing overlay — input is trapped.</Text>
+							<Text dimColor>
+								Press Enter (or c) to close via an in-content useRegisterInput
+								handler.
+							</Text>
+						</Box>
+						<CapturingOverlayDismiss getOverlayId={() => holder.id} />
+					</>,
+					{
+						anchor: 'center',
+						capture: true,
+						backdrop: 'opaque',
+						z: 70,
+					},
+				);
+				holder.id = id3;
+				setAllIds(previous => [...previous, id3]);
+				break;
+			}
+
+			case 'u': {
+				// ── update: atomic patch + content replace ──────────
+				//
+				// overlay.update(id, patch, newContent?) shallow-merges
+				// the patch (Partial<LayerOpts>) into the existing
+				// entry AND optionally replaces the content — both in
+				// a SINGLE store notify. Here we patch backdrop to
+				// 'opaque' AND swap the text in one shot. We target the
+				// FIRST variant-1 overlay (variant1Ids[0]).
+				const first = variant1Ids[0];
+				if (first) {
+					overlay.update(
+						first,
+						{backdrop: 'opaque'},
+						<Box borderStyle="round" padding={1}>
+							<Text>{`Updated content (update #${updateCount + 1})`}</Text>
+						</Box>,
+					);
+					setUpdateCount(count => count + 1);
+				}
+
+				break;
+			}
+
+			case 'c': {
+				// ── closeAll + reset local tracking ─────────────────
+				//
+				// overlay.closeAll() closes every imperative overlay
+				// tracked by the store. We also reset the local
+				// mirror state so the display row and update counter
+				// start fresh. NOTE: this key will NOT fire while
+				// variant 3 (capture: true) is open — see that arm.
+				overlay.closeAll();
+				setVariant1Ids([]);
+				setAllIds([]);
+				setUpdateCount(0);
+				break;
+			}
+
+			default: {
+				break;
+			}
+		}
+	});
 
 	// ── Render ───────────────────────────────────────────────────────
 

@@ -74,6 +74,8 @@ export function Tooltip({
 	const timerReference = useRef<ReturnType<typeof setTimeout> | undefined>(
 		null,
 	);
+	const dismissDelayRef = useRef(dismissDelay);
+	dismissDelayRef.current = dismissDelay;
 
 	// ── Timer management ──────────────────────────────────────────
 
@@ -89,8 +91,8 @@ export function Tooltip({
 		timerReference.current = setTimeout(() => {
 			setVisible(false);
 			timerReference.current = null;
-		}, dismissDelay);
-	}, [dismissDelay, clearTimer]);
+		}, dismissDelayRef.current);
+	}, [clearTimer]);
 
 	// ── Show / hide helpers ───────────────────────────────────────
 

@@ -21,7 +21,7 @@ import {delay} from './helpers/delay.js';
 type HookSnapshot = {
 	stage: string;
 	currentStyle: Record<string, number | string>;
-	key: string;
+	transitionKey: string;
 };
 
 /**
@@ -48,7 +48,7 @@ function HistoryHarness({
 	history.push({
 		stage: result.stage,
 		currentStyle: {...result.currentStyle},
-		key: result.key,
+		transitionKey: result.transitionKey,
 	});
 	return <Text>content</Text>;
 }

@@ -1,16 +1,10 @@
 /**
- * Characterization tests pinning down the observable behaviors whose
- * explanatory comments are being cleaned up (no logic change).
+ * Characterization tests pinning the observable behaviours of comment regions
+ * across the source:
  *
- * Each describe block corresponds to a comment region targeted by the
- * comment-cleanup task:
- *
- *  1. `src/animation.tsx` — the 'fade' transition config (multi-line
- *     history comment replaced with a one-liner).
- *  2. `src/layer.tsx` — the content-sync effect (8-line rationale
- *     condensed to a concise note).
- *  3. `src/focus-trap.tsx` — the hook signature (active-first positional
- *     arg; the "signature decision" rationale removed).
+ *  1. `src/animation.tsx` — the 'fade' transition config.
+ *  2. `src/layer.tsx` — the content-sync effect.
+ *  3. `src/focus-trap.tsx` — the hook signature (active-first positional arg).
  *
  * Uses REAL timers — ink breaks with fake timers.
  */

@@ -71,6 +71,7 @@ export type {
 	Role,
 	LayerOpts,
 	OverlayDescriptor,
+	LayerPatch,
 	ToastKind,
 	ToastOptions,
 	CommandPaletteItem,

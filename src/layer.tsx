@@ -165,16 +165,42 @@ export function Layer({
 		}
 	}, []);
 
-	// ── Lifecycle: register / update / close ────────────────────────
-
+	// ── Open / close transitions ───────────────────────────────────
+	//
+	// Focused on `isOpen` transitions only: registers on a false→true
+	// edge, handles close (exit-transition vs. immediate unregister) on
+	// a true→false edge, and re-registers under React.StrictMode's
+	// dev unmount-remount cycle (wasOpen but registration cleared by the
+	// unmount-cleanup effect below). Structural prop changes while open
+	// are intentionally NOT handled here — see the props-update effect.
 	const previousOpenReference = useRef(false);
 
 	useEffect(() => {
 		const wasOpen = previousOpenReference.current;
 		previousOpenReference.current = isOpen;
 
-		if (isOpen) {
-			const desc = {
+		if (!isOpen) {
+			// Closing edge: tear down, optionally via an exit transition.
+			if (wasOpen && registeredReference.current) {
+				if (
+					resolvedTransition?.exit &&
+					resolvedTransition.exit.length > 1
+				) {
+					host.updateLayer(id, {exiting: true});
+				} else {
+					host.unregisterLayer(id);
+				}
+
+				registeredReference.current = false;
+			}
+
+			return;
+		}
+
+		// Opening edge, or StrictMode re-mount after registration was
+		// cleared: (re)register with a full descriptor.
+		if (!wasOpen || !registeredReference.current) {
+			host.registerLayer({
 				id,
 				z: z ?? 0,
 				capture,
@@ -189,65 +215,69 @@ export function Layer({
 				transition: resolvedTransition,
 				onDismiss: handleDismiss,
 				onBackdropInput,
-			};
-
-			if (!wasOpen) {
-				// Opening: register a new layer
-				host.registerLayer(desc);
-				registeredReference.current = true;
-			} else if (registeredReference.current) {
-				// Already open: update with fresh props
-				host.updateLayer(id, {
-					content: contentRef.current,
-					z: z ?? 0,
-					capture,
-					backdrop,
-					backdropColor,
-					role,
-					anchor,
-					explicitPosition,
-					overflow,
-					margin,
-					transition: resolvedTransition,
-					onDismiss: handleDismiss,
-					onBackdropInput,
-				});
-			} else {
-				// StrictMode re-mount: wasOpen but registration was cleared
-				host.registerLayer(desc);
-				registeredReference.current = true;
-			}
-		} else if (wasOpen && registeredReference.current) {
-			// Closing: check for exit transition
-			if (resolvedTransition?.exit && resolvedTransition.exit.length > 1) {
-				host.updateLayer(id, {exiting: true});
-				registeredReference.current = false;
-			} else {
-				host.unregisterLayer(id);
-				registeredReference.current = false;
-			}
+			});
+			registeredReference.current = true;
 		}
+
+		// Already open and registered: no open-state transition, so this
+		// effect has nothing to do. Structural prop updates are pushed by
+		// the dedicated props-update effect below.
+	}, [isOpen]);
+
+	// ── Structural props update ────────────────────────────────────
+	//
+	// Propagates structural prop changes for an already-registered,
+	// open layer via `host.updateLayer`. The initial mount run is
+	// skipped: the open/close effect above pushes the full descriptor
+	// on first open, so an update here would be a redundant duplicate.
+	const propsUpdateMountedReference = useRef(false);
+
+	useEffect(() => {
+		if (!propsUpdateMountedReference.current) {
+			propsUpdateMountedReference.current = true;
+			return;
+		}
+
+		if (!registeredReference.current) {
+			return;
+		}
+
+		host.updateLayer(id, {
+			content: contentRef.current,
+			z: z ?? 0,
+			capture,
+			backdrop,
+			backdropColor,
+			role,
+			anchor,
+			explicitPosition,
+			overflow,
+			margin,
+			transition: resolvedTransition,
+			onDismiss: handleDismiss,
+			onBackdropInput,
+		});
 	}, [
-		isOpen,
 		z,
 		capture,
 		backdrop,
 		backdropColor,
 		role,
 		anchor,
-		top,
-		left,
-		right,
-		bottom,
+		explicitPosition,
 		overflow,
 		margin,
 		resolvedTransition,
 		onBackdropInput,
 	]);
 
-	// ── Content sync: push contentRef changes to the host ────────
-	// Content-only updates: push contentRef changes to the host
-	// without re-running the registration effect.
+	// ── Content sync ───────────────────────────────────────────────
+	// No dependency array on purpose: this runs after every render so it
+	// can detect content-only changes (new children identity with no
+	// structural prop change) and push them to the host as a
+	// `{content}`-only patch — without re-running the open/close or
+	// props-update effects above. It is a no-op when content is
+	// unchanged or the layer is not currently registered.
 	const previousContentSyncReference = useRef<ReactNode>(contentRef.current);
 	useEffect(() => {
 		if (
@@ -304,7 +334,7 @@ export function LayerRenderer({descriptor}: {descriptor: OverlayDescriptor}) {
 		descriptor.exiting
 			? {
 					onExited() {
-						host.removeLayerAfterExit(descriptor.id);
+						host.unregisterLayer(descriptor.id);
 					},
 				}
 			: undefined,

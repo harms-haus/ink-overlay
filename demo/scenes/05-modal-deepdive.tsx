@@ -84,14 +84,10 @@
  */
 
 import {useState} from 'react';
-import {Box, Text, useInput} from 'ink';
-import {
-	Modal,
-	Layer,
-	useInputCaptureState,
-	useRegisterInput,
-} from '../../src/index.js';
+import {Box, Text} from 'ink';
+import {Modal, Layer, useRegisterInput} from '../../src/index.js';
 import {SceneShell} from '../ui.js';
+import {useGatedInput} from '../hooks.js';
 
 // ── AlertDialogDismiss ───────────────────────────────────────────────
 
@@ -156,54 +152,42 @@ export default function Scene05ModalDeepdive() {
 	/** Bare `<Layer role='tooltip'>` — top-anchored passive hint. */
 	const [showRoleTooltip, setShowRoleTooltip] = useState(false);
 
-	// ── Cooperative input gating ────────────────────────────────────
-	//
-	// While a capturing overlay (any <Modal>) is open this returns true
-	// and we deactivate the scene's own key handler so it does not
-	// double-handle keypresses. Note: the bare toast/tooltip layers do
-	// NOT capture input, so keys 1/2/3/4/5 remain active while only a
-	// toast or tooltip is showing.
-	const isCaptured = useInputCaptureState();
-
 	// ── Scene input handler ─────────────────────────────────────────
 	//
 	// A single switch (per the `unicorn/prefer-switch` rule) dispatches
 	// the five toggle keys. Each arm flips one boolean state.
-	useInput(
-		input => {
-			switch (input) {
-				case '1': {
-					setShowStandard(previous => !previous);
-					break;
-				}
-
-				case '2': {
-					setShowCustom(previous => !previous);
-					break;
-				}
-
-				case '3': {
-					setShowAlert(previous => !previous);
-					break;
-				}
-
-				case '4': {
-					setShowRoleToast(previous => !previous);
-					break;
-				}
-
-				case '5': {
-					setShowRoleTooltip(previous => !previous);
-					break;
-				}
-
-				default: {
-					break;
-				}
+	useGatedInput(input => {
+		switch (input) {
+			case '1': {
+				setShowStandard(previous => !previous);
+				break;
 			}
-		},
-		{isActive: !isCaptured},
-	);
+
+			case '2': {
+				setShowCustom(previous => !previous);
+				break;
+			}
+
+			case '3': {
+				setShowAlert(previous => !previous);
+				break;
+			}
+
+			case '4': {
+				setShowRoleToast(previous => !previous);
+				break;
+			}
+
+			case '5': {
+				setShowRoleTooltip(previous => !previous);
+				break;
+			}
+
+			default: {
+				break;
+			}
+		}
+	});
 
 	// ── Render ──────────────────────────────────────────────────────
 

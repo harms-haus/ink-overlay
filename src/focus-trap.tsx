@@ -131,7 +131,16 @@ export function useFocusTrap(
 		if (depth === 0) {
 			focusManager.enableFocus();
 			if (restoreFocus && previousFocusIdReference.current) {
-				focusManager.focus(previousFocusIdReference.current);
+				// Guard against a stale focus target that may have
+				// unmounted while the trap was active.  Ink's
+				// FocusManager.focus() can throw when the id is
+				// unknown — we must not let that propagate out of the
+				// passive-effect cleanup.
+				try {
+					focusManager.focus(previousFocusIdReference.current);
+				} catch {
+					// Target no longer exists — nothing to restore.
+				}
 			}
 		}
 	});

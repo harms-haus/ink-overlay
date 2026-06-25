@@ -172,6 +172,96 @@ describe('computeAnchorCoords', () => {
 		const result = computeAnchorCoords('top', viewport, layer, {top: 3});
 		expect(result).toEqual({top: 3, left: 30});
 	});
+
+	// --- Characterization for floor() inlining -----------------------------
+	// These pin down Math.floor rounding of the centered coordinates when
+	// (viewport - layerSize) is odd (produces a .5 value).
+	test('floor: odd viewport height produces floored centerTop (25-6)/2=9.5→9', () => {
+		const oddViewport = {columns: 80, rows: 25};
+		// centerTop = floor((25-6)/2) = floor(9.5) = 9
+		expect(computeAnchorCoords('center', oddViewport, layer)).toEqual({
+			top: 9,
+			left: 30,
+		});
+	});
+
+	test('floor: odd viewport columns produces floored centerLeft (81-20)/2=30.5→30', () => {
+		const oddViewport = {columns: 81, rows: 24};
+		// centerLeft = floor((81-20)/2) = floor(30.5) = 30
+		expect(computeAnchorCoords('center', oddViewport, layer)).toEqual({
+			top: 9,
+			left: 30,
+		});
+	});
+
+	test('floor: fractional margin produces a floored final coordinate', () => {
+		// top-left base top=0; margin.top=2.7 → top=2.7 → floor → 2
+		// top-left base left=0; margin.left=4.9 → left=4.9 → floor → 4
+		const result = computeAnchorCoords('top-left', viewport, layer, {
+			top: 2.7,
+			left: 4.9,
+		});
+		expect(result).toEqual({top: 2, left: 4});
+	});
+
+	// --- Characterization for resolveEdge() inlining -----------------------
+	// resolveEdge(value, 0) is equivalent to (value ?? 0): undefined edges
+	// must be treated as 0, NOT NaN.
+	test('resolveEdge: partial margin object treats undefined edges as 0', () => {
+		// Only `top` is defined; left/bottom/right are undefined → treated as 0.
+		const result = computeAnchorCoords('top-left', viewport, layer, {top: 5});
+		expect(result).toEqual({top: 5, left: 0});
+	});
+
+	test('resolveEdge: only margin.left defined pushes right', () => {
+		const result = computeAnchorCoords('top-left', viewport, layer, {left: 7});
+		expect(result).toEqual({top: 0, left: 7});
+	});
+
+	test('resolveEdge: only margin.right defined pushes left', () => {
+		// base left=0; margin.right=3 → left = 0 - 3 = -3 → clamped to 0
+		const result = computeAnchorCoords('top-left', viewport, layer, {right: 3});
+		expect(result).toEqual({top: 0, left: 0});
+	});
+
+	test('resolveEdge: only margin.bottom defined pushes up', () => {
+		// base top=0; margin.bottom=4 → top = 0 - 4 = -4 → clamped to 0
+		const result = computeAnchorCoords('top-left', viewport, layer, {bottom: 4});
+		expect(result).toEqual({top: 0, left: 0});
+	});
+
+	test('resolveEdge: empty margin object {} is a no-op', () => {
+		const result = computeAnchorCoords('top-left', viewport, layer, {});
+		expect(result).toEqual({top: 0, left: 0});
+	});
+
+	test('resolveEdge: each undefined edge contributes exactly 0', () => {
+		// center: top=9, left=30. With margin {}, top/left unchanged.
+		const result = computeAnchorCoords('center', viewport, layer, {});
+		expect(result).toEqual({top: 9, left: 30});
+	});
+
+	// --- Characterization for clampMin(n, 0) inlining ----------------------
+	// clampMin is Math.max(n, 0): values below 0 become 0; exactly 0 stays 0.
+	test('clampMin: a margin that drives coordinate to exactly 0 stays 0', () => {
+		// center base top=9; margin.bottom=9 → top = 9 - 9 = 0 (NOT clamped, exact)
+		const result = computeAnchorCoords('center', viewport, layer, {bottom: 9});
+		expect(result.top).toBe(0);
+	});
+
+	test('clampMin: fractional negative intermediate floors then clamps to 0', () => {
+		// center base top=9; margin.bottom=9.9 → top = 9 - 9.9 = -0.9 → floor → -1 → max(-1,0)=0
+		const result = computeAnchorCoords('center', viewport, layer, {bottom: 9.9});
+		expect(result.top).toBe(0);
+	});
+
+	test('clampMin: large negative margin clamps both axes to 0', () => {
+		const result = computeAnchorCoords('center', viewport, layer, {
+			bottom: 1000,
+			right: 1000,
+		});
+		expect(result).toEqual({top: 0, left: 0});
+	});
 });
 
 // ---------------------------------------------------------------------------
@@ -587,6 +677,95 @@ describe('computePopoverPosition', () => {
 		const result = computePopoverPosition(anchorRect, popover, viewport, 'top');
 		expect(result.top).toBeGreaterThanOrEqual(0);
 		expect(result.left).toBeGreaterThanOrEqual(0);
+	});
+
+	// --- Characterization for floor()/clamp() inlining in shift path --------
+	// These pin down that raw fractional coordinates are Math.floor'd both on
+	// the no-shift return path and inside the shift clamp bounds.
+	test('floor: no-shift path floors a fractional cross-axis center', () => {
+		// right placement, anchor height odd so (height - popoverHeight)/2 is .5
+		// anchorRect.height = 3, popover.height = 5 → (3-5)/2 = -1 → top = top + (-1)
+		const anchorRect = {
+			left: 10,
+			top: 10,
+			width: 5,
+			height: 3,
+		};
+		// right: left = 10+5+1 = 16; top = 10 + (3-5)/2 = 10 + (-1) = 9 (integer)
+		const result = computePopoverPosition(
+			anchorRect,
+			popover,
+			viewport,
+			'right',
+			{shift: false, flip: false},
+		);
+		expect(result.top).toBe(9);
+		expect(result.left).toBe(16);
+	});
+
+	test('floor: no-shift path floors a .5 fractional coordinate', () => {
+		// bottom-center: left = anchorRect.left + (width - popoverWidth)/2 + crossOffset
+		// anchorRect.width = 11, popover.width = 20 → (11-20)/2 = -4.5
+		// left = 30 + (-4.5) = 25.5 → floor → 25
+		const anchorRect = {
+			left: 30,
+			top: 5,
+			width: 11,
+			height: 2,
+		};
+		const result = computePopoverPosition(
+			anchorRect,
+			popover,
+			viewport,
+			'bottom',
+			{shift: false, flip: false},
+		);
+		expect(result.left).toBe(25);
+	});
+
+	test('clamp: shift path clamps fractional value between floored bounds', () => {
+		// Force a shift where the raw left is fractional and must be floored
+		// before clamping to [pad.left, columns-width-pad.right].
+		const anchorRect = {
+			left: 30,
+			top: 5,
+			width: 11,
+			height: 2,
+		};
+		// bottom-end: left = 30 + 11 - 20 = 21, top = 5+2+1 = 8 (fits, no flip)
+		// With shift on and a large right pad that pushes max below 21:
+		// max left = 80 - 20 - pad.right. Set pad.right = 45 → max = 15.
+		const result = computePopoverPosition(
+			anchorRect,
+			popover,
+			viewport,
+			'bottom-end',
+			{shift: true, flip: false, collisionPadding: {right: 45}},
+		);
+		expect(result.left).toBe(15);
+		expect(result.placement).toBe('bottom-end');
+	});
+
+	test('floor: shift floors fractional min/max bounds from fractional viewport', () => {
+		// Odd viewport produces fractional clamp bounds: rows=25, height=5
+		// max top = floor((25 - 5) / 1) ... here rows=25, pad 0: max = 25-5 = 20 (int)
+		// Use a fractional anchor to force a fractional raw top.
+		const fracViewport = {columns: 80, rows: 25};
+		const anchorRect = {
+			left: 30,
+			top: 22,
+			width: 11,
+			height: 1,
+		};
+		// bottom: top = 22 + 1 + 1 = 24; max top = 25 - 5 = 20 → shift clamps to 20
+		const result = computePopoverPosition(
+			anchorRect,
+			popover,
+			fracViewport,
+			'bottom',
+			{shift: true, flip: false},
+		);
+		expect(result.top).toBe(20);
 	});
 });
 

@@ -113,6 +113,14 @@ export type OverlayDescriptor = {
 	exiting?: boolean;
 };
 
+/**
+ * Partial update for a registered overlay layer.
+ *
+ * Excludes `order` because the host assigns and manages that internally;
+ * consumers must never mutate it via an update.
+ */
+export type LayerPatch = Omit<Partial<OverlayDescriptor>, 'order'>;
+
 export type OverlayEntry = {
 	id: string;
 	content: ReactNode;

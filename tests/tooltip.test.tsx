@@ -77,10 +77,12 @@ function FocusTriggerApp({
 	focused,
 	content = 'help text',
 	placement = 'top',
+	dismissDelay = 10_000,
 }: {
 	focused: boolean;
 	content?: string;
 	placement?: string;
+	dismissDelay?: number;
 }) {
 	const anchorReference = useRef<DOMElement | undefined>(null);
 	return (
@@ -93,6 +95,7 @@ function FocusTriggerApp({
 				content={<Text>{content}</Text>}
 				trigger="focus"
 				anchorFocused={focused}
+				dismissDelay={dismissDelay}
 				placement={placement as any}
 			/>
 		</>
@@ -364,5 +367,107 @@ describe('Tooltip cooperative capture gating', () => {
 		stdin.write('?');
 		await delay(500);
 		expect(lastFrame()).toContain('help text');
+	});
+});
+
+// ════════════════════════════════════════════════════════════════════
+// (f) dismissDelay prop changes — stale dismiss-timer fix
+//
+// `startDismissTimer` must read the latest `dismissDelay` from a ref
+// rather than closing over the prop. Changing the prop while a timer is
+// already running must NOT restart the timer, and a freshly-started timer
+// must use the newest value.
+// ════════════════════════════════════════════════════════════════════
+
+describe('Tooltip dismissDelay prop change (stale-timer fix)', () => {
+	test('changing dismissDelay while a focus-trigger timer is running does NOT restart the timer', async () => {
+		let setDismissDelay: (value: number) => void;
+
+		function App() {
+			const anchorReference = useRef<DOMElement | undefined>(null);
+			const [dismissDelay, updateDismissDelay] = useState(5000);
+			setDismissDelay = updateDismissDelay;
+			return (
+				<>
+					<Box ref={anchorReference}>
+						<Text>anchor</Text>
+					</Box>
+					<Tooltip
+						anchorRef={anchorReference}
+						content={<Text>help text</Text>}
+						trigger="focus"
+						anchorFocused={true}
+						dismissDelay={dismissDelay}
+					/>
+				</>
+			);
+		}
+
+		const {lastFrame} = renderWithHost(<App />);
+		await delay(500);
+		expect(lastFrame()).toContain('help text');
+		expect(lastFrame()).toContain('anchor');
+
+		// Shorten dismissDelay to 200ms while the original 5000ms timer is
+		// still pending. With the bug, `startDismissTimer` is recreated
+		// (dismissDelay in its deps), which recreates `show`, which re-runs
+		// the focus effect and RESTARTS the timer with the short 200ms delay
+		// — dismissing the tooltip ~700ms later. After the fix, `show` is
+		// stable and the effect does not re-run, so the original 5000ms
+		// timer keeps ticking and the tooltip stays visible.
+		setDismissDelay!(200);
+
+		// 700ms is well past the buggy 200ms restart, but far short of the
+		// original 5000ms timer.
+		await delay(700);
+		expect(lastFrame()).toContain('help text');
+	});
+
+	test('a freshly-started timer after a prop change uses the latest dismissDelay', async () => {
+		let setDismissDelay: (value: number) => void;
+		let setFocused: (value: boolean) => void;
+
+		function App() {
+			const anchorReference = useRef<DOMElement | undefined>(null);
+			const [dismissDelay, updateDismissDelay] = useState(5000);
+			const [focused, updateFocused] = useState(true);
+			setDismissDelay = updateDismissDelay;
+			setFocused = updateFocused;
+			return (
+				<>
+					<Box ref={anchorReference}>
+						<Text>anchor</Text>
+					</Box>
+					<Tooltip
+						anchorRef={anchorReference}
+						content={<Text>help text</Text>}
+						trigger="focus"
+						anchorFocused={focused}
+						dismissDelay={dismissDelay}
+					/>
+				</>
+			);
+		}
+
+		const {lastFrame} = renderWithHost(<App />);
+		await delay(500);
+		expect(lastFrame()).toContain('help text');
+
+		// Change the prop to a short delay, then hide the tooltip (clearing
+		// the running timer).
+		setDismissDelay!(1000);
+		setFocused!(false);
+		await delay(500);
+		expect(lastFrame()).not.toContain('help text');
+
+		// Re-show. The newly-started timer must read the updated 1000ms
+		// delay from the ref, so the tooltip stays visible at 500ms...
+		setFocused!(true);
+		await delay(500);
+		expect(lastFrame()).toContain('help text');
+
+		// ...and dismisses by ~1500ms after the re-show (1000ms delay + buffer).
+		await delay(1000);
+		expect(lastFrame()).not.toContain('help text');
 	});
 });

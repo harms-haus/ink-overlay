@@ -22,7 +22,7 @@ The hook also includes a `canSkip` optimization: when both the enter and exit ar
 
 ### Enter vs Exit — and Why the Layer Stays Mounted During Exit
 
-A critical architectural detail is that the exit sequence is not instantaneous. When a layer begins closing, the host marks the descriptor with `exiting: true` rather than removing it immediately. The `LayerRenderer` passes `!descriptor.exiting` as the `visible` argument to `useEnterExit`, so the hook drives the exit frames. The layer remains mounted — and painted — until the final exit frame completes, at which point `onExited` calls `host.removeLayerAfterExit(descriptor.id)` and the host finally unregisters the layer. This is what makes exit transitions visible: the content is progressively restyled across multiple frames before disappearing. If a transition's exit array has only one frame (or no transition is configured), the layer is unregistered immediately on close with no exit animation.
+A critical architectural detail is that the exit sequence is not instantaneous. When a layer begins closing, the host marks the descriptor with `exiting: true` rather than removing it immediately. The `LayerRenderer` passes `!descriptor.exiting` as the `visible` argument to `useEnterExit`, so the hook drives the exit frames. The layer remains mounted — and painted — until the final exit frame completes, at which point `onExited` calls `host.unregisterLayer(descriptor.id)` to remove the layer. This is what makes exit transitions visible: the content is progressively restyled across multiple frames before disappearing. If a transition's exit array has only one frame (or no transition is configured), the layer is unregistered immediately on close with no exit animation.
 
 ### Built-In Transitions
 

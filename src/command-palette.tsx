@@ -86,7 +86,13 @@ export function CommandPalette({
 	const [query, setQuery] = useState('');
 	const [cursorIndex, setCursorIndex] = useState(0);
 	const [selectedIndex, setSelectedIndex] = useState(0);
-	const [offset, setOffset] = useState(0);
+
+	// Scroll offset is kept in a ref and derived from `selectedIndex` during
+	// render (mutating a ref during render is permitted for this pattern, the
+	// same way `contentRef.current = children` is used in layer.tsx). Doing it
+	// here — rather than mirroring the value into state via an effect — avoids
+	// an extra render cycle on every selection change.
+	const offsetReference = useRef(0);
 
 	// ── Reset state on open ─────────────────────────────────────
 
@@ -96,7 +102,7 @@ export function CommandPalette({
 			setQuery('');
 			setCursorIndex(0);
 			setSelectedIndex(0);
-			setOffset(0);
+			offsetReference.current = 0;
 		}
 
 		previousOpenRef.current = isOpen;
@@ -119,7 +125,7 @@ export function CommandPalette({
 		if (query !== previousQueryReference.current) {
 			previousQueryReference.current = query;
 			setSelectedIndex(0);
-			setOffset(0);
+			offsetReference.current = 0;
 		}
 	}, [query]);
 
@@ -134,22 +140,15 @@ export function CommandPalette({
 	// ── Scroll-into-view ──────────────────────────────────────────
 
 	const visibleCount = maxVisible;
-	const listOffset = useMemo(() => {
-		if (selectedIndex < offset) {
-			return selectedIndex;
-		}
 
-		if (selectedIndex >= offset + visibleCount) {
-			return selectedIndex - visibleCount + 1;
-		}
+	// Clamp the scroll offset so `selectedIndex` stays in the visible window.
+	if (selectedIndex < offsetReference.current) {
+		offsetReference.current = selectedIndex;
+	} else if (selectedIndex >= offsetReference.current + visibleCount) {
+		offsetReference.current = selectedIndex - visibleCount + 1;
+	}
 
-		return offset;
-	}, [selectedIndex, offset, visibleCount]);
-
-	// Update offset via effect to avoid render-loop
-	useEffect(() => {
-		setOffset(listOffset);
-	}, [listOffset]);
+	const offset = offsetReference.current;
 
 	// ── Visible items ─────────────────────────────────────────────
 

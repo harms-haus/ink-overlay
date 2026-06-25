@@ -13,8 +13,8 @@
  * command-palette), that overlay increments the capture depth exposed
  * by {@link useInputCaptureState}.
  *
- * This menu reads `isCaptured` and sets `isActive: !isCaptured` on its
- * own `useInput`. Without this voluntary gate the arrow keys would
+ * This menu gates its own input via `useGatedInput`, which wraps
+ * `useInput` with `{isActive: !isCaptured}`. Without this voluntary gate the arrow keys would
  * leak through to the menu *while a modal is open*, moving the
  * highlight behind the overlay. This is the **cooperative input
  * model** in action — and it is strictly VOLUNTARY: the framework
@@ -29,9 +29,9 @@
  */
 
 import {useState} from 'react';
-import {Box, Text, useInput} from 'ink';
+import {Box, Text} from 'ink';
 import {type SceneDefinition} from './types.js';
-import {useInputCaptureState} from '../src/index.js';
+import {useGatedInput} from './hooks.js';
 
 // ── Props ───────────────────────────────────────────────────────────
 
@@ -49,39 +49,35 @@ type MenuProps = {
  */
 export function SceneMenu({scenes, onSelect}: MenuProps) {
 	const [selectedIndex, setSelectedIndex] = useState(0);
-	const isCaptured = useInputCaptureState();
 
 	// Cooperative gate: yield to any capturing overlay (modal,
 	// command-palette) so arrow/Enter keys don't leak through here.
-	useInput(
-		(_input, key) => {
-			if (key.upArrow) {
-				setSelectedIndex(previous =>
-					previous === 0 ? scenes.length - 1 : previous - 1,
-				);
+	useGatedInput((_input, key) => {
+		if (key.upArrow) {
+			setSelectedIndex(previous =>
+				previous === 0 ? scenes.length - 1 : previous - 1,
+			);
+			return;
+		}
+
+		if (key.downArrow) {
+			setSelectedIndex(previous =>
+				previous === scenes.length - 1 ? 0 : previous + 1,
+			);
+			return;
+		}
+
+		if (key.return) {
+			// Guard for noUncheckedIndexedAccess — scenes[selectedIndex]
+			// is typed as `SceneDefinition | undefined`.
+			const scene = scenes[selectedIndex];
+			if (scene === undefined) {
 				return;
 			}
 
-			if (key.downArrow) {
-				setSelectedIndex(previous =>
-					previous === scenes.length - 1 ? 0 : previous + 1,
-				);
-				return;
-			}
-
-			if (key.return) {
-				// Guard for noUncheckedIndexedAccess — scenes[selectedIndex]
-				// is typed as `SceneDefinition | undefined`.
-				const scene = scenes[selectedIndex];
-				if (scene === undefined) {
-					return;
-				}
-
-				onSelect(scene);
-			}
-		},
-		{isActive: !isCaptured},
-	);
+			onSelect(scene);
+		}
+	});
 
 	return (
 		<Box flexDirection="column" padding={1}>

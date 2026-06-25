@@ -86,15 +86,15 @@
  */
 
 import {useState} from 'react';
-import {Box, Text, useInput} from 'ink';
+import {Box, Text} from 'ink';
 import {
 	Layer,
 	getTransitionSteps,
-	useInputCaptureState,
 	type TransitionName,
 	type TransitionConfig,
 } from '../../src/index.js';
 import {SceneShell} from '../ui.js';
+import {useGatedInput} from '../hooks.js';
 
 // ── The six named transition presets ───────────────────────────────────
 //
@@ -134,13 +134,6 @@ const customConfig: TransitionConfig = {
  * the enter/exit animation lifecycle.
  */
 export default function Scene10Animations() {
-	// ── Cooperative input gating ────────────────────────────────────
-	//
-	// `useInputCaptureState()` returns true when an overlay with `capture`
-	// is active. We gate this scene's own key handling on `!isCaptured` so
-	// that a capturing overlay gets first crack at keypresses.
-	const isCaptured = useInputCaptureState();
-
 	// ── State ───────────────────────────────────────────────────────
 
 	/** Index into `transitions` — cycles via the `a` key. Starts at 1 ('fade'). */
@@ -157,27 +150,24 @@ export default function Scene10Animations() {
 	//   a — cycle transitionIndex with wrap-around.
 	//   o — toggle open (to see the enter/exit animation).
 	//   c — toggle useCustom (slide-up preset at 200ms/frame).
-	useInput(
-		(input: string) => {
-			// `a` → cycle transitionIndex with wrap-around.
-			if (input === 'a') {
-				setTransitionIndex(previous => (previous + 1) % transitions.length);
-				return;
-			}
+	useGatedInput((input: string) => {
+		// `a` → cycle transitionIndex with wrap-around.
+		if (input === 'a') {
+			setTransitionIndex(previous => (previous + 1) % transitions.length);
+			return;
+		}
 
-			// `o` → toggle open.
-			if (input === 'o') {
-				setOpen(value => !value);
-				return;
-			}
+		// `o` → toggle open.
+		if (input === 'o') {
+			setOpen(value => !value);
+			return;
+		}
 
-			// `c` → toggle useCustom.
-			if (input === 'c') {
-				setUseCustom(value => !value);
-			}
-		},
-		{isActive: !isCaptured},
-	);
+		// `c` → toggle useCustom.
+		if (input === 'c') {
+			setUseCustom(value => !value);
+		}
+	});
 
 	// ── Derived values ─────────────────────────────────────────────
 
@@ -213,8 +203,7 @@ export default function Scene10Animations() {
 		>
 			<Box flexDirection="column" gap={1}>
 				<Text dimColor>
-					current: {label}{' '}
-					{!useCustom && transitionName !== undefined ? '(preset)' : ''}
+					current: {label} {useCustom ? '' : '(preset)'}
 				</Text>
 				{/*
 				 * ════════════════════════════════════════════════════════
@@ -257,19 +246,17 @@ export default function Scene10Animations() {
 				 * driven by a self-contained setInterval inside
 				 * useEnterExit for deterministic, testable timing.
 				 */}
-				{transitionName !== undefined && (
-					<Layer
-						anchor="center"
-						z={10}
-						transition={transition}
-						open={open}
-						onOpenChange={setOpen}
-					>
-						<Box borderStyle="round" padding={1}>
-							<Text>{label}</Text>
-						</Box>
-					</Layer>
-				)}
+				<Layer
+					anchor="center"
+					z={10}
+					transition={transition}
+					open={open}
+					onOpenChange={setOpen}
+				>
+					<Box borderStyle="round" padding={1}>
+						<Text>{label}</Text>
+					</Box>
+				</Layer>
 			</Box>
 		</SceneShell>
 	);

@@ -6,10 +6,10 @@ import type {
 } from './types.js';
 
 /** Milliseconds between animation frames for all built-in transitions. */
-const FRAME_INTERVAL_MS = 80;
+export const FRAME_INTERVAL_MS = 80;
 
 /** Maximum margin (character cells) used by slide transitions. */
-const SLIDE_STEPS = 4;
+export const SLIDE_STEPS = 4;
 
 // ── getTransitionSteps (cached) ────────────────────────────────────
 
@@ -148,7 +148,7 @@ type Stage = 'entering' | 'visible' | 'exiting' | 'exited';
 export type UseEnterExitResult = {
 	stage: Stage;
 	currentStyle: Record<string, number | string>;
-	key: string;
+	transitionKey: string;
 };
 
 /**
@@ -291,6 +291,6 @@ export function useEnterExit(
 	return {
 		stage,
 		currentStyle,
-		key: String(transitionKey),
+		transitionKey: String(transitionKey),
 	};
 }

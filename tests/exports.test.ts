@@ -54,6 +54,7 @@ import type {
 	FilterFunction,
 	TransitionName,
 	TransitionConfig,
+	LayerPatch,
 } from '../src/index.js';
 
 /**
@@ -105,6 +106,8 @@ const _types = {
 	TransitionName: null as unknown as TransitionName,
 
 	TransitionConfig: null as unknown as TransitionConfig,
+
+	LayerPatch: null as unknown as LayerPatch,
 };
 void _types;
 

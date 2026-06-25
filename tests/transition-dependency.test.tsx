@@ -27,7 +27,7 @@
  * lifecycle update (contains `transition`) from a content-only sync.
  */
 import React, {useMemo, useState, type ReactNode} from 'react';
-import {test, expect} from 'vitest';
+import {test, expect, afterEach} from 'vitest';
 import {Text} from 'ink';
 import {render} from 'ink-testing-library';
 import {Layer} from '../src/layer.js';
@@ -40,6 +40,14 @@ import type {OverlayDescriptor} from '../src/types.js';
 import {delay} from './helpers/delay.js';
 
 // ── Spy infrastructure ─────────────────────────────────────────────
+
+// Tracks the rendered instance so it is always torn down between tests.
+let unmountInstance: (() => void) | undefined;
+
+afterEach(() => {
+	unmountInstance?.();
+	unmountInstance = undefined;
+});
 
 type CallRecord = {kind: 'register'; id: string} | {
 	kind: 'update';
@@ -121,7 +129,8 @@ test('string transition prop does not trigger full updates on parent re-render',
 		);
 	}
 
-	const {calls, lastFrame} = renderSpied(<Parent />);
+	const {calls, lastFrame, unmount} = renderSpied(<Parent />);
+	unmountInstance = unmount;
 
 	await delay(200);
 
@@ -173,7 +182,8 @@ test('stable (hoisted) object transition does not trigger full updates on parent
 		);
 	}
 
-	const {calls, lastFrame} = renderSpied(<Parent />);
+	const {calls, lastFrame, unmount} = renderSpied(<Parent />);
+	unmountInstance = unmount;
 
 	await delay(200);
 
@@ -195,7 +205,7 @@ test('stable (hoisted) object transition does not trigger full updates on parent
 // ── Test 3: inline object transition still functions correctly ────
 
 test('inline object transition renders content and drives an animation', async () => {
-	const {lastFrame, frames} = renderSpied(
+	const {lastFrame, frames, unmount} = renderSpied(
 		<Layer
 			anchor="center"
 			id="inline-obj-transition"
@@ -208,6 +218,7 @@ test('inline object transition renders content and drives an animation', async (
 			<Text>animated-inline</Text>
 		</Layer>,
 	);
+	unmountInstance = unmount;
 
 	await delay(500);
 
@@ -234,7 +245,8 @@ test('changing the transition value triggers a full update with the new transiti
 		);
 	}
 
-	const {calls, lastFrame} = renderSpied(<Parent />);
+	const {calls, lastFrame, unmount} = renderSpied(<Parent />);
+	unmountInstance = unmount;
 
 	await delay(200);
 

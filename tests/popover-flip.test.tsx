@@ -5,12 +5,21 @@
  * Uses `renderResizable` for viewport-resize tests (real timers).
  */
 import {useRef} from 'react';
-import {test, expect} from 'vitest';
+import {test, expect, afterEach} from 'vitest';
 import {Box, Text, type DOMElement} from 'ink';
 import {Popover} from '../src/popover.js';
 import {OverlayHost} from '../src/host.js';
 import {renderResizable} from './helpers/create-resizable-stdout.js';
 import {delay} from './helpers/delay.js';
+
+// ── Cleanup: unmount any render instance left over by a test ────────
+
+let resizableInstance: ReturnType<typeof renderResizable> | undefined;
+
+afterEach(() => {
+	resizableInstance?.unmountAndCleanup();
+	resizableInstance = undefined;
+});
 
 // ── Test 1: basic rendering ─────────────────────────────────────────
 
@@ -31,10 +40,11 @@ test('Popover renders content near the anchor', async () => {
 		);
 	}
 
-	const {lastFrame, unmountAndCleanup} = renderResizable(<App />, {
+	resizableInstance = renderResizable(<App />, {
 		columns: 80,
 		rows: 24,
 	});
+	const lastFrame = resizableInstance.lastFrame;
 
 	await delay(500);
 
@@ -42,8 +52,6 @@ test('Popover renders content near the anchor', async () => {
 	// Both the anchor and the popover content should be visible.
 	expect(frame).toContain('anchor');
 	expect(frame).toContain('pop');
-
-	unmountAndCleanup();
 });
 
 // ── Test 2: pop appears below anchor for bottom placement ────────────
@@ -65,10 +73,11 @@ test('Popover with placement="bottom" renders below the anchor', async () => {
 		);
 	}
 
-	const {lastFrame, unmountAndCleanup} = renderResizable(<App />, {
+	resizableInstance = renderResizable(<App />, {
 		columns: 80,
 		rows: 24,
 	});
+	const lastFrame = resizableInstance.lastFrame;
 
 	await delay(500);
 
@@ -85,8 +94,6 @@ test('Popover with placement="bottom" renders below the anchor', async () => {
 	expect(anchorRow).toBeGreaterThanOrEqual(0);
 	expect(popRow).toBeGreaterThanOrEqual(0);
 	expect(popRow).toBeGreaterThan(anchorRow);
-
-	unmountAndCleanup();
 });
 
 // ── Test 3: flip to top when bottom overflows ───────────────────────
@@ -114,12 +121,13 @@ test('Popover flips to top when bottom placement overflows the viewport', async 
 		);
 	}
 
-	const {lastFrame, resize, unmountAndCleanup} = renderResizable(<App />, {
+	resizableInstance = renderResizable(<App />, {
 		columns: 80,
 		rows: 30,
 	});
+	const {resize, lastFrame} = resizableInstance;
 
-	// ── Phase 1: large viewport — pop fits below anchor ──────────────
+	// ── Phase 1: large viewport — pop fits below anchor ──────────────────
 
 	await delay(600);
 
@@ -146,8 +154,6 @@ test('Popover flips to top when bottom placement overflows the viewport', async 
 
 	// After flip, pop should be above anchor → appears on an earlier row.
 	expect(popRow2).toBeLessThan(anchorRow2);
-
-	unmountAndCleanup();
 });
 
 // ── Test 4: controlled open/close ───────────────────────────────────
@@ -167,7 +173,8 @@ test('Popover respects controlled open prop', async () => {
 		);
 	}
 
-	const {lastFrame, unmount} = renderResizable(<App open={true} />);
+	resizableInstance = renderResizable(<App open={true} />);
+	const {lastFrame} = resizableInstance;
 
 	await delay(400);
 
@@ -185,6 +192,4 @@ test('Popover respects controlled open prop', async () => {
 	await delay(400);
 	expect(reopenResult.lastFrame()).toContain('pop');
 	reopenResult.unmountAndCleanup();
-
-	unmount();
 });

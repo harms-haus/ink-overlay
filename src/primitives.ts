@@ -43,17 +43,7 @@ export function anchorToFlexbox(anchor: Anchor): {
 // Pure coordinate math for positioning a layer of known size inside a viewport.
 // ---------------------------------------------------------------------------
 
-function floor(n: number): number {
-	return Math.floor(n);
-}
 
-function clampMin(n: number, min: number): number {
-	return Math.max(n, min);
-}
-
-function resolveEdge(value: number | undefined, fallback: number): number {
-	return value === undefined ? fallback : value;
-}
 
 export function computeAnchorCoords(
 	anchor: Anchor,
@@ -61,8 +51,8 @@ export function computeAnchorCoords(
 	layerSize: Rect,
 	margin?: OffsetEdges,
 ): {top: number; left: number} {
-	const centerTop = floor((viewport.rows - layerSize.height) / 2);
-	const centerLeft = floor((viewport.columns - layerSize.width) / 2);
+	const centerTop = Math.floor((viewport.rows - layerSize.height) / 2);
+	const centerLeft = Math.floor((viewport.columns - layerSize.width) / 2);
 
 	let top: number;
 	let left: number;
@@ -134,13 +124,13 @@ export function computeAnchorCoords(
 	// the base top = rows-height, so margin.bottom subtracting from
 	// top moves it upward (away from the bottom edge).
 	if (margin) {
-		top += resolveEdge(margin.top, 0);
-		left += resolveEdge(margin.left, 0);
-		top -= resolveEdge(margin.bottom, 0);
-		left -= resolveEdge(margin.right, 0);
+		top += margin.top ?? 0;
+		left += margin.left ?? 0;
+		top -= margin.bottom ?? 0;
+		left -= margin.right ?? 0;
 	}
 
-	return {top: clampMin(floor(top), 0), left: clampMin(floor(left), 0)};
+	return {top: Math.max(Math.floor(top), 0), left: Math.max(Math.floor(left), 0)};
 }
 
 // ---------------------------------------------------------------------------
@@ -213,8 +203,137 @@ function resolveCollisionPadding(
 	};
 }
 
-function clamp(n: number, min: number, max: number): number {
-	return Math.min(Math.max(n, min), max);
+/**
+ * Compute the base (pre-flip, pre-shift) popover position for a given axis
+ * and side. Pure coordinate math — no viewport or collision awareness.
+ */
+function computeBasePosition(
+	axis: PlacementAxis,
+	side: PlacementSide,
+	anchorRect: AnchorRect,
+	popoverSize: Rect,
+	offset: number,
+	crossOffset: number,
+): {top: number; left: number} {
+	let top: number;
+	let left: number;
+
+	// Main-axis positioning.
+	switch (axis) {
+		case 'bottom': {
+			top = anchorRect.top + anchorRect.height + offset;
+			break;
+		}
+
+		case 'top': {
+			top = anchorRect.top - offset - popoverSize.height;
+			break;
+		}
+
+		case 'right': {
+			left = anchorRect.left + anchorRect.width + offset;
+			break;
+		}
+
+		case 'left': {
+			left = anchorRect.left - offset - popoverSize.width;
+			break;
+		}
+	}
+
+	// Cross-axis positioning.
+	switch (axis) {
+		case 'bottom':
+		case 'top': {
+			// Cross axis is horizontal.
+			switch (side) {
+				case 'start': {
+					left = anchorRect.left + crossOffset;
+					break;
+				}
+
+				case 'center': {
+					left =
+						anchorRect.left +
+						(anchorRect.width - popoverSize.width) / 2 +
+						crossOffset;
+					break;
+				}
+
+				case 'end': {
+					left =
+						anchorRect.left +
+						anchorRect.width -
+						popoverSize.width +
+						crossOffset;
+					break;
+				}
+			}
+
+			break;
+		}
+
+		case 'left':
+		case 'right': {
+			// Cross axis is vertical.
+			switch (side) {
+				case 'start': {
+					top = anchorRect.top + crossOffset;
+					break;
+				}
+
+				case 'center': {
+					top =
+						anchorRect.top +
+						(anchorRect.height - popoverSize.height) / 2 +
+						crossOffset;
+					break;
+				}
+
+				case 'end': {
+					top =
+						anchorRect.top +
+						anchorRect.height -
+						popoverSize.height +
+						crossOffset;
+					break;
+				}
+			}
+
+			break;
+		}
+	}
+
+	return {top: top!, left: left!};
+}
+
+/**
+ * Determine whether a popover at `pos` overflows the viewport along its
+ * main axis (the axis the placement points toward).
+ */
+function checkMainAxisOverflow(
+	axis: PlacementAxis,
+	pos: {top: number; left: number},
+	popoverSize: Rect,
+	viewport: Viewport,
+): boolean {
+	switch (axis) {
+		case 'bottom': {
+			return pos.top + popoverSize.height > viewport.rows;
+		}
+
+		case 'top': {
+			return pos.top < 0;
+		}
+
+		case 'right': {
+			return pos.left + popoverSize.width > viewport.columns;
+		}
+
+		case 'left': {
+			return pos.left < 0;
+		}
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -242,149 +361,31 @@ export function computePopoverPosition(
 
 	let {axis, side} = parsePlacement(placement);
 
-	// Compute position for the given axis.
-	function computePosition(
-		ax: PlacementAxis,
-		si: PlacementSide,
-	): {top: number; left: number} {
-		let top: number;
-		let left: number;
+	// PHASE 1 — compute the base position for the requested placement.
+	let pos = computeBasePosition(axis, side, anchorRect, popoverSize, offset, crossOffset);
 
-		// Main-axis positioning.
-		switch (ax) {
-			case 'bottom': {
-				top = anchorRect.top + anchorRect.height + offset;
-				break;
-			}
-
-			case 'top': {
-				top = anchorRect.top - offset - popoverSize.height;
-				break;
-			}
-
-			case 'right': {
-				left = anchorRect.left + anchorRect.width + offset;
-				break;
-			}
-
-			case 'left': {
-				left = anchorRect.left - offset - popoverSize.width;
-				break;
-			}
-		}
-
-		// Cross-axis positioning.
-		switch (ax) {
-			case 'bottom':
-			case 'top': {
-				// Cross axis is horizontal.
-				switch (si) {
-					case 'start': {
-						left = anchorRect.left + crossOffset;
-						break;
-					}
-
-					case 'center': {
-						left =
-							anchorRect.left +
-							(anchorRect.width - popoverSize.width) / 2 +
-							crossOffset;
-						break;
-					}
-
-					case 'end': {
-						left =
-							anchorRect.left +
-							anchorRect.width -
-							popoverSize.width +
-							crossOffset;
-						break;
-					}
-				}
-
-				break;
-			}
-
-			case 'left':
-			case 'right': {
-				// Cross axis is vertical.
-				switch (si) {
-					case 'start': {
-						top = anchorRect.top + crossOffset;
-						break;
-					}
-
-					case 'center': {
-						top =
-							anchorRect.top +
-							(anchorRect.height - popoverSize.height) / 2 +
-							crossOffset;
-						break;
-					}
-
-					case 'end': {
-						top =
-							anchorRect.top +
-							anchorRect.height -
-							popoverSize.height +
-							crossOffset;
-						break;
-					}
-				}
-
-				break;
-			}
-		}
-
-		return {top: top!, left: left!};
-	}
-
-	// Check main-axis overflow for flip.
-	function overflowsMainAxis(
-		ax: PlacementAxis,
-		pos: {top: number; left: number},
-	): boolean {
-		switch (ax) {
-			case 'bottom': {
-				return pos.top + popoverSize.height > viewport.rows;
-			}
-
-			case 'top': {
-				return pos.top < 0;
-			}
-
-			case 'right': {
-				return pos.left + popoverSize.width > viewport.columns;
-			}
-
-			case 'left': {
-				return pos.left < 0;
-			}
-		}
-	}
-
-	let pos = computePosition(axis, side);
-
-	// FLIP: mirror placement if main-axis overflow detected.
-	if (shouldFlip && overflowsMainAxis(axis, pos)) {
+	// PHASE 2 — FLIP: mirror the placement along the main axis if the
+	// popover would overflow the viewport.
+	if (shouldFlip && checkMainAxisOverflow(axis, pos, popoverSize, viewport)) {
 		axis = flipAxis(axis);
-		pos = computePosition(axis, side);
+		pos = computeBasePosition(axis, side, anchorRect, popoverSize, offset, crossOffset);
 	}
 
-	// SHIFT: clamp within viewport.
+	// PHASE 3 — SHIFT: clamp the popover within the viewport, respecting
+	// the collision padding.
 	if (shouldShift) {
 		const minX = pad.left;
 		const maxX = viewport.columns - popoverSize.width - pad.right;
 		const minY = pad.top;
 		const maxY = viewport.rows - popoverSize.height - pad.bottom;
 
-		pos.left = clamp(floor(pos.left), floor(minX), floor(maxX));
-		pos.top = clamp(floor(pos.top), floor(minY), floor(maxY));
+		pos.left = Math.min(Math.max(Math.floor(pos.left), Math.floor(minX)), Math.floor(maxX));
+		pos.top = Math.min(Math.max(Math.floor(pos.top), Math.floor(minY)), Math.floor(maxY));
 	}
 
 	return {
-		top: shouldShift ? pos.top : floor(pos.top),
-		left: shouldShift ? pos.left : floor(pos.left),
+		top: shouldShift ? pos.top : Math.floor(pos.top),
+		left: shouldShift ? pos.left : Math.floor(pos.left),
 		placement: placementKey(axis, side),
 	};
 }

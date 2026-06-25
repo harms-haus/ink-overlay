@@ -62,7 +62,7 @@ The menu renders this registry verbatim — order below is the order shown on sc
 | 12  | **Input & Focus**          | Capture gating, LIFO dispatch, `FocusTrap`, nesting                   |
 | 13  | **Runtime & Environments** | `getRuntimeInfo`, Bun / non-TTY graceful degradation                  |
 
-Source files live in [`demo/scenes/`](./scenes/), named to match the registry order (e.g. `01-overlay-host.tsx` … `13-runtime.tsx`). Note the **mixed export styles**: scenes `01` and `03` use named exports; all others use default exports.
+Source files live in [`demo/scenes/`](./scenes/), named to match the registry order (e.g. `01-getting-started.tsx` … `13-runtime.tsx`). Note the **mixed export styles**: scenes `01` and `03` use named exports; all others use default exports.
 
 ## Architecture notes
 

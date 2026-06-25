@@ -164,7 +164,125 @@ describe('toast service — basic lifecycle', () => {
 });
 
 // ═══════════════════════════════════════════════════════════════════
-// (c) Stacking — multiple toasts rendered simultaneously
+// (c) toasts.show alias — pins down observable behavior so that
+//     refactoring `show` to delegate to `info` is provably safe.
+// ═══════════════════════════════════════════════════════════════════
+
+describe('toast service — show alias', () => {
+	test('show returns a string id that can be used to dismiss the toast', async () => {
+		const {lastFrame} = renderWithHost(<Text>app</Text>);
+		await delay(100);
+
+		const id = toasts.show('Alias-id', {duration: 100000});
+		expect(typeof id).toBe('string');
+		expect(id.length).toBeGreaterThan(0);
+		await waitForFrame(lastFrame, 'Alias-id');
+		expect(lastFrame()).toContain('Alias-id');
+
+		// The returned id must be usable with dismiss(id).
+		toasts.dismiss(id);
+		await waitForFrame(lastFrame, 'Alias-id', {present: false});
+		expect(lastFrame()).not.toContain('Alias-id');
+	});
+
+	test('show honors a caller-provided id option', async () => {
+		const {lastFrame} = renderWithHost(<Text>app</Text>);
+		await delay(100);
+
+		const id = toasts.show('Stable-id', {id: 'alias-stable', duration: 100000});
+		expect(id).toBe('alias-stable');
+		await waitForFrame(lastFrame, 'Stable-id');
+
+		// Dismissing via the caller-provided id must work.
+		toasts.dismiss('alias-stable');
+		await waitForFrame(lastFrame, 'Stable-id', {present: false});
+	});
+
+	test('show with a duplicate id replaces the existing toast', async () => {
+		const {lastFrame} = renderWithHost(<Text>app</Text>);
+		await delay(100);
+
+		toasts.show('First body', {id: 'alias-dup', duration: 100000});
+		await waitForFrame(lastFrame, 'First body');
+
+		// Re-showing with the same id should replace the content.
+		toasts.show('Second body', {id: 'alias-dup', duration: 100000});
+		await waitForFrame(lastFrame, 'Second body');
+		expect(lastFrame()).not.toContain('First body');
+		expect(lastFrame()).toContain('Second body');
+
+		// Only one toast entry should remain.
+		const toastEntries = overlayStore.getAll().filter(e => e.opts.z === 90);
+		expect(toastEntries).toHaveLength(1);
+	});
+
+	test('show auto-dismisses after the provided duration', async () => {
+		const {lastFrame} = renderWithHost(<Text>app</Text>);
+		await delay(100);
+
+		toasts.show('Ephemeral-alias', {duration: 300});
+		await waitForFrame(lastFrame, 'Ephemeral-alias');
+		expect(lastFrame()).toContain('Ephemeral-alias');
+
+		// Wait past the 300ms duration + render buffer.
+		await delay(700);
+		await waitForFrame(lastFrame, 'Ephemeral-alias', {present: false});
+		expect(lastFrame()).not.toContain('Ephemeral-alias');
+	});
+
+	test('show renders with the same info icon (ℹ) as info', async () => {
+		const {lastFrame} = renderWithHost(<Text>app</Text>);
+		await delay(100);
+
+		toasts.show('Alias-icon', {duration: 100000});
+		await waitForFrame(lastFrame, 'Alias-icon');
+		expect(lastFrame()).toContain('ℹ');
+	});
+
+	test('show and info produce equivalent results side by side', async () => {
+		const {lastFrame} = renderWithHost(<Text>app</Text>);
+		await delay(100);
+
+		toasts.show('via-show', {id: 'cmp-show', duration: 100000});
+		toasts.info('via-info', {id: 'cmp-info', duration: 100000});
+		await waitForFrame(lastFrame, 'via-show');
+		await waitForFrame(lastFrame, 'via-info');
+
+		const frame = lastFrame();
+		expect(frame).toContain('via-show');
+		expect(frame).toContain('via-info');
+		// Both render as info-kind toasts (single ℹ icon each).
+		expect(frame).toContain('ℹ');
+	});
+
+	test('show respects a custom anchor option', async () => {
+		const {lastFrame} = renderWithHost(<Text>app</Text>);
+		await delay(100);
+
+		toasts.show('Anchored', {anchor: 'top-left', duration: 100000});
+		await waitForFrame(lastFrame, 'Anchored');
+
+		// The overlay entry should reflect the requested anchor.
+		const toastEntry = overlayStore.getAll().find(e => e.opts.z === 90);
+		expect(toastEntry).toBeDefined();
+		expect(toastEntry!.opts.anchor).toBe('top-left');
+	});
+
+	test('show toast is cleared by dismissAll', async () => {
+		const {lastFrame} = renderWithHost(<Text>app</Text>);
+		await delay(100);
+
+		toasts.show('Bulk-clear', {duration: 100000});
+		await waitForFrame(lastFrame, 'Bulk-clear');
+
+		toasts.dismissAll();
+		await waitForFrame(lastFrame, 'Bulk-clear', {present: false});
+		expect(lastFrame()).not.toContain('Bulk-clear');
+	});
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// (d) Stacking — multiple toasts rendered simultaneously
 // ═══════════════════════════════════════════════════════════════════
 
 describe('toast service — stacking', () => {
@@ -192,7 +310,7 @@ describe('toast service — stacking', () => {
 });
 
 // ═══════════════════════════════════════════════════════════════════
-// (d) dismiss(id) — remove specific toast
+// (e) dismiss(id) — remove specific toast
 // ═══════════════════════════════════════════════════════════════════
 
 describe('toast service — dismiss', () => {
@@ -246,7 +364,7 @@ describe('toast service — dismiss', () => {
 });
 
 // ═══════════════════════════════════════════════════════════════════
-// (e) dismissAll — clears everything
+// (f) dismissAll — clears everything
 // ═══════════════════════════════════════════════════════════════════
 
 describe('toast service — dismissAll', () => {
@@ -269,7 +387,7 @@ describe('toast service — dismissAll', () => {
 });
 
 // ═══════════════════════════════════════════════════════════════════
-// (f) Queue behavior — toast BEFORE host mounts
+// (g) Queue behavior — toast BEFORE host mounts
 // ═══════════════════════════════════════════════════════════════════
 
 describe('toast service — queue before host', () => {
@@ -295,7 +413,74 @@ describe('toast service — queue before host', () => {
 });
 
 // ═══════════════════════════════════════════════════════════════════
-// (g) Non-capturing — background input still works
+// (h) Stale currentOverlayId recovery — external close of the toast
+//     overlay entry must not prevent future toasts from appearing.
+// ═══════════════════════════════════════════════════════════════════
+
+describe('toast service — stale overlay entry recovery', () => {
+	test('new toast appears after overlayStore.closeAll() externally closes the toast layer', async () => {
+		const {lastFrame} = renderWithHost(<Text>app</Text>);
+		await delay(100);
+
+		toasts.success('First toast', {id: 'stale-1'});
+		await waitForFrame(lastFrame, 'First toast');
+		expect(lastFrame()).toContain('First toast');
+
+		// Externally close every overlay entry — this removes the toast
+		// layer from the store but leaves the module-level currentOverlayId
+		// pointing at the now-defunct entry.
+		overlayStore.closeAll();
+		await waitForFrame(lastFrame, 'First toast', {present: false});
+		expect(lastFrame()).not.toContain('First toast');
+
+		// Adding a new toast must open a fresh overlay entry. Without the
+		// fix, publishToasts would call overlayStore.update() on the stale
+		// id (a silent no-op) and the new toast would never render.
+		toasts.success('Second toast', {id: 'stale-2', duration: 100000});
+		await waitForFrame(lastFrame, 'Second toast');
+		expect(lastFrame()).toContain('Second toast');
+	});
+
+	test('new toast appears after overlayStore.close(currentOverlayId) externally closes the toast layer', async () => {
+		const {lastFrame} = renderWithHost(<Text>app</Text>);
+		await delay(100);
+
+		toasts.info('Original', {id: 'stale-single-1'});
+		await waitForFrame(lastFrame, 'Original');
+		expect(lastFrame()).toContain('Original');
+
+		// Close the specific toast overlay entry directly via the store.
+		const toastEntry = overlayStore.getAll().find(e => e.opts.z === 90);
+		expect(toastEntry).toBeDefined();
+		overlayStore.close(toastEntry!.id);
+		await waitForFrame(lastFrame, 'Original', {present: false});
+
+		// A subsequent toast must still render by opening a new entry.
+		toasts.error('Recovered', {id: 'stale-single-2', duration: 100000});
+		await waitForFrame(lastFrame, 'Recovered');
+		expect(lastFrame()).toContain('Recovered');
+		expect(lastFrame()).toContain('✗');
+	});
+
+	test('multiple new toasts stack after external closeAll', async () => {
+		const {lastFrame} = renderWithHost(<Text>app</Text>);
+		await delay(100);
+
+		toasts.warn('Seed', {id: 'stale-multi-0'});
+		await waitForFrame(lastFrame, 'Seed');
+
+		overlayStore.closeAll();
+		await waitForFrame(lastFrame, 'Seed', {present: false});
+
+		toasts.success('Fresh one', {id: 'stale-multi-1', duration: 100000});
+		toasts.error('Fresh two', {id: 'stale-multi-2', duration: 100000});
+		await waitForFrame(lastFrame, 'Fresh one');
+		expect(lastFrame()).toContain('Fresh two');
+	});
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// (i) Non-capturing — background input still works
 // ═══════════════════════════════════════════════════════════════════
 
 describe('toast service — non-capturing', () => {

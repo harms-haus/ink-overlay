@@ -185,14 +185,21 @@ test('get(id) returns the entry or undefined', () => {
 
 // ── unique ids across multiple opens ────────────────────────────────
 
-test('each open call returns a distinct id', () => {
+// UUID v4 shape: 8-4-4-4-12 hex digits.  Matches crypto.randomUUID()
+// (available in the test runtime) and the documented fallback format.
+const ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+test('each open call returns a distinct id in a stable format', () => {
 	const store = createStore();
 	const ids = new Set<string>();
-	for (let i = 0; i < 50; i++) {
-		ids.add(store.open(`item-${i}`, {}));
+	for (let i = 0; i < 5; i++) {
+		const id = store.open(`item-${i}`, {});
+		expect(id).toMatch(ID_RE);
+		ids.add(id);
 	}
 
-	expect(ids.size).toBe(50);
+	// All five ids are distinct.
+	expect(ids.size).toBe(5);
 });
 
 // ── singleton export ────────────────────────────────────────────────

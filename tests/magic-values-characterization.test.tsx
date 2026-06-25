@@ -1,12 +1,10 @@
 /**
- * Characterization tests pinning the magic-value literals that are being
- * extracted into named constants across the source files.
+ * Characterization tests pinning the magic-value literals used across
+ * the source files.
  *
  * These tests assert the *current observable behaviour* (exact durations,
- * exact margin-step sequences, exact colours, exact offscreen sentinel)
- * so that the pure-rename refactor of extracting literals to constants is
- * provably behaviour-preserving. They must pass both before and after the
- * refactor, and must fail if any value is accidentally changed.
+ * exact margin-step sequences, exact colours, exact offscreen sentinel).
+ * They must fail if any value is accidentally changed.
  *
  * Uses REAL timers — ink breaks with fake timers.
  */
@@ -17,6 +15,8 @@ import {Text, Box, type DOMElement} from 'ink';
 import {
 	getTransitionSteps,
 	useEnterExit,
+	FRAME_INTERVAL_MS,
+	SLIDE_STEPS,
 } from '../src/animation.js';
 import type {TransitionConfig} from '../src/types.js';
 import {Layer} from '../src/layer.js';
@@ -30,16 +30,8 @@ import {delay} from './helpers/delay.js';
 
 // ── Shared helpers ──────────────────────────────────────────────────
 
-/**
- * The per-frame interval (ms) baked into every transition config and used
- * as the default when `config.duration` is undefined.
- */
-const FRAME_INTERVAL_MS = 80;
-
-/**
- * The base slide step distance. Enter goes `n → n/2 → 0`; exit reverses.
- */
-const SLIDE_STEPS = 4;
+// FRAME_INTERVAL_MS and SLIDE_STEPS are imported from src/animation.js so
+// that these tests stay in sync with the source constants automatically.
 
 // ANSI sequences chalk emits in the test environment (FORCE_COLOR=1, level 1).
 const CYAN_FG = '\u001B[36m'; // foreground cyan — used for borderColor="cyan"
@@ -50,7 +42,7 @@ const BLACK_BG = '\u001B[40m'; // background black — #1a1a2e rounds to this
 type HookSnapshot = {
 	stage: string;
 	currentStyle: Record<string, number | string>;
-	key: string;
+	transitionKey: string;
 };
 
 function Harness({

@@ -24,13 +24,14 @@
  * fail the project's `noUnusedLocals` rule), so it is deliberately
  * omitted.
  *
- * @module demo/scenes/01-overlay-host
+ * @module demo/scenes/01-getting-started
  */
 
 import {useState} from 'react';
-import {Box, Text, useInput} from 'ink';
-import {Modal, toasts, useInputCaptureState} from '../../src/index.js';
+import {Box, Text} from 'ink';
+import {Modal, toasts} from '../../src/index.js';
 import {SceneShell} from '../ui.js';
+import {useGatedInput} from '../hooks.js';
 
 // ── Component ───────────────────────────────────────────────────────
 
@@ -50,7 +51,7 @@ import {SceneShell} from '../ui.js';
  * scene's own `useInput` is deactivated (`isActive: !isCaptured`) so the
  * modal's keypresses (Esc, etc.) are not double-handled by the scene.
  */
-export function Scene01OverlayHost() {
+export function Scene01GettingStarted() {
 	// ── Declarative modal state ──────────────────────────────────────
 	//
 	// The modal's visibility is controlled entirely by this boolean.
@@ -59,49 +60,38 @@ export function Scene01OverlayHost() {
 	// closes the modal (Escape, backdrop click, etc.).
 	const [showModal, setShowModal] = useState(false);
 
-	// ── Cooperative input gating ────────────────────────────────────
-	//
-	// `useInputCaptureState()` returns `true` whenever at least one
-	// capturing overlay (e.g. a modal) is currently active. We gate our
-	// own `useInput` on `!isCaptured` so that, while the modal is open,
-	// this scene does not also react to the same keypresses.
-	const isCaptured = useInputCaptureState();
-
-	// ── Scene input handler ─────────────────────────────────────────
+	// ── Scene input handler ─────────────────────────────────
 	//
 	// `m` toggles the declarative modal; `s` and `e` fire imperative
-	// toasts. All three are deactivated while a capturing overlay is
-	// open thanks to `{isActive: !isCaptured}`.
-	useInput(
-		input => {
-			switch (input) {
-				case 'm': {
-					// Declarative: toggle the React state that controls <Modal open>.
-					setShowModal(previous => !previous);
-					break;
-				}
-
-				case 's': {
-					// Imperative — callable from anywhere, no hook/provider needed.
-					// Returns a toast id and auto-dismisses after 4000 ms (default).
-					toasts.success('Saved successfully');
-					break;
-				}
-
-				case 'e': {
-					// Imperative — same as success but renders in the error style.
-					// Returns a toast id and auto-dismisses after 4000 ms (default).
-					toasts.error('Something went wrong');
-					break;
-				}
-
-				default: {
-					break;
-				}
+	// toasts. useGatedInput automatically deactivates this handler while
+	// a capturing overlay is open so keypresses are not double-handled.
+	useGatedInput(input => {
+		switch (input) {
+			case 'm': {
+				// Declarative: toggle the React state that controls <Modal open>.
+				setShowModal(previous => !previous);
+				break;
 			}
-		},
-		{isActive: !isCaptured},
-	);
+
+			case 's': {
+				// Imperative — callable from anywhere, no hook/provider needed.
+				// Returns a toast id and auto-dismisses after 4000 ms (default).
+				toasts.success('Saved successfully');
+				break;
+			}
+
+			case 'e': {
+				// Imperative — same as success but renders in the error style.
+				// Returns a toast id and auto-dismisses after 4000 ms (default).
+				toasts.error('Something went wrong');
+				break;
+			}
+
+			default: {
+				break;
+			}
+		}
+	});
 
 	return (
 		<SceneShell
@@ -173,24 +163,18 @@ export function Scene01OverlayHost() {
 				// The `footer` prop — dim text rendered inside the bottom
 				// border. Default: undefined (no footer row).
 				footer="Esc to close"
-				// The `width` prop — box width of the modal. Default: 50.
-				// width={50}
-				// The `backdrop` prop — backdrop kind behind the modal.
-				// Default: 'dim'. (Also: 'none', 'opaque'.)
-				// backdrop='dim'
-				// The `borderStyle` prop — ink BoxProps border style.
-				// Default: 'round'.
-				// borderStyle='round'
-				// The `borderColor` prop — border colour string.
-				// Default: 'cyan'.
-				// borderColor='cyan'
-				// The `z` prop — z-index for layer ordering. Default: 100.
-				// z={100}
-				// The `role` prop — ARIA role. Default: 'dialog'.
-				// role='dialog'
 			>
 				{/* children — the modal body, rendered between the
 				     optional title and footer inside the bordered box. */}
+				{/* 
+				  Omitted props use their defaults:
+				  - width: 50
+				  - backdrop: 'dim'
+				  - borderStyle: 'round'
+				  - borderColor: 'cyan'
+				  - z: 100
+				  - role: 'dialog'
+				*/}
 				<Text>Modal content goes here.</Text>
 			</Modal>
 		</SceneShell>

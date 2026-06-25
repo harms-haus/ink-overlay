@@ -106,14 +106,10 @@
  */
 
 import {useState} from 'react';
-import {Box, Text, useInput} from 'ink';
-import {
-	toasts,
-	Toast,
-	defaultToastColors,
-	useInputCaptureState,
-} from '../../src/index.js';
+import {Box, Text} from 'ink';
+import {toasts, Toast, defaultToastColors} from '../../src/index.js';
 import {SceneShell} from '../ui.js';
+import {useGatedInput} from '../hooks.js';
 
 // ── Component ───────────────────────────────────────────────────────
 
@@ -142,15 +138,6 @@ export default function Scene08Toasts() {
 	// service REPLACES the existing toast instead of stacking a new one.
 	const [counter, setCounter] = useState(0);
 
-	// ── Cooperative input gating ─────────────────────────────────
-	//
-	// While a capturing overlay (a modal, the command-palette) is open
-	// this returns true and we deactivate the scene's key handler so it
-	// does not double-handle keypresses. Toasts themselves do NOT
-	// capture input, so this gate is for parity with the other scenes
-	// rather than to avoid toast interference.
-	const isCaptured = useInputCaptureState();
-
 	// ── Scene input handler ──────────────────────────────────────
 	//
 	// A single switch (per the `unicorn/prefer-switch` rule) dispatches
@@ -159,105 +146,102 @@ export default function Scene08Toasts() {
 	//
 	// Note: the void-returning methods (`dismiss`, `dismissAll`) are
 	// wrapped in block bodies to satisfy `no-confusing-void-expression`.
-	useInput(
-		input => {
-			switch (input) {
-				// ── success ───────────────────────────────────────
-				// toasts.success(message, options?) → string
-				// Default kind 'success' → green border + ✓ icon.
-				case 's': {
-					toasts.success('Saved successfully');
-					break;
-				}
-
-				// ── error ─────────────────────────────────────────
-				// toasts.error(message, options?) → string
-				// Default kind 'error' → red border + ✗ icon.
-				case 'e': {
-					toasts.error('Something went wrong');
-					break;
-				}
-
-				// ── info ──────────────────────────────────────────
-				// toasts.info(message, options?) → string
-				// Default kind 'info' → blue border + ℹ icon.
-				case 'i': {
-					toasts.info('For your information');
-					break;
-				}
-
-				// ── warn ──────────────────────────────────────────
-				// toasts.warn(message, options?) → string
-				// Default kind 'warn' → yellow border + ⚠ icon.
-				case 'w': {
-					toasts.warn('Heads up!');
-					break;
-				}
-
-				// ── dismissAll ────────────────────────────────────
-				// toasts.dismissAll(): void — clears every active
-				// toast. Wrapped in a block body because it returns
-				// void (no-confusing-void-expression).
-				case 'd': {
-					toasts.dismissAll();
-					break;
-				}
-
-				// ── id-replace ────────────────────────────────────
-				// Reuses the stable id 'counter'. Because that id
-				// already exists after the first press, subsequent
-				// presses REPLACE the toast in place instead of
-				// stacking. The counter is incremented AFTER publishing
-				// so the next press shows the next number.
-				case 'r': {
-					toasts.success(`Updated counter: ${counter}`, {
-						id: 'counter',
-					});
-					setCounter(c => c + 1);
-					break;
-				}
-
-				// ── custom duration ───────────────────────────────
-				// duration: 8000 — this toast lingers twice as long as
-				// the default 4000ms before auto-dismissing.
-				case 'c': {
-					toasts.info('I last 8 seconds', {duration: 8000});
-					break;
-				}
-
-				// ── custom anchor ─────────────────────────────────
-				// anchor: 'top-left' — pins THIS toast to the top-left
-				// corner. NOTE: if other toasts are already visible the
-				// container anchor is already pinned from the FIRST
-				// toast, so this new toast joins the existing stack
-				// rather than relocating it. To see top-left anchoring
-				// cleanly, press 'd' first to clear, then 'a'.
-				case 'a': {
-					toasts.info('Anchored top-left', {anchor: 'top-left'});
-					break;
-				}
-
-				// ── eviction demo ─────────────────────────────────
-				// Fires five toasts in rapid succession. Because
-				// DEFAULT_MAX_TOASTS is 3, the oldest two are evicted
-				// as the newer ones arrive — you end up seeing only the
-				// last three. We use a for...of loop (per the
-				// unicorn/no-array-for-each rule) over a literal array.
-				case 'f': {
-					for (const n of [1, 2, 3, 4, 5]) {
-						toasts.info(`Flood toast ${n}`);
-					}
-
-					break;
-				}
-
-				default: {
-					break;
-				}
+	useGatedInput(input => {
+		switch (input) {
+			// ── success ───────────────────────────────────────
+			// toasts.success(message, options?) → string
+			// Default kind 'success' → green border + ✓ icon.
+			case 's': {
+				toasts.success('Saved successfully');
+				break;
 			}
-		},
-		{isActive: !isCaptured},
-	);
+
+			// ── error ─────────────────────────────────────────
+			// toasts.error(message, options?) → string
+			// Default kind 'error' → red border + ✗ icon.
+			case 'e': {
+				toasts.error('Something went wrong');
+				break;
+			}
+
+			// ── info ──────────────────────────────────────────
+			// toasts.info(message, options?) → string
+			// Default kind 'info' → blue border + ℹ icon.
+			case 'i': {
+				toasts.info('For your information');
+				break;
+			}
+
+			// ── warn ──────────────────────────────────────────
+			// toasts.warn(message, options?) → string
+			// Default kind 'warn' → yellow border + ⚠ icon.
+			case 'w': {
+				toasts.warn('Heads up!');
+				break;
+			}
+
+			// ── dismissAll ────────────────────────────────────
+			// toasts.dismissAll(): void — clears every active
+			// toast. Wrapped in a block body because it returns
+			// void (no-confusing-void-expression).
+			case 'd': {
+				toasts.dismissAll();
+				break;
+			}
+
+			// ── id-replace ────────────────────────────────────
+			// Reuses the stable id 'counter'. Because that id
+			// already exists after the first press, subsequent
+			// presses REPLACE the toast in place instead of
+			// stacking. The counter is incremented AFTER publishing
+			// so the next press shows the next number.
+			case 'r': {
+				toasts.success(`Updated counter: ${counter}`, {
+					id: 'counter',
+				});
+				setCounter(c => c + 1);
+				break;
+			}
+
+			// ── custom duration ───────────────────────────────
+			// duration: 8000 — this toast lingers twice as long as
+			// the default 4000ms before auto-dismissing.
+			case 'c': {
+				toasts.info('I last 8 seconds', {duration: 8000});
+				break;
+			}
+
+			// ── custom anchor ─────────────────────────────────
+			// anchor: 'top-left' — pins THIS toast to the top-left
+			// corner. NOTE: if other toasts are already visible the
+			// container anchor is already pinned from the FIRST
+			// toast, so this new toast joins the existing stack
+			// rather than relocating it. To see top-left anchoring
+			// cleanly, press 'd' first to clear, then 'a'.
+			case 'a': {
+				toasts.info('Anchored top-left', {anchor: 'top-left'});
+				break;
+			}
+
+			// ── eviction demo ─────────────────────────────────
+			// Fires five toasts in rapid succession. Because
+			// DEFAULT_MAX_TOASTS is 3, the oldest two are evicted
+			// as the newer ones arrive — you end up seeing only the
+			// last three. We use a for...of loop (per the
+			// unicorn/no-array-for-each rule) over a literal array.
+			case 'f': {
+				for (const n of [1, 2, 3, 4, 5]) {
+					toasts.info(`Flood toast ${n}`);
+				}
+
+				break;
+			}
+
+			default: {
+				break;
+			}
+		}
+	});
 
 	// ── Render ───────────────────────────────────────────────────
 

@@ -544,3 +544,92 @@ test('nested traps: inner deactivation keeps focus disabled while outer is still
 	frame = lastFrame();
 	expect(frame).toContain('BG✓');
 });
+
+// ════════════════════════════════════════════════════════════════════
+// restoreFocus when the previously-focused element has UNMOUNTED
+// ════════════════════════════════════════════════════════════════════
+//
+// The trap snapshots the focused id at activation and calls
+// `focusManager.focus(snapshot)` on deactivation.  If that element has
+// unmounted in the meantime the id is stale.  Ink's real FocusManager
+// treats unknown ids as a silent no-op, so deactivation must complete
+// without throwing and global Tab navigation must be restored.  This
+// characterizes the real-world scenario the try/catch guard in
+// `deactivateEffectEvent` is designed to protect against (and would also
+// keep deactivation safe under a stricter focus manager that throws).
+
+test('restoreFocus does not crash when the previously-focused element unmounts before deactivation', async () => {
+	let trapActive = false;
+	let bgMounted = true;
+
+	const {stdin, rerender, lastFrame} = render(
+		<InputDispatcher>
+			{bgMounted ? <FocusableChild id="bg" /> : <Text>gone</Text>}
+			<FocusTrap active={trapActive}>
+				<FocusableChild id="A" />
+			</FocusTrap>
+		</InputDispatcher>,
+	);
+
+	await delay(100);
+
+	// (1) Focus the bg component — its id is what the trap will snapshot.
+	stdin.write('\t');
+	await delay(100);
+	expect(lastFrame()).toContain('bg✓');
+
+	// (2) Activate the trap (snapshots 'bg').
+	trapActive = true;
+	rerender(
+		<InputDispatcher>
+			{bgMounted ? <FocusableChild id="bg" /> : <Text>gone</Text>}
+			<FocusTrap active={trapActive}>
+				<FocusableChild id="A" />
+			</FocusTrap>
+		</InputDispatcher>,
+	);
+	await delay(100);
+	// bg keeps focus until Tab moves into the trap (the trap only
+	// *snapshots* focus on activation; it does not move it).
+	expect(lastFrame()).toContain('bg✓');
+
+	// Tab into the trap so A is focused while captured.
+	stdin.write('\t');
+	await delay(100);
+	expect(lastFrame()).toContain('A✓');
+
+	// (3) Unmount the previously-focused bg element while the trap is
+	//     still active.  'bg' is no longer a registered focusable.
+	bgMounted = false;
+	rerender(
+		<InputDispatcher>
+			{bgMounted ? <FocusableChild id="bg" /> : <Text>gone</Text>}
+			<FocusTrap active={trapActive}>
+				<FocusableChild id="A" />
+			</FocusTrap>
+		</InputDispatcher>,
+	);
+	await delay(100);
+	expect(lastFrame()).toContain('gone');
+	expect(lastFrame()).not.toContain('bg');
+
+	// (4) Deactivate the trap — restoreFocus will attempt focus('bg') on a
+	//     now-unmounted element.  This must NOT throw, and global focus
+	//     navigation must be restored (Tab reaches the remaining focusable).
+	trapActive = false;
+	rerender(
+		<InputDispatcher>
+			{bgMounted ? <FocusableChild id="bg" /> : <Text>gone</Text>}
+			<FocusTrap active={trapActive}>
+				<FocusableChild id="A" />
+			</FocusTrap>
+		</InputDispatcher>,
+	);
+	await delay(100);
+
+	// Deactivation completed — Tab navigation works again and A (the only
+	// remaining focusable) is reachable via Ink's native focus.
+	stdin.write('\t');
+	await delay(100);
+	expect(lastFrame()).toContain('A✓');
+});
