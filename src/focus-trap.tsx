@@ -33,7 +33,6 @@ import {useFocusManager} from 'ink';
 import {
 	useRegisterInput,
 	useInputDispatcher,
-	useInputCaptureState,
 } from './input-dispatcher.js';
 
 // ── Focus-gate ref counter ──────────────────────────────────────────

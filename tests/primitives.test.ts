@@ -586,12 +586,6 @@ describe('computePopoverPosition', () => {
 	});
 
 	test('shift: clamp right overflow', () => {
-		const anchorRect = {
-			left: 65,
-			top: 10,
-			width: 5,
-			height: 2,
-		};
 		// Right-start: left = 65+5+1 = 71, popover width=20, right edge=91 > 80
 		// flip → left-start: left = 65-1-20 = 44 (fits fine, no shift needed)
 		// Use bottom-end to force a shift case instead:

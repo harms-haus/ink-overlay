@@ -372,7 +372,7 @@ describe('useEnterExit interval — lifecycle (setInterval spy)', () => {
 
 		globalThis.setInterval = ((
 			callback: (...args: unknown[]) => void,
-			delay?: number,
+			timeout?: number,
 			...args: unknown[]
 		) => {
 			const id = originalSetInterval(
@@ -384,10 +384,10 @@ describe('useEnterExit interval — lifecycle (setInterval spy)', () => {
 
 					callback(...a);
 				},
-				delay,
+				timeout,
 				...args,
 			);
-			trackers.set(id, {delay: delay ?? 0, fireCount: 0, cleared: false});
+			trackers.set(id, {delay: timeout ?? 0, fireCount: 0, cleared: false});
 			return id;
 		}) as typeof setInterval;
 
@@ -453,7 +453,7 @@ describe('useEnterExit interval — lifecycle (setInterval spy)', () => {
 
 		globalThis.setInterval = ((
 			callback: (...args: unknown[]) => void,
-			delay?: number,
+			timeout?: number,
 			...args: unknown[]
 		) => {
 			const id = originalSetInterval(
@@ -465,10 +465,10 @@ describe('useEnterExit interval — lifecycle (setInterval spy)', () => {
 
 					callback(...a);
 				},
-				delay,
+				timeout,
 				...args,
 			);
-			trackers.set(id, {delay: delay ?? 0, fireCount: 0, cleared: false});
+			trackers.set(id, {delay: timeout ?? 0, fireCount: 0, cleared: false});
 			return id;
 		}) as typeof setInterval;
 

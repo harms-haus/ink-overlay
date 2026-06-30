@@ -20,7 +20,6 @@
 import {test, expect, afterEach} from 'vitest';
 import React from 'react';
 import {Text} from 'ink';
-import {OverlayHost} from '../src/host.js';
 import {OverlayHostContext} from '../src/host-context.js';
 import {renderWithHost} from './helpers/render-with-host.js';
 

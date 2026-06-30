@@ -39,7 +39,6 @@ import React, {
 	type ReactNode,
 	useMemo,
 	useState,
-	useRef,
 } from 'react';
 import {test, expect, afterEach} from 'vitest';
 import {Text} from 'ink';

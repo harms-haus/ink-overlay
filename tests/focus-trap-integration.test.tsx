@@ -46,7 +46,6 @@ import {renderWithHost} from './helpers/render-with-host.js';
 import {delay} from './helpers/delay.js';
 
 const TAB = '\t';
-const ESC = '\u001B';
 
 // ── Helpers ─────────────────────────────────────────────────────────
 

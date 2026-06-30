@@ -372,7 +372,7 @@ describe('demo Scene 11 — Imperative Overlay Service', () => {
 
 	test('variant-1 cap: a fourth `1` evicts the oldest, keeping the count at 3', async () => {
 		instance = renderWithHost(<Scene11ImperativeOverlay />);
-		const {stdin, lastFrame} = instance;
+		const {stdin} = instance;
 		await delay(300);
 
 		// Open three variant-1 overlays.

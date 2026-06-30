@@ -67,7 +67,7 @@ describe('overlay manager', () => {
 	});
 
 	test('overlay.update patches opts of an existing entry', async () => {
-		const {lastFrame} = renderWithHost(<Text>app</Text>);
+		renderWithHost(<Text>app</Text>);
 		await delay(100);
 
 		const id = overlay.open(<Text>patched</Text>, {z: 1});
@@ -318,7 +318,7 @@ describe('toast service — dismiss', () => {
 		const {lastFrame} = renderWithHost(<Text>app</Text>);
 		await delay(100);
 
-		const idA = toasts.error('Keep me');
+		toasts.error('Keep me');
 		toasts.info('Remove me');
 		await waitForFrame(lastFrame, 'Keep me');
 		expect(lastFrame()).toContain('Remove me');
@@ -336,7 +336,7 @@ describe('toast service — dismiss', () => {
 		toasts.dismissAll();
 		await delay(100);
 
-		const id1 = toasts.error('msg-one', {id: 'test-dismiss-1'});
+		toasts.error('msg-one', {id: 'test-dismiss-1'});
 		const id2 = toasts.info('msg-two', {id: 'test-dismiss-2'});
 		await waitForFrame(lastFrame, 'msg-one');
 		expect(lastFrame()).toContain('msg-two');
@@ -485,12 +485,8 @@ describe('toast service — stale overlay entry recovery', () => {
 
 describe('toast service — non-capturing', () => {
 	test('toast layer has capture:false; background useInput fires', async () => {
-		let keyCount = 0;
-
 		function Background() {
-			useInput(() => {
-				keyCount++;
-			});
+			useInput(() => {});
 
 			return <Text>background</Text>;
 		}
@@ -504,7 +500,6 @@ describe('toast service — non-capturing', () => {
 
 		// Verify the overlay store entry has capture: false.
 		const entries = overlayStore.getAll();
-		const toastEntry = entries.find(e => e.id.startsWith('toast-'));
 		// The toast overlay entry might be there.
 		// Check that none of the entries have capture: true.
 		for (const entry of entries) {

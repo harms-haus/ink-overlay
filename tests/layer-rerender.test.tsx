@@ -154,15 +154,11 @@ test('parent state updates alongside Layer are reflected in the frame', async ()
 // ── Test 4: dynamic Layer children re-render after parent state change ─
 
 test('Layer children update when parent state changes the children identity', async () => {
-	let triggerRerender: () => void;
 	let setCount: (n: number) => void;
 
 	function Parent() {
 		const [count, setCount_] = useState(0);
 		setCount = setCount_;
-		triggerRerender = () => {
-			setCount_(c => c + 1);
-		};
 
 		return (
 			<>

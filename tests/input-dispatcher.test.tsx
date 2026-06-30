@@ -335,7 +335,7 @@ test('useInputDispatcher throws when used outside <InputDispatcher>', () => {
 // ── warnBunInput not called on import ───────────────────────────────
 
 test('warnBunInput is not called on module import', async () => {
-	const {warnBunInput} = await import('../src/runtime.js');
+	await import('../src/runtime.js');
 	const spy = vi.spyOn(console, 'warn');
 
 	// Importing input-dispatcher should NOT trigger warnBunInput.

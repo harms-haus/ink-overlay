@@ -218,7 +218,7 @@ describe('useEnterExit', () => {
 		const config = getTransitionSteps('none');
 		let snapshot: HookSnapshot | undefined;
 
-		const {rerender, unmount} = render(
+		const {unmount} = render(
 			<Harness
 				visible={true}
 				config={config}

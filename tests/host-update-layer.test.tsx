@@ -69,16 +69,6 @@ function SpiedHost({
 	);
 }
 
-function renderSpied(tree: ReactNode) {
-	const calls = {current: [] as UpdateCall[]};
-	const result = render(
-		<OverlayHost>
-			<SpiedHost calls={calls}>{tree}</SpiedHost>
-		</OverlayHost>,
-	);
-	return {...result, calls};
-}
-
 // ── Probe: exposes host methods to the test ────────────────────────
 
 /**
@@ -105,7 +95,6 @@ function ContextProbe({
 function RegisterAndUpdateLayer({
 	id,
 	initialContent,
-	hostRef,
 }: {
 	id: string;
 	initialContent: string;

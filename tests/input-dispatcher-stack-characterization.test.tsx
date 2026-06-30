@@ -425,10 +425,8 @@ test('interleaved register/unregister sequences keep consistent LIFO order', asy
 // ── Empty stack dispatch is a safe no-op ────────────────────────────
 
 test('keypress with an empty handler stack is a safe no-op', async () => {
-	let api: ReturnType<typeof useImperativeDispatcher> | undefined;
-
 	function Inspector() {
-		api = useImperativeDispatcher();
+		useImperativeDispatcher();
 		return <Text>inspector</Text>;
 	}
 

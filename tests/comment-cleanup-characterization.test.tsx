@@ -50,7 +50,7 @@ describe('characterization: "fade" transition config', () => {
 
 	test('fade frames carry NO dim or dimColor keys', () => {
 		const cfg = getTransitionSteps('fade');
-		for (const frame of [...cfg.enter!, ...cfg.exit!!]) {
+		for (const frame of [...cfg.enter!, ...cfg.exit!]) {
 			expect(frame.style).not.toHaveProperty('dim');
 			expect(frame.style).not.toHaveProperty('dimColor');
 		}
