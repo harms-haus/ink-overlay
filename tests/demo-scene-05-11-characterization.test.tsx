@@ -49,7 +49,7 @@ describe('demo Scene 05 — Modal Deep Dive', () => {
 		const frame = lastFrame();
 		expect(frame).toContain('Scene 05 — Modal Deep Dive');
 		expect(frame).toContain(
-			'Every <Modal> prop, role=alertdialog, and bare toast/tooltip Layers.',
+			'Modal props (except defaultOpen), role=alertdialog, and bare toast/tooltip Layers.',
 		);
 		// Hint footer enumerates the five toggle keys + Esc → menu.
 		expect(frame).toContain('standard modal');

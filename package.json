@@ -3,6 +3,29 @@
 	"version": "0.1.0",
 	"description": "Overlay/modal/popover/toast/command-palette framework for Ink",
 	"license": "MIT",
+	"author": "harms-haus",
+	"homepage": "https://github.com/harms-haus/ink-overlay#readme",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/harms-haus/ink-overlay.git"
+	},
+	"bugs": {
+		"url": "https://github.com/harms-haus/ink-overlay/issues"
+	},
+	"keywords": [
+		"ink",
+		"react",
+		"terminal",
+		"console",
+		"cli",
+		"overlay",
+		"modal",
+		"popover",
+		"tooltip",
+		"toast",
+		"command-palette",
+		"tui"
+	],
 	"type": "module",
 	"sideEffects": false,
 	"exports": {
