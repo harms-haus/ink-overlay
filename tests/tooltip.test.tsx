@@ -9,7 +9,10 @@ import React, {useRef, useState} from 'react';
 import {Box, Text, type DOMElement} from 'ink';
 import {Tooltip} from '../src/tooltip.js';
 import {Layer} from '../src/layer.js';
-import {renderWithHost as baseRenderWithHost, type RenderWithHostResult} from './helpers/render-with-host.js';
+import {
+	renderWithHost as baseRenderWithHost,
+	type RenderWithHostResult,
+} from './helpers/render-with-host.js';
 import {delay} from './helpers/delay.js';
 
 // Track the active render instance so afterEach can tear it down.

@@ -226,7 +226,9 @@ describe('computeAnchorCoords', () => {
 
 	test('resolveEdge: only margin.bottom defined pushes up', () => {
 		// base top=0; margin.bottom=4 → top = 0 - 4 = -4 → clamped to 0
-		const result = computeAnchorCoords('top-left', viewport, layer, {bottom: 4});
+		const result = computeAnchorCoords('top-left', viewport, layer, {
+			bottom: 4,
+		});
 		expect(result).toEqual({top: 0, left: 0});
 	});
 
@@ -251,7 +253,9 @@ describe('computeAnchorCoords', () => {
 
 	test('clampMin: fractional negative intermediate floors then clamps to 0', () => {
 		// center base top=9; margin.bottom=9.9 → top = 9 - 9.9 = -0.9 → floor → -1 → max(-1,0)=0
-		const result = computeAnchorCoords('center', viewport, layer, {bottom: 9.9});
+		const result = computeAnchorCoords('center', viewport, layer, {
+			bottom: 9.9,
+		});
 		expect(result.top).toBe(0);
 	});
 
@@ -456,9 +460,9 @@ describe('computePopoverPosition', () => {
 		).toBe(13);
 
 		// top axis: top = top - offset - height = 10 - 1 - 5 = 4 (would be 1 if offset=4)
-		expect(
-			computePopoverPosition(anchor, popover, viewport, 'top').top,
-		).toBe(4);
+		expect(computePopoverPosition(anchor, popover, viewport, 'top').top).toBe(
+			4,
+		);
 
 		// right axis: left = left + width + offset = 10 + 5 + 1 = 16 (would be 19 if offset=4)
 		expect(
@@ -475,10 +479,21 @@ describe('computePopoverPosition', () => {
 		).toBe(-11);
 
 		// Omitting offset must be identical to passing offset: 1 explicitly.
-		const implicit = computePopoverPosition(anchor, popover, viewport, 'bottom');
-		const explicit = computePopoverPosition(anchor, popover, viewport, 'bottom', {
-			offset: 1,
-		});
+		const implicit = computePopoverPosition(
+			anchor,
+			popover,
+			viewport,
+			'bottom',
+		);
+		const explicit = computePopoverPosition(
+			anchor,
+			popover,
+			viewport,
+			'bottom',
+			{
+				offset: 1,
+			},
+		);
 		expect(implicit).toEqual(explicit);
 
 		// And it must NOT equal the old offset: 4 behavior.

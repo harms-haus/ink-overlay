@@ -23,7 +23,10 @@ import {test, expect, afterEach, vi} from 'vitest';
 import {useState, type ReactElement} from 'react';
 import {Text} from 'ink';
 import {Layer, overlay} from '../src/index.js';
-import {renderWithHost as baseRenderWithHost, type RenderWithHostResult} from './helpers/render-with-host.js';
+import {
+	renderWithHost as baseRenderWithHost,
+	type RenderWithHostResult,
+} from './helpers/render-with-host.js';
 import {delay} from './helpers/delay.js';
 
 const ESC = '\u001B';

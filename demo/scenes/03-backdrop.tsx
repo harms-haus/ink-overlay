@@ -69,10 +69,7 @@
 
 import {useState} from 'react';
 import {Box, Text} from 'ink';
-import {
-	Layer,
-	type BackdropKind,
-} from '../../src/index.js';
+import {Layer, type BackdropKind} from '../../src/index.js';
 import {SceneShell} from '../ui.js';
 
 // The three backdrop kinds, cycled by the `b` key.

@@ -38,10 +38,7 @@ import {Text} from 'ink';
 import {render} from 'ink-testing-library';
 import {Layer} from '../src/layer.js';
 import {OverlayHost} from '../src/host.js';
-import {
-	OverlayHostContext,
-	useOverlayHost,
-} from '../src/host-context.js';
+import {OverlayHostContext, useOverlayHost} from '../src/host-context.js';
 import type {OverlayDescriptor} from '../src/types.js';
 import {delay} from './helpers/delay.js';
 
@@ -176,9 +173,7 @@ test('closing a layer without an exit transition calls unregisterLayer immediate
 	// intermediate `{exiting: true}` update.
 	expect(records.some(r => r.kind === 'unregister')).toBe(true);
 	expect(
-		records.some(
-			r => r.kind === 'update' && r.keys.includes('exiting'),
-		),
+		records.some(r => r.kind === 'update' && r.keys.includes('exiting')),
 	).toBe(false);
 });
 
@@ -191,12 +186,7 @@ test('closing a layer with a multi-frame exit transition calls updateLayer with 
 		const [open, set] = useState(true);
 		setOpen = set;
 		return (
-			<Layer
-				anchor="center"
-				id="exit-close"
-				open={open}
-				transition="slide-up"
-			>
+			<Layer anchor="center" id="exit-close" open={open} transition="slide-up">
 				<Text>content</Text>
 			</Layer>
 		);
@@ -215,9 +205,7 @@ test('closing a layer with a multi-frame exit transition calls updateLayer with 
 
 	// An exiting=true update must have fired.
 	expect(
-		records.some(
-			r => r.kind === 'update' && r.keys.includes('exiting'),
-		),
+		records.some(r => r.kind === 'update' && r.keys.includes('exiting')),
 	).toBe(true);
 
 	// At this point (mid-animation) the layer should NOT yet be
@@ -269,12 +257,7 @@ test('re-opening after an exit-transition close re-registers the layer', async (
 		const [open, set] = useState(true);
 		setOpen = set;
 		return (
-			<Layer
-				anchor="center"
-				id="reopen-exit"
-				open={open}
-				transition="slide-up"
-			>
+			<Layer anchor="center" id="reopen-exit" open={open} transition="slide-up">
 				<Text>content</Text>
 			</Layer>
 		);
@@ -325,11 +308,9 @@ test('changing z on an open layer fires updateLayer (not registerLayer)', async 
 	const records = forId(calls.current, 'prop-z');
 
 	// An update carrying `z` must have fired.
-	expect(
-		records.some(
-			r => r.kind === 'update' && r.keys.includes('z'),
-		),
-	).toBe(true);
+	expect(records.some(r => r.kind === 'update' && r.keys.includes('z'))).toBe(
+		true,
+	);
 
 	// No additional registration — the layer was already registered.
 	expect(records.some(r => r.kind === 'register')).toBe(false);
@@ -370,8 +351,8 @@ test('structural prop change produces a full update patch with structural keys',
 	expect(updates.length).toBeGreaterThan(0);
 
 	const fullUpdates = updates.filter(u =>
-		(['z', 'capture', 'backdrop', 'anchor', 'transition'] as const).every(
-			key => u.keys.includes(key),
+		(['z', 'capture', 'backdrop', 'anchor', 'transition'] as const).every(key =>
+			u.keys.includes(key),
 		),
 	);
 	expect(fullUpdates.length).toBeGreaterThan(0);

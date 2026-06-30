@@ -128,7 +128,7 @@ describe('animation: frame interval duration (FRAME_INTERVAL_MS)', () => {
 // ════════════════════════════════════════════════════════════════════
 
 describe('animation: slide step distance (SLIDE_STEPS)', () => {
-	test("slide-up steps marginTop n → n/2 → 0 (enter) and 0 → n/2 → n (exit)", () => {
+	test('slide-up steps marginTop n → n/2 → 0 (enter) and 0 → n/2 → n (exit)', () => {
 		const cfg = getTransitionSteps('slide-up');
 		expect(cfg.enter!.map(s => s.style.marginTop)).toEqual([
 			SLIDE_STEPS,
@@ -142,7 +142,7 @@ describe('animation: slide step distance (SLIDE_STEPS)', () => {
 		]);
 	});
 
-	test("slide-down steps marginBottom n → n/2 → 0 (enter) and 0 → n/2 → n (exit)", () => {
+	test('slide-down steps marginBottom n → n/2 → 0 (enter) and 0 → n/2 → n (exit)', () => {
 		const cfg = getTransitionSteps('slide-down');
 		expect(cfg.enter!.map(s => s.style.marginBottom)).toEqual([
 			SLIDE_STEPS,
@@ -156,7 +156,7 @@ describe('animation: slide step distance (SLIDE_STEPS)', () => {
 		]);
 	});
 
-	test("slide-left steps marginLeft n → n/2 → 0 (enter) and 0 → n/2 → n (exit)", () => {
+	test('slide-left steps marginLeft n → n/2 → 0 (enter) and 0 → n/2 → n (exit)', () => {
 		const cfg = getTransitionSteps('slide-left');
 		expect(cfg.enter!.map(s => s.style.marginLeft)).toEqual([
 			SLIDE_STEPS,
@@ -170,7 +170,7 @@ describe('animation: slide step distance (SLIDE_STEPS)', () => {
 		]);
 	});
 
-	test("slide-right steps marginRight n → n/2 → 0 (enter) and 0 → n/2 → n (exit)", () => {
+	test('slide-right steps marginRight n → n/2 → 0 (enter) and 0 → n/2 → n (exit)', () => {
 		const cfg = getTransitionSteps('slide-right');
 		expect(cfg.enter!.map(s => s.style.marginRight)).toEqual([
 			SLIDE_STEPS,
@@ -242,10 +242,7 @@ describe('modal: default border colour (cyan)', () => {
 describe('command-palette: border colour (cyan)', () => {
 	test('CommandPalette border renders with the cyan ANSI colour code', async () => {
 		const {lastFrame, unmount} = renderWithHost(
-			<CommandPalette
-				items={[{id: 'a', label: 'Apple'}]}
-				defaultOpen
-			/>,
+			<CommandPalette items={[{id: 'a', label: 'Apple'}]} defaultOpen />,
 		);
 
 		await delay(300);

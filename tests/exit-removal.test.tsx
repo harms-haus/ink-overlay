@@ -74,7 +74,10 @@ function makeToggleApp({
 // ── Tests ──────────────────────────────────────────────────────────
 
 test('layer with exit transition is fully removed after the exit animation completes', async () => {
-	const {App, getSetOpen} = makeToggleApp({content: 'removable', transition: 'slide-up'});
+	const {App, getSetOpen} = makeToggleApp({
+		content: 'removable',
+		transition: 'slide-up',
+	});
 
 	const {lastFrame, unmount} = renderWithHost(<App />);
 	unmountInstance = unmount;
@@ -97,7 +100,10 @@ test('layer with exit transition is fully removed after the exit animation compl
 });
 
 test('layer stays removed after exit (no lingering zombie frame)', async () => {
-	const {App, getSetOpen} = makeToggleApp({content: 'zombie', transition: 'slide-up'});
+	const {App, getSetOpen} = makeToggleApp({
+		content: 'zombie',
+		transition: 'slide-up',
+	});
 
 	const {lastFrame, unmount} = renderWithHost(<App />);
 	unmountInstance = unmount;
@@ -164,7 +170,10 @@ test('closing one layer with exit transition does not remove a sibling layer', a
 });
 
 test('layer without exit transition is removed immediately on close', async () => {
-	const {App, getSetOpen} = makeToggleApp({content: 'instant', transition: 'none'});
+	const {App, getSetOpen} = makeToggleApp({
+		content: 'instant',
+		transition: 'none',
+	});
 
 	const {lastFrame, unmount} = renderWithHost(<App />);
 	unmountInstance = unmount;

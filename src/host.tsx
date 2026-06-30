@@ -235,7 +235,13 @@ export function OverlayHost({children}: OverlayHostProps) {
 
 			enableFocus();
 		}
-	}, [capturingCount, isRawModeSupported, setRawMode, disableFocus, enableFocus]);
+	}, [
+		capturingCount,
+		isRawModeSupported,
+		setRawMode,
+		disableFocus,
+		enableFocus,
+	]);
 
 	// ── Unmount cleanup (raw-mode + focus) ─────────────────────────
 	// Read prevCapturingCountRef INSIDE the cleanup so we always see the

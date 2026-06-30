@@ -31,11 +31,7 @@ afterEach(() => {
 	unmountInstance = undefined;
 });
 
-function Probe({
-	onContext,
-}: {
-	onContext: (value: unknown) => void;
-}) {
+function Probe({onContext}: {onContext: (value: unknown) => void}) {
 	return (
 		<OverlayHostContext.Consumer>
 			{value => {
@@ -49,9 +45,11 @@ function Probe({
 test('OverlayHostContext value exposes exactly the three documented methods', () => {
 	let captured: unknown = null;
 	const {unmount} = renderWithHost(
-		<Probe onContext={v => {
-			captured = v;
-		}} />,
+		<Probe
+			onContext={v => {
+				captured = v;
+			}}
+		/>,
 	);
 	unmountInstance = unmount;
 
@@ -59,17 +57,17 @@ test('OverlayHostContext value exposes exactly the three documented methods', ()
 	expect(typeof captured).toBe('object');
 
 	const methods = Object.keys(captured as object).sort();
-	expect(methods).toEqual(
-		['registerLayer', 'unregisterLayer', 'updateLayer'],
-	);
+	expect(methods).toEqual(['registerLayer', 'unregisterLayer', 'updateLayer']);
 });
 
 test('the deprecated onLayerExited method name is NOT present on the context', () => {
 	let captured: Record<string, unknown> | null = null;
 	const {unmount} = renderWithHost(
-		<Probe onContext={v => {
-			captured = v as Record<string, unknown>;
-		}} />,
+		<Probe
+			onContext={v => {
+				captured = v as Record<string, unknown>;
+			}}
+		/>,
 	);
 	unmountInstance = unmount;
 
@@ -80,9 +78,11 @@ test('the deprecated onLayerExited method name is NOT present on the context', (
 test('the removed removeLayerAfterExit alias is NOT present on the context', () => {
 	let captured: Record<string, unknown> | null = null;
 	const {unmount} = renderWithHost(
-		<Probe onContext={v => {
-			captured = v as Record<string, unknown>;
-		}} />,
+		<Probe
+			onContext={v => {
+				captured = v as Record<string, unknown>;
+			}}
+		/>,
 	);
 	unmountInstance = unmount;
 

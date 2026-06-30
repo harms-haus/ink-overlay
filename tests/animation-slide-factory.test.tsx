@@ -43,13 +43,15 @@ const ALL_MARGIN_KEYS = [
 type MarginKey = (typeof ALL_MARGIN_KEYS)[number];
 
 /** Extract the set of margin keys actually present on a step style. */
-function presentMarginKeys(style: TransitionConfig['enter'] extends infer T
-	? T extends Array<infer S>
-		? S
-		: never
-	: never extends {style: infer K}
-	? K
-	: never): MarginKey[] {
+function presentMarginKeys(
+	style: TransitionConfig['enter'] extends infer T
+		? T extends Array<infer S>
+			? S
+			: never
+		: never extends {style: infer K}
+			? K
+			: never,
+): MarginKey[] {
 	return ALL_MARGIN_KEYS.filter(k => k in style);
 }
 
@@ -102,12 +104,8 @@ describe('slide transitions — shared duration & frame count', () => {
 	test('every slide transition has exactly 3 enter and 3 exit frames', () => {
 		for (const name of slideNames) {
 			const cfg = getTransitionSteps(name);
-			expect(cfg.enter, `${name} enter`).toHaveLength(
-				EXPECTED_FRAME_COUNT,
-			);
-			expect(cfg.exit, `${name} exit`).toHaveLength(
-				EXPECTED_FRAME_COUNT,
-			);
+			expect(cfg.enter, `${name} enter`).toHaveLength(EXPECTED_FRAME_COUNT);
+			expect(cfg.exit, `${name} exit`).toHaveLength(EXPECTED_FRAME_COUNT);
 		}
 	});
 

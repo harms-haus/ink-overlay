@@ -30,18 +30,12 @@ afterEach(async () => {
 describe('characterization: "fade" transition config', () => {
 	test('enter is exactly two frames stepping height 0 → 1', () => {
 		const cfg = getTransitionSteps('fade');
-		expect(cfg.enter).toEqual([
-			{style: {height: 0}},
-			{style: {height: 1}},
-		]);
+		expect(cfg.enter).toEqual([{style: {height: 0}}, {style: {height: 1}}]);
 	});
 
 	test('exit is exactly two frames stepping height 1 → 0', () => {
 		const cfg = getTransitionSteps('fade');
-		expect(cfg.exit).toEqual([
-			{style: {height: 1}},
-			{style: {height: 0}},
-		]);
+		expect(cfg.exit).toEqual([{style: {height: 1}}, {style: {height: 0}}]);
 	});
 
 	test('duration is the standard frame interval (80 ms)', () => {

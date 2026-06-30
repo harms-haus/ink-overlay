@@ -30,10 +30,7 @@ import {
 	useId,
 } from 'react';
 import {useFocusManager} from 'ink';
-import {
-	useRegisterInput,
-	useInputDispatcher,
-} from './input-dispatcher.js';
+import {useRegisterInput, useInputDispatcher} from './input-dispatcher.js';
 
 // ── Focus-gate ref counter ──────────────────────────────────────────
 

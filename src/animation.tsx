@@ -80,19 +80,35 @@ export function getTransitionSteps(name: TransitionName): TransitionConfig {
 		}
 
 		case 'slide-up':
-			config = createSlideTransition('marginTop', SLIDE_STEPS, FRAME_INTERVAL_MS);
+			config = createSlideTransition(
+				'marginTop',
+				SLIDE_STEPS,
+				FRAME_INTERVAL_MS,
+			);
 			break;
 
 		case 'slide-down':
-			config = createSlideTransition('marginBottom', SLIDE_STEPS, FRAME_INTERVAL_MS);
+			config = createSlideTransition(
+				'marginBottom',
+				SLIDE_STEPS,
+				FRAME_INTERVAL_MS,
+			);
 			break;
 
 		case 'slide-left':
-			config = createSlideTransition('marginLeft', SLIDE_STEPS, FRAME_INTERVAL_MS);
+			config = createSlideTransition(
+				'marginLeft',
+				SLIDE_STEPS,
+				FRAME_INTERVAL_MS,
+			);
 			break;
 
 		case 'slide-right':
-			config = createSlideTransition('marginRight', SLIDE_STEPS, FRAME_INTERVAL_MS);
+			config = createSlideTransition(
+				'marginRight',
+				SLIDE_STEPS,
+				FRAME_INTERVAL_MS,
+			);
 			break;
 
 		default: {

@@ -576,16 +576,11 @@ describe('demo Scene 10 — layer always renders (guard removal)', () => {
 // ════════════════════════════════════════════════════════════════════
 
 describe('demo/app.tsx — Scene 08 tag casing', () => {
-	const appSource = readFileSync(
-		join(here, '..', 'demo', 'app.tsx'),
-		'utf8',
-	);
+	const appSource = readFileSync(join(here, '..', 'demo', 'app.tsx'), 'utf8');
 
 	test('Scene 08 tags use capitalized words (no lowercase "toasts")', () => {
 		// Extract the scene 08 entry's tags array.
-		const scene08Match = appSource.match(
-			/id: '08',[^]*?tags: (\[[^\]]*\])/,
-		);
+		const scene08Match = appSource.match(/id: '08',[^]*?tags: (\[[^\]]*\])/);
 		expect(scene08Match, 'scene 08 entry must exist in app.tsx').not.toBeNull();
 		const tagsLiteral = scene08Match![1]!;
 

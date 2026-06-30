@@ -35,20 +35,13 @@
  *
  * Uses REAL timers — ink breaks with fake timers.
  */
-import React, {
-	type ReactNode,
-	useMemo,
-	useState,
-} from 'react';
+import React, {type ReactNode, useMemo, useState} from 'react';
 import {test, expect, afterEach} from 'vitest';
 import {Text} from 'ink';
 import {render} from 'ink-testing-library';
 import {Layer} from '../src/layer.js';
 import {OverlayHost} from '../src/host.js';
-import {
-	OverlayHostContext,
-	useOverlayHost,
-} from '../src/host-context.js';
+import {OverlayHostContext, useOverlayHost} from '../src/host-context.js';
 import type {OverlayDescriptor} from '../src/types.js';
 import {delay} from './helpers/delay.js';
 
@@ -190,9 +183,7 @@ test('changing structural props while the layer is closed does not fire updateLa
 	// while closed), but that patch carries only `content` — never the
 	// structural keys like `z`.
 	const structuralUpdates = afterOpen.filter(
-		r =>
-			r.kind === 'update' &&
-			r.keys.some(k => k !== 'content'),
+		r => r.kind === 'update' && r.keys.some(k => k !== 'content'),
 	);
 	expect(structuralUpdates).toHaveLength(0);
 });
@@ -281,9 +272,7 @@ test('changing a structural prop AND children simultaneously fires a structural 
 	// the structural patch always includes contentRef.current.
 	const structuralUpdates = updates.filter(u => u.keys.includes('z'));
 	expect(structuralUpdates.length).toBeGreaterThan(0);
-	expect(
-		structuralUpdates.every(u => u.keys.includes('content')),
-	).toBe(true);
+	expect(structuralUpdates.every(u => u.keys.includes('content'))).toBe(true);
 });
 
 // ── Effect 1 isolation: structural change does not re-run open/close effect ─
@@ -364,7 +353,9 @@ test('content-only change does not fire registerLayer, unregisterLayer, or a str
 	// Only content-only patches (single key).
 	const updates = records.filter(r => r.kind === 'update');
 	expect(updates.length).toBeGreaterThan(0);
-	expect(updates.every(u => u.keys.length === 1 && u.keys[0] === 'content')).toBe(true);
+	expect(
+		updates.every(u => u.keys.length === 1 && u.keys[0] === 'content'),
+	).toBe(true);
 });
 
 // ── Effect 2: changing the same structural prop to the same value is a no-op ─
@@ -424,10 +415,7 @@ test('the content-sync effect fires exactly once for a single content change (no
 	await delay(250);
 
 	const contentUpdates = forId(calls.current, 'single-content').filter(
-		r =>
-			r.kind === 'update' &&
-			r.keys.length === 1 &&
-			r.keys[0] === 'content',
+		r => r.kind === 'update' && r.keys.length === 1 && r.keys[0] === 'content',
 	);
 
 	// Exactly one content-only patch for one content change.

@@ -6,10 +6,7 @@ import {dirname, resolve} from 'node:path';
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, '..');
 
-const indexSource = readFileSync(
-	resolve(repoRoot, 'src/index.tsx'),
-	'utf8',
-);
+const indexSource = readFileSync(resolve(repoRoot, 'src/index.tsx'), 'utf8');
 const apiReference = readFileSync(
 	resolve(repoRoot, 'docs/reference/api-reference.md'),
 	'utf8',
@@ -26,8 +23,11 @@ function exportedSharedTypes(): string[] {
 	const blockMatch = indexSource.match(
 		/export type \{([^}]*)\} from '\.\/types\.js';/s,
 	);
-	expect(blockMatch, 'expected a `export type {…} from "./types.js"` block').toBeTruthy();
-	const names = (blockMatch![1])
+	expect(
+		blockMatch,
+		'expected a `export type {…} from "./types.js"` block',
+	).toBeTruthy();
+	const names = blockMatch![1]
 		.split(',')
 		.map(name => name.trim())
 		.filter(name => name.length > 0);
@@ -45,12 +45,12 @@ describe('API reference documents every exported shared type', () => {
 			// A documented type appears either as its own heading
 			// (`### \`TypeName\``) or as part of a combined heading
 			// (e.g. `### \`TransitionStep\` and \`TransitionConfig\``).
-			const headingPattern = new RegExp(
-				`^### .*\\\`${name}\\\``,
-				'm',
-			);
+			const headingPattern = new RegExp(`^### .*\\\`${name}\\\``, 'm');
 			const inReference = headingPattern.test(apiReference);
-			expect(inReference, `Type \`${name}\` is exported from the barrel but has no section heading in docs/reference/api-reference.md`).toBe(true);
+			expect(
+				inReference,
+				`Type \`${name}\` is exported from the barrel but has no section heading in docs/reference/api-reference.md`,
+			).toBe(true);
 		});
 	}
 

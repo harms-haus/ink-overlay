@@ -45,9 +45,7 @@
 import {test, expect, vi, afterEach} from 'vitest';
 import {Text} from 'ink';
 import {render} from 'ink-testing-library';
-import {
-	InputDispatcher,
-} from '../src/input-dispatcher.js';
+import {InputDispatcher} from '../src/input-dispatcher.js';
 import {FocusTrap} from '../src/focus-trap.js';
 import {delay} from './helpers/delay.js';
 
@@ -90,9 +88,7 @@ vi.mock('ink', async importOriginal => {
 	};
 });
 
-function makeStub(
-	overrides: Partial<StubFocusManager> = {},
-): StubFocusManager {
+function makeStub(overrides: Partial<StubFocusManager> = {}): StubFocusManager {
 	return {
 		activeId: 'prev-focused',
 		enableFocus: vi.fn(),
@@ -252,7 +248,9 @@ test('a throwing focus() does NOT surface an error when guarded (unmounted targe
 	const stub = makeStub({focus: throwingFocus});
 	stubHolder.current = stub;
 
-	const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+	const consoleErrorSpy = vi
+		.spyOn(console, 'error')
+		.mockImplementation(() => {});
 	const {handle, errors, restore} = renderTrapWithErrorHandler(true);
 	await delay(100);
 	expect(stub.disableFocus).toHaveBeenCalledTimes(1);
@@ -304,7 +302,9 @@ test('a trap that survived a throwing restore can be re-activated and deactivate
 	const stub = makeStub({focus: throwingFocus});
 	stubHolder.current = stub;
 
-	const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+	const consoleErrorSpy = vi
+		.spyOn(console, 'error')
+		.mockImplementation(() => {});
 	const {handle, errors, restore} = renderTrapWithErrorHandler(true);
 	await delay(100);
 

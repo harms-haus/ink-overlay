@@ -47,7 +47,9 @@ describe('demo smoke tests — every scene renders its header', () => {
 
 		const frame = lastFrame();
 		expect(frame).toContain('01 · Getting Started');
-		expect(frame).toContain('OverlayHost, declarative Modal, imperative toasts');
+		expect(frame).toContain(
+			'OverlayHost, declarative Modal, imperative toasts',
+		);
 
 		unmount();
 	});

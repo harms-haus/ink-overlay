@@ -94,7 +94,9 @@ describe('demo Scene 01 — identity (import path resolves to the right scene)',
 
 		const frame = lastFrame();
 		// The scene-01 description text from SceneShell.
-		expect(frame).toContain('OverlayHost, declarative Modal, imperative toasts');
+		expect(frame).toContain(
+			'OverlayHost, declarative Modal, imperative toasts',
+		);
 		unmount();
 	});
 });

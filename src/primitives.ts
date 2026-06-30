@@ -43,8 +43,6 @@ export function anchorToFlexbox(anchor: Anchor): {
 // Pure coordinate math for positioning a layer of known size inside a viewport.
 // ---------------------------------------------------------------------------
 
-
-
 export function computeAnchorCoords(
 	anchor: Anchor,
 	viewport: Viewport,
@@ -130,7 +128,10 @@ export function computeAnchorCoords(
 		left -= margin.right ?? 0;
 	}
 
-	return {top: Math.max(Math.floor(top), 0), left: Math.max(Math.floor(left), 0)};
+	return {
+		top: Math.max(Math.floor(top), 0),
+		left: Math.max(Math.floor(left), 0),
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -362,13 +363,27 @@ export function computePopoverPosition(
 	let {axis, side} = parsePlacement(placement);
 
 	// PHASE 1 — compute the base position for the requested placement.
-	let pos = computeBasePosition(axis, side, anchorRect, popoverSize, offset, crossOffset);
+	let pos = computeBasePosition(
+		axis,
+		side,
+		anchorRect,
+		popoverSize,
+		offset,
+		crossOffset,
+	);
 
 	// PHASE 2 — FLIP: mirror the placement along the main axis if the
 	// popover would overflow the viewport.
 	if (shouldFlip && checkMainAxisOverflow(axis, pos, popoverSize, viewport)) {
 		axis = flipAxis(axis);
-		pos = computeBasePosition(axis, side, anchorRect, popoverSize, offset, crossOffset);
+		pos = computeBasePosition(
+			axis,
+			side,
+			anchorRect,
+			popoverSize,
+			offset,
+			crossOffset,
+		);
 	}
 
 	// PHASE 3 — SHIFT: clamp the popover within the viewport, respecting
@@ -379,8 +394,14 @@ export function computePopoverPosition(
 		const minY = pad.top;
 		const maxY = viewport.rows - popoverSize.height - pad.bottom;
 
-		pos.left = Math.min(Math.max(Math.floor(pos.left), Math.floor(minX)), Math.floor(maxX));
-		pos.top = Math.min(Math.max(Math.floor(pos.top), Math.floor(minY)), Math.floor(maxY));
+		pos.left = Math.min(
+			Math.max(Math.floor(pos.left), Math.floor(minX)),
+			Math.floor(maxX),
+		);
+		pos.top = Math.min(
+			Math.max(Math.floor(pos.top), Math.floor(minY)),
+			Math.floor(maxY),
+		);
 	}
 
 	return {

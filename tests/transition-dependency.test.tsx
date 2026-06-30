@@ -32,10 +32,7 @@ import {Text} from 'ink';
 import {render} from 'ink-testing-library';
 import {Layer} from '../src/layer.js';
 import {OverlayHost} from '../src/host.js';
-import {
-	OverlayHostContext,
-	useOverlayHost,
-} from '../src/host-context.js';
+import {OverlayHostContext, useOverlayHost} from '../src/host-context.js';
 import type {OverlayDescriptor} from '../src/types.js';
 import {delay} from './helpers/delay.js';
 
@@ -49,11 +46,13 @@ afterEach(() => {
 	unmountInstance = undefined;
 });
 
-type CallRecord = {kind: 'register'; id: string} | {
-	kind: 'update';
-	id: string;
-	keys: string[];
-};
+type CallRecord =
+	| {kind: 'register'; id: string}
+	| {
+			kind: 'update';
+			id: string;
+			keys: string[];
+	  };
 
 /**
  * Wraps the real host context so every `registerLayer` / `updateLayer`
@@ -198,7 +197,9 @@ test('stable (hoisted) object transition does not trigger full updates on parent
 	// Because the object reference is stable (hoisted out of render),
 	// neither `transition` nor `resolvedTransition` changes identity, so
 	// no full lifecycle update should fire.
-	expect(countTransitionUpdates(calls.current, 'stable-obj-transition')).toBe(0);
+	expect(countTransitionUpdates(calls.current, 'stable-obj-transition')).toBe(
+		0,
+	);
 	expect(lastFrame()).toContain('content');
 });
 

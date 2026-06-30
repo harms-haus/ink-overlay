@@ -12,12 +12,7 @@
  */
 import {describe, test, expect} from 'vitest';
 import {computePopoverPosition} from '../src/primitives.js';
-import type {
-	AnchorRect,
-	Rect,
-	Viewport,
-	Placement,
-} from '../src/types.js';
+import type {AnchorRect, Rect, Viewport, Placement} from '../src/types.js';
 
 // ── Shared fixtures ────────────────────────────────────────────────────────
 // A generously-sized viewport so that base-position + flip tests do not
@@ -72,10 +67,16 @@ describe('computePopoverPosition — base position (flip:false, shift:false)', (
 	for (const placement of ALL_PLACEMENTS) {
 		const exp = expected[placement];
 		test(`placement '${placement}' → base coords {top:${exp.top}, left:${exp.left}}`, () => {
-			const result = computePopoverPosition(anchor, popover, viewport, placement, {
-				flip: false,
-				shift: false,
-			});
+			const result = computePopoverPosition(
+				anchor,
+				popover,
+				viewport,
+				placement,
+				{
+					flip: false,
+					shift: false,
+				},
+			);
 			expect(result.top).toBe(exp.top);
 			expect(result.left).toBe(exp.left);
 			// placement field is echoed back unchanged when nothing happens.
@@ -167,15 +168,27 @@ describe('computePopoverPosition — base position (flip:false, shift:false)', (
 	});
 
 	test('crossOffset=0 is identical to omitting crossOffset', () => {
-		const implicit = computePopoverPosition(anchor, popover, viewport, 'bottom', {
-			flip: false,
-			shift: false,
-		});
-		const explicit = computePopoverPosition(anchor, popover, viewport, 'bottom', {
-			flip: false,
-			shift: false,
-			crossOffset: 0,
-		});
+		const implicit = computePopoverPosition(
+			anchor,
+			popover,
+			viewport,
+			'bottom',
+			{
+				flip: false,
+				shift: false,
+			},
+		);
+		const explicit = computePopoverPosition(
+			anchor,
+			popover,
+			viewport,
+			'bottom',
+			{
+				flip: false,
+				shift: false,
+				crossOffset: 0,
+			},
+		);
 		expect(implicit).toEqual(explicit);
 	});
 
@@ -208,11 +221,17 @@ describe('computePopoverPosition — base position (flip:false, shift:false)', (
 	});
 
 	test('negative crossOffset shifts in the opposite direction', () => {
-		const r = computePopoverPosition(anchor, popover, viewport, 'bottom-start', {
-			flip: false,
-			shift: false,
-			crossOffset: -4,
-		});
+		const r = computePopoverPosition(
+			anchor,
+			popover,
+			viewport,
+			'bottom-start',
+			{
+				flip: false,
+				shift: false,
+				crossOffset: -4,
+			},
+		);
 		// 30 - 4 = 26
 		expect(r.left).toBe(26);
 	});

@@ -42,11 +42,7 @@ function stripAnsi(s: string): string {
 describe('demo ui — SceneShell separator width', () => {
 	test('the footer separator is exactly 48 box-drawing characters', async () => {
 		const {lastFrame} = render(
-			<SceneShell
-				title="T"
-				description="D"
-				hints={[{key: 'q', label: 'quit'}]}
-			>
+			<SceneShell title="T" description="D" hints={[{key: 'q', label: 'quit'}]}>
 				<Text>body</Text>
 			</SceneShell>,
 		);
@@ -75,11 +71,7 @@ describe('demo ui — SceneShell separator width', () => {
 
 	test('the separator uses the heavy-horizontal box-drawing glyph, not dashes', async () => {
 		const {lastFrame} = render(
-			<SceneShell
-				title="T"
-				description="D"
-				hints={[{key: 'q', label: 'quit'}]}
-			>
+			<SceneShell title="T" description="D" hints={[{key: 'q', label: 'quit'}]}>
 				<Text>body</Text>
 			</SceneShell>,
 		);

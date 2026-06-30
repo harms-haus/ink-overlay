@@ -182,10 +182,7 @@ export function Layer({
 		if (!isOpen) {
 			// Closing edge: tear down, optionally via an exit transition.
 			if (wasOpen && registeredReference.current) {
-				if (
-					resolvedTransition?.exit &&
-					resolvedTransition.exit.length > 1
-				) {
+				if (resolvedTransition?.exit && resolvedTransition.exit.length > 1) {
 					host.updateLayer(id, {exiting: true});
 				} else {
 					host.unregisterLayer(id);

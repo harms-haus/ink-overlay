@@ -150,7 +150,10 @@ function publishToasts(): void {
 
 	const opts = {...TOAST_BASE_OPTS, anchor};
 
-	if (currentOverlayId === null || overlayStore.get(currentOverlayId) === undefined) {
+	if (
+		currentOverlayId === null ||
+		overlayStore.get(currentOverlayId) === undefined
+	) {
 		// The previously recorded id may belong to an entry that was
 		// externally removed (e.g. via closeAll); open a fresh entry.
 		currentOverlayId = overlayStore.open(content, opts);
@@ -274,5 +277,3 @@ export const toasts: ToastService = {
 		publishToasts();
 	},
 };
-
-

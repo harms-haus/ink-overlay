@@ -53,7 +53,9 @@ afterEach(async () => {
 
 /** Extract the top border line of a rounded modal from a stripped frame. */
 function findTopBorder(frame: string): string | undefined {
-	return frame.split('\n').find(line => line.includes('╭') && line.includes('╮'));
+	return frame
+		.split('\n')
+		.find(line => line.includes('╭') && line.includes('╮'));
 }
 
 // ════════════════════════════════════════════════════════════════════
@@ -76,7 +78,9 @@ describe('demo Scene 01 — shell rendering', () => {
 
 		const frame = lastFrame();
 		expect(frame).toContain('01 · Getting Started');
-		expect(frame).toContain('OverlayHost, declarative Modal, imperative toasts');
+		expect(frame).toContain(
+			'OverlayHost, declarative Modal, imperative toasts',
+		);
 		unmount();
 	});
 
@@ -299,7 +303,9 @@ describe('demo Scene 01 — modal renders with documented defaults', () => {
 		stdin.write('m');
 		await delay(300);
 
-		const lines = stripAnsi(lastFrame()).split('\n').map(l => l.trim());
+		const lines = stripAnsi(lastFrame())
+			.split('\n')
+			.map(l => l.trim());
 		// The title row sits between the top border and the body row.
 		const topIdx = lines.findIndex(l => /^╭─{48}╮$/.test(l));
 		const bottomIdx = lines.findIndex(l => /^╰─{48}╯$/.test(l));

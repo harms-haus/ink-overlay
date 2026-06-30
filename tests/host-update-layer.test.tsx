@@ -28,10 +28,7 @@ import {test, expect} from 'vitest';
 import {Text} from 'ink';
 import {render} from 'ink-testing-library';
 import {OverlayHost} from '../src/host.js';
-import {
-	OverlayHostContext,
-	useOverlayHost,
-} from '../src/host-context.js';
+import {OverlayHostContext, useOverlayHost} from '../src/host-context.js';
 import {Layer} from '../src/layer.js';
 import {delay} from './helpers/delay.js';
 
